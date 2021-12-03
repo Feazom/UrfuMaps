@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrfuMaps.Api", "UrfuMaps.Api\UrfuMaps.Api.csproj", "{518CFF58-6F89-4088-8CD2-6201163A5D26}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrfuMaps.Api", "UrfuMaps.Api\UrfuMaps.Api.csproj", "{AB4FB04C-27EB-46C1-B973-DC6E7F473899}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrfuMaps.Api.Auth", "UrfuMaps.Api.Auth\UrfuMaps.Api.Auth.csproj", "{02E073C7-1070-4AAB-8138-696B8401D16A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +13,19 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{518CFF58-6F89-4088-8CD2-6201163A5D26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{518CFF58-6F89-4088-8CD2-6201163A5D26}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{518CFF58-6F89-4088-8CD2-6201163A5D26}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{518CFF58-6F89-4088-8CD2-6201163A5D26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB4FB04C-27EB-46C1-B973-DC6E7F473899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB4FB04C-27EB-46C1-B973-DC6E7F473899}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB4FB04C-27EB-46C1-B973-DC6E7F473899}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB4FB04C-27EB-46C1-B973-DC6E7F473899}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02E073C7-1070-4AAB-8138-696B8401D16A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02E073C7-1070-4AAB-8138-696B8401D16A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02E073C7-1070-4AAB-8138-696B8401D16A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02E073C7-1070-4AAB-8138-696B8401D16A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {A9DDBE94-DEEB-4A8D-BFB7-8DFF2C4F2AC6}
+		SolutionGuid = {FFDD24AE-D57E-4B8E-AD18-B93080F82BF8}
 	EndGlobalSection
 EndGlobal

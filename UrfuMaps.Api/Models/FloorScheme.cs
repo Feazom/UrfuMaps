@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using UrfuMapsApi.Models;
+﻿using System.Collections.Generic;
 
-namespace UrfuMapsApi.Models
+namespace UrfuMaps.Api.Models
 {
 	public class FloorScheme
 	{
+		public int Id { get; set; }
+		public string Name { get; set; }
 		public int Floor { get; set; }
 		public string ImageLink { get; set; }
-		public Position[] Positions { get; set; }
+		public ICollection<Position> Positions { get; set; }
 	}
 }

@@ -1,51 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using UrfuMapsApi.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using UrfuMaps.Api.Models;
 
-namespace UrfuMapsApi.Controllers
+namespace UrfuMaps.Api.Controllers
 {
 	[ApiController]
-	[Route("[controller]")]
+	[Route("/map")]
 	public class MapController : ControllerBase
 	{
-		private readonly ILogger<MapController> _logger;
-
-		public MapController(ILogger<MapController> logger)
-		{
-			_logger = logger;
-		}
-
 		[HttpGet]
-		public Building Get()
+		public ActionResult<FloorScheme> Get([FromQuery] int? floor, string building)
 		{
-			var b = HttpContext;
-			var imageLink = HttpContext.Request.Host.Value + "/template.png";
-			return new Building
+			if (floor == null || building == null)
 			{
-				Name = "RTF",
-				Floors = new FloorScheme[]
+				return BadRequest();
+			}
+			var imageLink = HttpContext.Request.Host.Value + "/template.png";
+			return Ok(new FloorScheme[]
+			{
+				new FloorScheme
 				{
-					new FloorScheme
+					Name = building,
+					Floor = floor.Value,
+					ImageLink = imageLink,
+					Positions = new Position[]
 					{
-						Floor = 1,
-						ImageLink = imageLink,
-						Positions = new Position[]
+						new Position
 						{
-							new Position 
-							{
-								Cabinet = "RI - 001",
-								X = 10,
-								Y = 10
-							}
+							Cabinet = "RI - 001",
+							X = 10,
+							Y = 10
 						}
 					}
 				}
-			};
+			});
 		}
 	}
 }

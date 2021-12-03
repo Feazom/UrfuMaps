@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace UrfuMapsApi.Models
+namespace UrfuMaps.Api.Models
 {
 	public class Position
 	{
+		[Key]
 		public string Cabinet { get; set; }
+		public string Description { get; set; }
+		public FloorScheme Floor { get; set; }
+		public int FloorId { get; set; }
 		public int X { get; set; }
 		public int Y { get; set; }
 	}
