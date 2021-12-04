@@ -19,11 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UrfuMaps.Auth\UrfuMaps.Api.Auth.csproj" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <ProjectReference Include="..\UrfuMaps.Api.Auth\UrfuMaps.Api.Auth.csproj" />
   </ItemGroup>
 
 </Project>
