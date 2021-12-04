@@ -8,7 +8,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
 using UrfuMaps.Api.Services;
-using UrfuMaps.Api.Auth;
 
 namespace UrfuMaps.Api
 {
