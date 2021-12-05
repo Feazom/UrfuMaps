@@ -7,15 +7,23 @@ namespace UrfuMaps.Api
 	{
 		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-		public DbSet<FloorScheme> Buildings { get; set; }
+		public DbSet<FloorScheme> Floors { get; set; }
 		public DbSet<User> Users { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder model)
 		{
-			model.Entity<Position>()
-				.HasOne(x => x.Floor)
+			model.Entity<FloorScheme>()
+				.ToTable("Floors")
+				.HasKey(x => new { x.Floor, x.BuildingName });
+
+			model.Entity<PositionScheme>()
+				.ToTable("Positions")
+				.HasKey(x => x.Cabinet);
+
+			model.Entity<PositionScheme>()
+				.HasOne<FloorScheme>()
 				.WithMany(x => x.Positions)
-				.HasForeignKey(x => x.FloorId);
+				.HasForeignKey(x => new { x.Floor, x.BuildingName });
 		}
 	}
 }

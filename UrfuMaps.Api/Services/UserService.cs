@@ -22,7 +22,7 @@ namespace UrfuMaps.Api.Services
 			_authOptions = authOptions;
 		}
 
-		public async Task<User> Authenticate(User user)
+		public async Task<User?> Authenticate(User user)
 		{
 			var account = await _db.Users.FindAsync(user.Login);
 
@@ -35,15 +35,13 @@ namespace UrfuMaps.Api.Services
 
 		public async Task Register(User user)
 		{
-			var account = new User
-			{
-				Login = user.Login,
-				Password = BC.HashPassword(
+			var account = new User(
+				user.Login,
+				BC.HashPassword(
 					user.Password,
 					BC.GenerateSalt(4),
 					true,
-					BCrypt.Net.HashType.SHA256)
-			};
+					BCrypt.Net.HashType.SHA256));
 
 			_db.Users.Add(account);
 			await _db.SaveChangesAsync();

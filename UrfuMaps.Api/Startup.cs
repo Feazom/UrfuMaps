@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Text.Json.Serialization;
 using UrfuMaps.Api.Auth;
 using UrfuMaps.Api.Services;
 
@@ -24,9 +25,12 @@ namespace UrfuMaps.Api
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddDbContext<AppDbContext>(options =>
+				options.UseNpgsql(Configuration["ConnectionString"]));
 			services.AddControllers();
 
 			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<IMapService, MapService>();
 
 			var authOptionsConfiguration = Configuration.GetSection("Auth");
 			services.Configure<AuthOptions>(authOptionsConfiguration);
@@ -50,9 +54,6 @@ namespace UrfuMaps.Api
 						ValidateIssuerSigningKey = true,
 					};
 				});
-			services.AddDbContext<AppDbContext>(options =>
-				options.UseNpgsql(Configuration["ConnectionString"]));
-
 
 			services.AddSwaggerGen(options =>
 			{
