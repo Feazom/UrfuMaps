@@ -25,6 +25,11 @@ namespace UrfuMaps.Api.Controllers
 		{
 			var response = await _mapService.GetScheme(floor, building);
 
+			if (response == null)
+			{
+				return NoContent();
+			}
+
 			return Ok(response);
 		}
 
@@ -32,18 +37,16 @@ namespace UrfuMaps.Api.Controllers
 		[HttpPost]
 		public async Task<ActionResult<FloorDTO>> PostMap([FromBody] FloorDTO floor)
 		{
-			var scheme = await _mapService.GetScheme(floor.Floor, floor.BuildingName);
+			if (floor.BuildingName == null || floor.Floor == null)
+			{
+				return BadRequest();
+			}
+
+			var scheme = await _mapService.GetScheme(floor.Floor.Value, floor.BuildingName);
 			if (scheme != null)
 			{
 				return BadRequest(new { message = "duplicate schemes" });
 			}
-			//var response = new FloorDTO
-			//{
-			//	BuildingName = floor.BuildingName,
-			//	Floor = floor.Floor,
-			//	ImageLink = floor.ImageLink,
-			//	Positions = floor.Positions
-			//};
 
 			await _mapService.Add(floor);
 			return Ok(floor);

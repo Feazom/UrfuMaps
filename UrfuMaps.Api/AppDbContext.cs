@@ -7,8 +7,8 @@ namespace UrfuMaps.Api
 	{
 		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-		public DbSet<FloorScheme> Floors { get; set; }
-		public DbSet<User> Users { get; set; }
+		public DbSet<FloorScheme> Floors => Set<FloorScheme>();
+		public DbSet<User> Users => Set<User>();
 
 		protected override void OnModelCreating(ModelBuilder model)
 		{

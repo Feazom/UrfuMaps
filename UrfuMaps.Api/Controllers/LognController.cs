@@ -29,7 +29,7 @@ namespace UrfuMaps.Api.Controllers
 				});
 			}
 
-			return Unauthorized();
+			return Forbid();
 		}
 	}
 }

@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
 
 namespace UrfuMaps.Api.Services
@@ -14,16 +17,21 @@ namespace UrfuMaps.Api.Services
 
 		public async Task Add(FloorDTO floorRequest)
 		{
-			if (floorRequest.ToScheme() != null)
-			_db.Floors.Add(floorRequest.ToScheme());
+			var scheme = floorRequest.ToScheme();
+			
+			if (scheme != null && scheme.Positions.Count != 0)
+				_db.Floors.Add(floorRequest.ToScheme());
 			await _db.SaveChangesAsync();
 		}
 
 		public async Task<FloorDTO?> GetScheme(int floor, string building)
 		{
-			var floorScheme = await _db.FindAsync<FloorScheme>(floor, building);
+			var floorScheme = await _db.Floors
+				.Where(n => n.Floor == floor && n.BuildingName == building)
+				.Include(n => n.Positions)
+				.FirstOrDefaultAsync();
 
-			if (floorScheme == null || floorScheme.Positions == null)
+			if (floorScheme == null || floorScheme.Positions.Count == 0)
 			{
 				return null;
 			}

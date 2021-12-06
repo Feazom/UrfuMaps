@@ -7,8 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Text.Json.Serialization;
-using UrfuMaps.Api.Auth;
 using UrfuMaps.Api.Services;
 
 namespace UrfuMaps.Api
@@ -26,7 +24,7 @@ namespace UrfuMaps.Api
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddDbContext<AppDbContext>(options =>
-				options.UseNpgsql(Configuration["ConnectionString"]));
+				options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_STRING")/*Configuration["ConnectionString"]*/));
 			services.AddControllers();
 
 			services.AddScoped<IUserService, UserService>();
