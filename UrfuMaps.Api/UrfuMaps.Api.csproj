@@ -23,8 +23,4 @@
         <Folder Include="wwwroot\" />
     </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\UrfuMaps.Api.Auth\UrfuMaps.Api.Auth.csproj" />
-    </ItemGroup>
-
 </Project>

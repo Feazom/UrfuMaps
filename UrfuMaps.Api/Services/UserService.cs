@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using UrfuMaps.Api.Auth;
 using UrfuMaps.Api.Models;
 using BC = BCrypt.Net.BCrypt;
 

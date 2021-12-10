@@ -7,10 +7,10 @@ namespace UrfuMaps.Api.Models
 	public class FloorScheme
 	{
 		[StringLength(10)]
-		public string BuildingName { get; set; }
-		public int Floor { get; set; }
-		public string ImageLink { get; set; }
-		public ICollection<PositionScheme> Positions { get; set; }
+		public string? BuildingName { get; set; }
+		public int? Floor { get; set; }
+		public string? ImageLink { get; set; }
+		public List<PositionScheme> Positions { get; set; } = new List<PositionScheme>();
 
 		public FloorDTO ToDTO()
 		{
@@ -22,7 +22,8 @@ namespace UrfuMaps.Api.Models
 				Positions = Positions
 					.Select(n => n.ToDTO())
 					.Where(n => n != null)
-					.ToArray()
+					.ToList()
+					
 			};
 		}
 	}
