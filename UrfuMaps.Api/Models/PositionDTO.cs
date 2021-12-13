@@ -7,8 +7,8 @@ namespace UrfuMaps.Api.Models
 		[StringLength(10)]
 		public string? Cabinet { get; set; }
 		public string? Description { get; set; }
-		public int? X { get; set; }
-		public int? Y { get; set; }
+		public double? X { get; set; }
+		public double? Y { get; set; }
 
 		public PositionScheme ToScheme(string building, int floor)
 		{
@@ -17,7 +17,7 @@ namespace UrfuMaps.Api.Models
 				Cabinet = Cabinet,
 				Description = Description,
 				BuildingName = building,
-				Floor = floor,
+				FloorNumber = floor,
 				X = X,
 				Y = Y
 			};

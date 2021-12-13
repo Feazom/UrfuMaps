@@ -9,9 +9,9 @@ namespace UrfuMaps.Api.Models
 		public string? Description { get; set; }
 		[StringLength(10)]
 		public string? BuildingName { get; set; }
-		public int? Floor { get; set; }
-		public int? X { get; set; }
-		public int? Y { get; set; }
+		public int? FloorNumber { get; set; }
+		public double? X { get; set; }
+		public double? Y { get; set; }
 
 		public PositionDTO ToDTO()
 		{

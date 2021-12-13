@@ -14,7 +14,7 @@ namespace UrfuMaps.Api
 		{
 			model.Entity<FloorScheme>()
 				.ToTable("Floors")
-				.HasKey(x => new { x.Floor, x.BuildingName });
+				.HasKey(x => new { x.FloorNumber, x.BuildingName });
 
 			model.Entity<PositionScheme>()
 				.ToTable("Positions")
@@ -23,7 +23,7 @@ namespace UrfuMaps.Api
 			model.Entity<PositionScheme>()
 				.HasOne<FloorScheme>()
 				.WithMany(x => x.Positions)
-				.HasForeignKey(x => new { x.Floor, x.BuildingName });
+				.HasForeignKey(x => new { x.FloorNumber, x.BuildingName });
 		}
 	}
 }

@@ -8,7 +8,7 @@ namespace UrfuMaps.Api.Models
 	{
 		[StringLength(10)]
 		public string? BuildingName { get; set; }
-		public int? Floor { get; set; }
+		public int? FloorNumber { get; set; }
 		public string? ImageLink { get; set; }
 		public List<PositionScheme> Positions { get; set; } = new List<PositionScheme>();
 
@@ -17,13 +17,13 @@ namespace UrfuMaps.Api.Models
 			return new FloorDTO
 			{
 				BuildingName = BuildingName,
-				Floor = Floor,
+				FloorNumber = FloorNumber,
 				ImageLink = ImageLink,
 				Positions = Positions
 					.Select(n => n.ToDTO())
 					.Where(n => n != null)
 					.ToList()
-					
+
 			};
 		}
 	}

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using UrfuMaps.Api.Services;
@@ -38,7 +39,7 @@ namespace UrfuMaps.Api
 				.AddJwtBearer(options =>
 				{
 					options.RequireHttpsMetadata = false;
-					options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+					options.TokenValidationParameters = new TokenValidationParameters
 					{
 						ValidateIssuer = true,
 						ValidIssuer = authOptions.Issuer,

@@ -7,7 +7,7 @@ namespace UrfuMaps.Api.Models
 	{
 		[StringLength(10)]
 		public string? BuildingName { get; set; }
-		public int? Floor { get; set; }
+		public int? FloorNumber { get; set; }
 		public IFormFile? Image { get; set; }
 		public PositionDTO[]? Positions { get; set; }
 	}
