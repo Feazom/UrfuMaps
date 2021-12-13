@@ -37,12 +37,12 @@ namespace UrfuMaps.Api.Controllers
 		[HttpPost]
 		public async Task<ActionResult<FloorDTO>> PostMap([FromBody] FloorDTO floor)
 		{
-			if (floor.BuildingName == null || floor.Floor == null)
+			if (floor.BuildingName == null || floor.FloorNumber == null)
 			{
 				return BadRequest();
 			}
 
-			var scheme = await _mapService.GetScheme(floor.Floor.Value, floor.BuildingName);
+			var scheme = await _mapService.GetScheme(floor.FloorNumber.Value, floor.BuildingName);
 			if (scheme != null)
 			{
 				return BadRequest(new { message = "duplicate schemes" });

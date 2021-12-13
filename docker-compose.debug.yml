@@ -1,0 +1,28 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.4'
+
+services:
+  urfumapsapi:
+    image: urfumapsapi
+    build:
+      context: .
+      dockerfile: UrfuMaps.Api/Dockerfile
+    ports:
+      - 5000:5000
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - POSTGRES_STRING=$POSTGRES_STRING
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
+  urfumaps:
+    image: urfumaps
+    build:
+      context: UrfuMaps.Client
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - 3000:3000
+      - 9229:9229
+    command: ["node", "--inspect=0.0.0.0:9229", "index.js"]
