@@ -23,7 +23,8 @@ namespace UrfuMaps.Api
 			model.Entity<PositionScheme>()
 				.HasOne<FloorScheme>()
 				.WithMany(x => x.Positions)
-				.HasForeignKey(x => new { x.FloorNumber, x.BuildingName });
+				.HasForeignKey(x => new { x.FloorNumber, x.BuildingName })
+				.OnDelete(DeleteBehavior.Cascade);
 		}
 	}
 }

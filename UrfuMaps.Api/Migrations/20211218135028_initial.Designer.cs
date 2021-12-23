@@ -10,8 +10,8 @@ using UrfuMaps.Api;
 namespace UrfuMaps.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211210074545_bas")]
-    partial class bas
+    [Migration("20211218135028_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -85,7 +85,8 @@ namespace UrfuMaps.Api.Migrations
                 {
                     b.HasOne("UrfuMaps.Api.Models.FloorScheme", null)
                         .WithMany("Positions")
-                        .HasForeignKey("FloorNumber", "BuildingName");
+                        .HasForeignKey("FloorNumber", "BuildingName")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("UrfuMaps.Api.Models.FloorScheme", b =>

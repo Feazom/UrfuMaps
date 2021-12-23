@@ -23,14 +23,14 @@ namespace UrfuMaps.Api.Controllers
 		[HttpGet]
 		public async Task<ActionResult<FloorDTO>> Get([FromQuery] int floor, [StringLength(10)] string building)
 		{
-			var response = await _mapService.GetScheme(floor, building);
+			var result = await _mapService.GetScheme(floor, building);
 
-			if (response == null)
+			if (result == null)
 			{
 				return NoContent();
 			}
 
-			return Ok(response);
+			return Ok(result);
 		}
 
 		[Authorize]
@@ -49,6 +49,14 @@ namespace UrfuMaps.Api.Controllers
 			}
 
 			await _mapService.Add(floor);
+			return Ok(floor);
+		}
+
+		[Authorize]
+		[HttpDelete]
+		public async Task<ActionResult<FloorDTO>> DeleteMap([FromQuery] int floor, [StringLength(10)] string building)
+		{
+			await _mapService.Delete(floor, building);
 			return Ok(floor);
 		}
 

@@ -53,6 +53,7 @@ namespace UrfuMaps.Api
 						ValidateIssuerSigningKey = true,
 					};
 				});
+			services.AddCors();				
 
 			services.AddSwaggerGen(options =>
 			{
@@ -94,6 +95,7 @@ namespace UrfuMaps.Api
 			app.UseRouting();
 			app.UseStaticFiles();
 
+			app.UseCors(builder => builder.AllowAnyOrigin());
 			app.UseAuthentication();
 			app.UseAuthorization();
 
