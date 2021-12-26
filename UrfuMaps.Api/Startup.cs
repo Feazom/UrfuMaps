@@ -95,7 +95,7 @@ namespace UrfuMaps.Api
 			app.UseRouting();
 			app.UseStaticFiles();
 
-			app.UseCors(builder => builder.AllowAnyOrigin());
+			app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 			app.UseAuthentication();
 			app.UseAuthorization();
 
