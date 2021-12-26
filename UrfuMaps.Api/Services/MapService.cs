@@ -23,11 +23,23 @@ namespace UrfuMaps.Api.Services
 			await _db.SaveChangesAsync();
 		}
 
+		public async Task Delete(int floor, string building)
+		{
+			var floorScheme = await _db.Floors
+				.Where(n => n.FloorNumber == floor && n.BuildingName == building)
+				.Include(n => n.Positions)
+				.FirstOrDefaultAsync();
+
+			_db.Floors.Remove(floorScheme);
+			await _db.SaveChangesAsync();
+		}
+
 		public async Task<FloorDTO?> GetScheme(int floor, string building)
 		{
 			var floorScheme = await _db.Floors
 				.Where(n => n.FloorNumber == floor && n.BuildingName == building)
 				.Include(n => n.Positions)
+				.AsNoTracking()
 				.FirstOrDefaultAsync();
 
 			if (floorScheme == null || floorScheme.Positions.Count == 0)

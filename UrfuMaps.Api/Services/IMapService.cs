@@ -7,5 +7,6 @@ namespace UrfuMaps.Api.Services
 	{
 		Task Add(FloorDTO floorScheme);
 		Task<FloorDTO?> GetScheme(int floor, string building);
+		Task Delete(int floor, string building);
 	}
 }

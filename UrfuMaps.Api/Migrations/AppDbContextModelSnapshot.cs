@@ -83,7 +83,8 @@ namespace UrfuMaps.Api.Migrations
                 {
                     b.HasOne("UrfuMaps.Api.Models.FloorScheme", null)
                         .WithMany("Positions")
-                        .HasForeignKey("FloorNumber", "BuildingName");
+                        .HasForeignKey("FloorNumber", "BuildingName")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("UrfuMaps.Api.Models.FloorScheme", b =>

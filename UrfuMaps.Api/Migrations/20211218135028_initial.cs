@@ -2,7 +2,7 @@
 
 namespace UrfuMaps.Api.Migrations
 {
-    public partial class bas : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -50,7 +50,7 @@ namespace UrfuMaps.Api.Migrations
                         columns: x => new { x.FloorNumber, x.BuildingName },
                         principalTable: "Floors",
                         principalColumns: new[] { "FloorNumber", "BuildingName" },
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
