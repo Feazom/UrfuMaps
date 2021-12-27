@@ -1,6 +1,6 @@
 {
   "name": "urfu-maps",
-  "homepage": "https://feazom.github.io/urfumaps",
+  "homepage": ".",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
