@@ -17,9 +17,13 @@ const UploadMap = ({ setCoords, link, setLink }: UploadMapProps) => {
 
   function handleClick(event: MouseEvent<HTMLImageElement>) {
     const offset = event.currentTarget.getBoundingClientRect();
+    // console.log(offset);
+    // console.log(event);
     setCoords({
-      x: (((event.pageX - offset.left) * 100) / offset.width).toFixed(4),
-      y: (((event.pageY - offset.top) * 100) / offset.height).toFixed(4),
+      // x: (event.pageX - offset.left).toFixed(4),
+      // y: (event.pageY - offset.top).toFixed(4),
+      x: (((event.clientX - offset.left) * 100) / offset.width).toFixed(4),
+      y: (((event.clientY - offset.top) * 100) / offset.height).toFixed(4),
     });
   }
 

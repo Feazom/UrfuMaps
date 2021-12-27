@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Map from '../components/Map';
 import NavMap from '../components/NavMap';
 import '../App.css';
+import { Link } from 'react-router-dom';
 
 function Main() {
   const [floorNumber, setFloorNumber] = useState(1);
@@ -10,6 +11,7 @@ function Main() {
 
   return (
     <div className="app">
+      <Link to="/add">add</Link>
       <NavMap
         floor={floorNumber}
         setFloorNumber={setFloorNumber}

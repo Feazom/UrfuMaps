@@ -11,7 +11,7 @@ type AddMapProps = {
   setEditedPosition: Function;
   editedPosition: PositionDTO;
   setCoords: Function;
-  coords: Position | undefined;
+  coords: Position;
   link: string;
   positions: PositionDTO[];
   setPositions: Function;
@@ -47,7 +47,7 @@ const NavAddMap = ({
   function submitPosition(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPositions([...positions, editedPosition]);
-    setCoords(undefined);
+    setCoords({ x: NaN, y: NaN });
     setCabinet('');
     setDescription('');
   }
@@ -61,14 +61,6 @@ const NavAddMap = ({
       imageLink: link,
       positions,
     };
-
-    console.log({
-      floorNumber,
-      buildingName,
-      imageLink: 'link',
-      positions,
-    } as FloorDTO);
-
     const response = await fetch(`${env.API_DOMAIN}/map`, {
       headers: {
         Authorization: env.TOKEN,
@@ -99,32 +91,27 @@ const NavAddMap = ({
         <input onChange={handleBuildingChange} size={5} />
         <input type="submit" value="Upload map" />
       </form>
-      {coords !== undefined ? (
-        <form
-          id="cabinet-form"
-          className="cabinet-edit"
-          onSubmit={submitPosition}
-        >
-          <div>
-            <label htmlFor="cabinet">Cabinet:</label>
-            <input id="cabinet" size={5} onChange={handleCabinetChange} />
-            <label htmlFor="description">Descrpiption</label>
-            <input
-              id="description"
-              size={5}
-              onChange={handleDescriptionChange}
-            />
-          </div>
 
-          <div>
-            <label htmlFor="x">X:</label>
-            <input readOnly id="x" size={5} value={coords.x} />
-            <label htmlFor="y">Y:</label>
-            <input readOnly id="y" size={5} value={coords.y} />
-            <input className="edit-button" type="submit" value="Add" />
-          </div>
-        </form>
-      ) : null}
+      <form
+        id="cabinet-form"
+        className="cabinet-edit"
+        onSubmit={submitPosition}
+      >
+        <div>
+          <label htmlFor="cabinet">Cabinet:</label>
+          <input id="cabinet" size={5} onChange={handleCabinetChange} />
+          <label htmlFor="description">Descrpiption</label>
+          <input id="description" size={5} onChange={handleDescriptionChange} />
+        </div>
+
+        <div>
+          <label htmlFor="x">X:</label>
+          <input readOnly id="x" size={5} value={coords.x} />
+          <label htmlFor="y">Y:</label>
+          <input readOnly id="y" size={5} value={coords.y} />
+          <input className="edit-button" type="submit" value="Add" />
+        </div>
+      </form>
     </div>
   );
 };
