@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import env from 'react-dotenv';
-import { ImageListType } from 'react-images-uploading';
-import { useLinkClickHandler } from 'react-router-dom';
+// import { ImageListType } from 'react-images-uploading';
+// import { useLinkClickHandler } from 'react-router-dom';
 import FloorDTO from '../DTOs/FloorDTO';
 import PositionDTO from '../DTOs/PositionDTO';
 import { Position } from '../types';
@@ -61,7 +61,7 @@ const NavAddMap = ({
       imageLink: link,
       positions,
     };
-    const response = await fetch(`${env.API_DOMAIN}/map`, {
+    await fetch(`${env.API_DOMAIN}/map`, {
       headers: {
         Authorization: env.TOKEN,
         accept: 'text/plain',
@@ -70,7 +70,6 @@ const NavAddMap = ({
       method: 'POST',
       body: JSON.stringify(data),
     });
-    console.log(response);
   }
 
   useEffect(() => {

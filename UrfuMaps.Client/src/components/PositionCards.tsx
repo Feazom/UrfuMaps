@@ -11,10 +11,10 @@ const PositionCards = ({ positions }: PositionCardsProps) => {
       {positions.map((position, index) => {
         return (
           <div key={index} className="card">
-            <text>Cabinet: {position.cabinet}</text>
-            <text>Description: {position.description}</text>
-            <text>X: {position.x}</text>
-            <text>Y: {position.y}</text>
+            <label>Cabinet: {position.cabinet}</label>
+            <label>Description: {position.description}</label>
+            <label>X: {position.x}</label>
+            <label>Y: {position.y}</label>
           </div>
         );
       })}

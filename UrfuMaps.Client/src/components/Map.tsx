@@ -8,23 +8,27 @@ type MapProps = {
   buildingName: string | null;
   searchedCabinet: string;
 };
-const Map = ({ floorNumber, buildingName, searchedCabinet }: MapProps) => {
+const Map = ({
+  floorNumber,
+  buildingName,
+  searchedCabinet
+}: MapProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [floor, setFloor] = useState<FloorDTO>();
 
   useEffect(() => {
     (async () => {
       if (floorNumber != null && buildingName != null) {
-        const response = await fetch(
+        const schemeResponse = await fetch(
           `${env.API_DOMAIN}/map?floor=${floorNumber}&building=${buildingName}`,
           {
             method: 'GET',
           }
         );
 
-        setFloor(await response.json());
+        setFloor(await schemeResponse.json());
 
-        if (response.ok) {
+        if (schemeResponse.ok) {
           setIsLoading(false);
         }
       }
