@@ -1,0 +1,20 @@
+.link-add{  
+    text-align: center;
+    font-size: 30px;
+    background: #2fe7ff;
+    box-sizing: border-box;
+    width: 5%;
+    height: 50px;
+    border: solid #002a56 3px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+.link-add:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    background: #259ff5; 
+}
+.linkstyle{
+    color: #002a56;
+    text-decoration: none;
+}
