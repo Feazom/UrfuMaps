@@ -15,7 +15,9 @@ const AddMap = () => {
 
   return (
     <div className="App">
-      <Link to="/">home</Link>
+      <div className="link-add">
+        <Link className="linkstyle" to="/">Home</Link>
+      </div>
       {/* <Login /> */}
       <NavAddMap
         editedPosition={editedPosition}

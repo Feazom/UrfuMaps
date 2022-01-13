@@ -29,8 +29,10 @@ const UploadMap = ({ setCoords, link, setLink }: UploadMapProps) => {
 
   return (
     <div>
-      <label>Link: </label>
-      <input value={link} onChange={handleLinkChange} />
+      <div className="link-insert">
+        <label>Link: </label>
+        <input value={link} onChange={handleLinkChange} />
+      </div>
       <br />
       {link.length !== 0 ? (
         <img

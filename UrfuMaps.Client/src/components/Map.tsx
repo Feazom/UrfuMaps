@@ -1,4 +1,5 @@
-import { useState, useEffect, CSSProperties } from 'react';
+import { useState, useEffect, CSSProperties} from 'react';
+import InfoDTO from '../DTOs/InfoDTO';
 import FloorDTO from '../DTOs/FloorDTO';
 import env from 'react-dotenv';
 import './Map.css';
@@ -11,10 +12,20 @@ type MapProps = {
 const Map = ({
   floorNumber,
   buildingName,
-  searchedCabinet
+  searchedCabinet,
 }: MapProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [floor, setFloor] = useState<FloorDTO>();
+
+  useEffect(() => {
+    if(!isNaN(parseInt(searchedCabinet[(searchedCabinet.search("-")+1)]))){
+      if(searchedCabinet.search("-") !== -1){
+        if(searchedCabinet[(searchedCabinet.search("-")+1)] != null){
+          floorNumber = Number(searchedCabinet[(searchedCabinet.search("-")+1)]);
+        }
+      }  
+    }
+  },[searchedCabinet])
 
   useEffect(() => {
     (async () => {
@@ -33,7 +44,7 @@ const Map = ({
         }
       }
     })();
-  }, [buildingName, floorNumber]);
+  }, [buildingName, floorNumber, searchedCabinet]);
 
   return (
     <div className="map-scheme">

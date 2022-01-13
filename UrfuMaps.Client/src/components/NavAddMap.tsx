@@ -99,7 +99,7 @@ const NavAddMap = ({
         <div>
           <label htmlFor="cabinet">Cabinet:</label>
           <input id="cabinet" size={5} onChange={handleCabinetChange} />
-          <label htmlFor="description">Descrpiption</label>
+          <label htmlFor="description">Description</label>
           <input id="description" size={5} onChange={handleDescriptionChange} />
         </div>
 
