@@ -1,16 +1,18 @@
-import { useState, useEffect, CSSProperties} from 'react';
+import { useState, useEffect, CSSProperties } from 'react';
 import InfoDTO from '../DTOs/InfoDTO';
 import FloorDTO from '../DTOs/FloorDTO';
 import env from 'react-dotenv';
 import './Map.css';
 
 type MapProps = {
-  floorNumber: number | null;
+  floorNumber: number;
+  setFloorNumber: Function;
   buildingName: string | null;
   searchedCabinet: string;
 };
 const Map = ({
   floorNumber,
+  setFloorNumber,
   buildingName,
   searchedCabinet,
 }: MapProps) => {
@@ -18,14 +20,16 @@ const Map = ({
   const [floor, setFloor] = useState<FloorDTO>();
 
   useEffect(() => {
-    if(!isNaN(parseInt(searchedCabinet[(searchedCabinet.search("-")+1)]))){
-      if(searchedCabinet.search("-") !== -1){
-        if(searchedCabinet[(searchedCabinet.search("-")+1)] != null){
-          floorNumber = Number(searchedCabinet[(searchedCabinet.search("-")+1)]);
+    if (!isNaN(parseInt(searchedCabinet[searchedCabinet.search('-') + 1]))) {
+      if (searchedCabinet.search('-') !== -1) {
+        if (searchedCabinet[searchedCabinet.search('-') + 1] != null) {
+          setFloorNumber(
+            Number(searchedCabinet[searchedCabinet.search('-') + 1])
+          );
         }
-      }  
+      }
     }
-  },[searchedCabinet])
+  }, [searchedCabinet]);
 
   useEffect(() => {
     (async () => {
