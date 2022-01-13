@@ -19,6 +19,7 @@ function Main() {
         <NavMap
           floor={floorNumber}
           setFloorNumber={setFloorNumber}
+          floorNumber={floorNumber}
           buildingName={buildingName}
           setBuildingName={setBuildingName}
           searchedCabinet={searchedCabinet}
@@ -26,6 +27,7 @@ function Main() {
         />
         <Map
           floorNumber={floorNumber}
+          setFloorNumber={setFloorNumber}
           buildingName={buildingName}
           searchedCabinet={searchedCabinet}
         />
