@@ -1,4 +1,8 @@
-import { MouseEvent, FormEvent, useEffect } from 'react';
+import {
+  MouseEvent,
+  FormEvent,
+} from 'react';
+import './UploadMap.css';
 
 type UploadMapProps = {
   setCoords: Function;
@@ -17,25 +21,26 @@ const UploadMap = ({ setCoords, link, setLink }: UploadMapProps) => {
 
   function handleClick(event: MouseEvent<HTMLImageElement>) {
     const offset = event.currentTarget.getBoundingClientRect();
-    // console.log(offset);
-    // console.log(event);
     setCoords({
-      // x: (event.pageX - offset.left).toFixed(4),
-      // y: (event.pageY - offset.top).toFixed(4),
       x: (((event.clientX - offset.left) * 100) / offset.width).toFixed(4),
       y: (((event.clientY - offset.top) * 100) / offset.height).toFixed(4),
     });
   }
 
-  useEffect(() => {}, []);
-
   return (
     <div>
-      <label>Link: </label>
-      <input value={link} onChange={handleLinkChange} />
+      <div className="link-insert">
+        <label>Link: </label>
+        <input value={link} onChange={handleLinkChange} />
+      </div>
       <br />
       {link.length !== 0 ? (
-        <img alt="" src={link} onClick={handleClick} />
+        <img
+          className="edited-map-image"
+          alt=""
+          src={link}
+          onClick={handleClick}
+        />
       ) : null}
       {/* <ImageUploading value={images} onChange={handleImage} maxNumber={1}>
         {({ imageList, onImageUpload, onImageUpdate, onImageRemove }) => (

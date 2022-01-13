@@ -1,7 +1,7 @@
 import './index.css';
 import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Routes, Route, HashRouter } from 'react-router-dom';
+import { Routes, Route, HashRouter } from 'react-router-dom';
 import Main from './routes/Main';
 import AddMap from './routes/AddMap';
 import React from 'react';

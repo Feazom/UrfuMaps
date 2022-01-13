@@ -70,13 +70,11 @@ const NavMap = (props: MapProps) => {
                 <span>Cabinet: </span>
                 <div>
                     <input
+                        placeholder='Search...'
                         value={props.searchedCabinet}
                         onChange={handleCabinetChange}
                         size={5}
                     />
-                    <button className="button" type="submit" value="Search">
-                        Search
-                    </button>
                 </div>
             </div>
         </div>

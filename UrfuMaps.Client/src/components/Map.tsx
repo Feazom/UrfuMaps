@@ -1,4 +1,5 @@
-import { useState, useEffect, CSSProperties } from 'react';
+import { useState, useEffect, CSSProperties} from 'react';
+import InfoDTO from '../DTOs/InfoDTO';
 import FloorDTO from '../DTOs/FloorDTO';
 import env from 'react-dotenv';
 import './Map.css';
@@ -8,28 +9,42 @@ type MapProps = {
   buildingName: string | null;
   searchedCabinet: string;
 };
-const Map = ({ floorNumber, buildingName, searchedCabinet }: MapProps) => {
+const Map = ({
+  floorNumber,
+  buildingName,
+  searchedCabinet,
+}: MapProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [floor, setFloor] = useState<FloorDTO>();
 
   useEffect(() => {
+    if(!isNaN(parseInt(searchedCabinet[(searchedCabinet.search("-")+1)]))){
+      if(searchedCabinet.search("-") !== -1){
+        if(searchedCabinet[(searchedCabinet.search("-")+1)] != null){
+          floorNumber = Number(searchedCabinet[(searchedCabinet.search("-")+1)]);
+        }
+      }  
+    }
+  },[searchedCabinet])
+
+  useEffect(() => {
     (async () => {
       if (floorNumber != null && buildingName != null) {
-        const response = await fetch(
+        const schemeResponse = await fetch(
           `${env.API_DOMAIN}/map?floor=${floorNumber}&building=${buildingName}`,
           {
             method: 'GET',
           }
         );
 
-        setFloor(await response.json());
+        setFloor(await schemeResponse.json());
 
-        if (response.ok) {
+        if (schemeResponse.ok) {
           setIsLoading(false);
         }
       }
     })();
-  }, [buildingName, floorNumber]);
+  }, [buildingName, floorNumber, searchedCabinet]);
 
   return (
     <div className="map-scheme">

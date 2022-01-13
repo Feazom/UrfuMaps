@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Map from '../components/Map';
 import NavMap from '../components/NavMap';
 import '../App.css';
+import '../Link.css';
 import { Link } from 'react-router-dom';
 
 function Main() {
@@ -11,20 +12,24 @@ function Main() {
 
   return (
     <div className="app">
-      <Link to="/add">add</Link>
-      <NavMap
-        floor={floorNumber}
-        setFloorNumber={setFloorNumber}
-        buildingName={buildingName}
-        setBuildingName={setBuildingName}
-        searchedCabinet={searchedCabinet}
-        setSearchedCabinet={setSearchedCabinet}
-      />
-      <Map
-        floorNumber={floorNumber}
-        buildingName={buildingName}
-        searchedCabinet={searchedCabinet}
-      />
+      <div className="link-add">
+        <Link to="/add" className="linkstyle">Add</Link>
+      </div>
+      <div>
+        <NavMap
+          floor={floorNumber}
+          setFloorNumber={setFloorNumber}
+          buildingName={buildingName}
+          setBuildingName={setBuildingName}
+          searchedCabinet={searchedCabinet}
+          setSearchedCabinet={setSearchedCabinet}
+        />
+        <Map
+          floorNumber={floorNumber}
+          buildingName={buildingName}
+          searchedCabinet={searchedCabinet}
+        />
+      </div>
     </div>
   );
 }
