@@ -3,7 +3,6 @@ import Map from '../components/Map';
 import NavMap from '../components/NavMap';
 import '../App.css';
 import '../Link.css';
-import { Link } from 'react-router-dom';
 
 function Main() {
   const [floorNumber, setFloorNumber] = useState(1);
@@ -12,9 +11,6 @@ function Main() {
 
   return (
     <div className="app">
-      <div className="link-add">
-        <Link to="/add" className="linkstyle">Add</Link>
-      </div>
       <div>
         <NavMap
           floor={floorNumber}

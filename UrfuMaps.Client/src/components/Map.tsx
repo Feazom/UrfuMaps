@@ -1,5 +1,4 @@
 import { useState, useEffect, CSSProperties } from 'react';
-import InfoDTO from '../DTOs/InfoDTO';
 import FloorDTO from '../DTOs/FloorDTO';
 import env from 'react-dotenv';
 import './Map.css';
@@ -29,7 +28,7 @@ const Map = ({
         }
       }
     }
-  }, [searchedCabinet]);
+  }, [searchedCabinet, setFloorNumber]);
 
   useEffect(() => {
     (async () => {

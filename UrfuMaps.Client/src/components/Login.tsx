@@ -50,7 +50,7 @@ const Login = () => {
 export default Login;
 
 async function loginFetch(user: User) {
-  const response = await fetch(`${env.API_DOMAIN}/login`, {
+  const response = await fetch('/login', {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',

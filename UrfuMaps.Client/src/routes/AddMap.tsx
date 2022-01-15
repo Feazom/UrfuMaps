@@ -4,7 +4,6 @@ import PositionDTO from '../DTOs/PositionDTO';
 import UploadMap from '../components/UploadMap';
 import { Position } from '../types';
 import PositionCards from '../components/PositionCards';
-import { Link } from 'react-router-dom';
 
 const AddMap = () => {
   const [editedPosition, setEditedPosition] = useState({} as PositionDTO);
@@ -15,9 +14,6 @@ const AddMap = () => {
 
   return (
     <div className="App">
-      <div className="link-add">
-        <Link className="linkstyle" to="/">Home</Link>
-      </div>
       {/* <Login /> */}
       <NavAddMap
         editedPosition={editedPosition}

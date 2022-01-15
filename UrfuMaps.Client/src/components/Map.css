@@ -8,7 +8,6 @@
   height: auto;
   position: relative;
   display: block;
-  filter: invert(78%) sepia(54%) saturate(1838%) hue-rotate(151deg) brightness(101%) contrast(104%);
 }
 
 .map-marker {
