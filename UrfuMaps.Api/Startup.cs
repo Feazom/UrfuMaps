@@ -28,6 +28,11 @@ namespace UrfuMaps.Api
 				options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_STRING")/*Configuration["ConnectionString"]*/));
 			services.AddControllers();
 
+			services.AddSpaStaticFiles(configuration =>
+			{
+				configuration.RootPath = "UrfuMaps.Client/build";
+			});
+
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<IMapService, MapService>();
 
@@ -94,6 +99,12 @@ namespace UrfuMaps.Api
 
 			app.UseRouting();
 			app.UseStaticFiles();
+			app.UseSpaStaticFiles();
+
+			app.UseSpa(spa =>
+			{
+				spa.Options.SourcePath = "UrfuMaps.Client";
+			});
 
 			app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 			app.UseAuthentication();
