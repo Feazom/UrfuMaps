@@ -1,9 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
-import env from 'react-dotenv';
-// import { ImageListType } from 'react-images-uploading';
-// import { useLinkClickHandler } from 'react-router-dom';
 import FloorDTO from '../DTOs/FloorDTO';
 import PositionDTO from '../DTOs/PositionDTO';
+import { addMap } from '../services/RequestService';
 import { Position } from '../types';
 import './NavMap.css';
 
@@ -61,15 +59,7 @@ const NavAddMap = ({
       imageLink: link,
       positions,
     };
-    await fetch(`${env.API_DOMAIN}/map`, {
-      headers: {
-        Authorization: env.TOKEN,
-        accept: 'text/plain',
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
+    await addMap(data);
   }
 
   useEffect(() => {
@@ -84,11 +74,11 @@ const NavAddMap = ({
   return (
     <div className="app-header-edit">
       <form className="floor-edit" onSubmit={submitMap}>
-        <label>Floor:</label>
+        <label>Этаж:</label>
         <input onChange={handleFloorChange} size={5} />
-        <label>Building:</label>
+        <label>Здание:</label>
         <input onChange={handleBuildingChange} size={5} />
-        <input type="submit" value="Upload map" />
+        <input type="submit" value="Загрузить карту" />
       </form>
 
       <form
@@ -97,9 +87,9 @@ const NavAddMap = ({
         onSubmit={submitPosition}
       >
         <div>
-          <label htmlFor="cabinet">Cabinet:</label>
+          <label htmlFor="cabinet">Кабинет:</label>
           <input id="cabinet" size={5} onChange={handleCabinetChange} />
-          <label htmlFor="description">Description</label>
+          <label htmlFor="description">Описание</label>
           <input id="description" size={5} onChange={handleDescriptionChange} />
         </div>
 
@@ -108,7 +98,7 @@ const NavAddMap = ({
           <input readOnly id="x" size={5} value={coords.x} />
           <label htmlFor="y">Y:</label>
           <input readOnly id="y" size={5} value={coords.y} />
-          <input className="edit-button" type="submit" value="Add" />
+          <input className="edit-button" type="submit" value="Добавить кабинет" />
         </div>
       </form>
     </div>

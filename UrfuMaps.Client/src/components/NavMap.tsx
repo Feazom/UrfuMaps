@@ -1,7 +1,7 @@
 import { useState, useEffect, FormEvent } from 'react';
 import InfoDTO from '../DTOs/InfoDTO';
-import env from 'react-dotenv';
 import './NavMap.css';
+import { getInfo } from '../services/RequestService';
 
 type MapProps = {
   floor: number | null;
@@ -28,9 +28,7 @@ const NavMap = ({
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(`${env.API_DOMAIN}/info`, {
-        method: 'GET',
-      });
+      const response = await getInfo();
       const info: InfoDTO[] = await response.json();
       const buildings: Record<string, number[]> = {};
       info.forEach((e) => {
@@ -63,7 +61,7 @@ const NavMap = ({
   return (
     <div className="app-header">
       <div className="floor-select">
-        <span>Floor: </span>
+        <span>Этаж: </span>
         <select
           value={floorNumber}
           onChange={handleFloorChange}
@@ -75,7 +73,7 @@ const NavMap = ({
         </select>
       </div>
       <div className="building-select">
-        <span>Building: </span>
+        <span>Здание: </span>
         <select onChange={handleBuildingChange} onLoad={handleBuildingChange}>
           {Object.keys(buildingList)?.map((buildingName) => {
             return <option key={buildingName}>{buildingName}</option>;
@@ -83,10 +81,10 @@ const NavMap = ({
         </select>
       </div>
       <div className="cabinet-select">
-        <span>Cabinet: </span>
+        <span>Кабинет: </span>
         <div>
           <input
-            placeholder="Search..."
+            placeholder="Поиск..."
             onChange={handleCabinetChange}
             size={5}
           />

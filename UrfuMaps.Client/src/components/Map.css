@@ -1,10 +1,16 @@
 .container {
   position: relative;
-  max-width: 600px;
+  width: 100%;
+  height: auto;
+}
+
+.search-button {
+  height: 30px;
+  width: 5em;
 }
 
 .map-image {
-  width: 100%;
+  width: 100vw;
   height: auto;
   position: relative;
   display: block;

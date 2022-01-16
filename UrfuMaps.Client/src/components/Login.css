@@ -1,0 +1,13 @@
+.login-form {
+  margin: 20px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+}
+
+.login-form div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
