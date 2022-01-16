@@ -1,11 +1,10 @@
 .app-header {
   color: #2fe7ff;
   display: grid;
-  grid-template-columns: 200px 200px;
+  grid-template-columns: 104px 150px;
   grid-gap: 10px;
-  font-size: 25px;
-  width: 400px;
-  margin: 20px;
+  font-size: 22px;
+  margin: 6px;
   grid-template-areas:
     'floor  building'
     'cabinet  cabinet';

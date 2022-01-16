@@ -1,12 +1,10 @@
-import env from 'react-dotenv';
 import UserDTO from '../DTOs/UserDTO';
 import TokenDTO from '../DTOs/TokenDTO';
 
 export async function signin(login: string, password: string) {
   const user: UserDTO = { login, password };
-  const response = await fetch(`${env.API_DOMAIN}/login`, {
+  const response = await fetch('/login', {
     headers: {
-      // accept: 'text/plain',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(user),

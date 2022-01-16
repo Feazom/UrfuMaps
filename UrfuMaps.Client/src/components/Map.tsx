@@ -18,6 +18,7 @@ const Map = ({
 }: MapProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [floor, setFloor] = useState<FloorDTO>();
+  const [update, setUpdate] = useState(true);
 
   useEffect(() => {
     if (!isNaN(parseInt(searchedCabinet[searchedCabinet.search('-') + 1]))) {
@@ -29,7 +30,7 @@ const Map = ({
         }
       }
     }
-  }, [searchedCabinet, setFloorNumber]);
+  }, [searchedCabinet, setFloorNumber, update]);
 
   useEffect(() => {
     (async () => {
@@ -56,10 +57,11 @@ const Map = ({
                 <button
                   className="search-button"
                   onClick={() => {
+                    setUpdate(!update);
                     zoomToElement(searchedCabinet, 2);
                   }}
                 >
-                  <img src="search-icon.svg" />
+                  <img src="search-icon.svg" alt="🔎" />
                 </button>
               </div>
               <TransformComponent>
