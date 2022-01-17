@@ -11,7 +11,7 @@ export function getMap(floorNumber: number, buildingName: string) {
 }
 
 export function addMap(data: FloorDTO) {
-  return fetch('map', {
+  return fetch('/map', {
     headers: authHeader(),
     method: 'POST',
     body: JSON.stringify(data),

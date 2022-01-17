@@ -48,14 +48,15 @@ const NavMap = ({
 
   function handleCabinetChange(event: FormEvent<HTMLInputElement>) {
     let cabinet = event.currentTarget.value;
-    cabinet = cabinet.replace(/[rр]/i, 'r');
+    cabinet = cabinet.replace(/[р]/i, 'r');
     cabinet = cabinet.replace(/\s+/g, '-');
+    cabinet = cabinet.replaceAll(/[а]/gmi, 'a')
     if (!isNaN(parseInt(cabinet))) {
       cabinet = 'r-' + cabinet;
     } else if (cabinet[0] === 'r' && !isNaN(parseInt(cabinet[1]))) {
       cabinet = 'r-' + cabinet.slice(1);
     }
-    setSearchedCabinet(cabinet);
+    setSearchedCabinet(cabinet.toLowerCase());
   }
 
   return (
