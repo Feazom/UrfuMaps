@@ -1,7 +1,7 @@
 import { useState, useEffect, FormEvent } from 'react';
 import InfoDTO from '../DTOs/InfoDTO';
-import env from 'react-dotenv';
 import './NavMap.css';
+import { getInfo } from '../services/RequestService';
 
 type MapProps = {
   floor: number | null;
@@ -13,16 +13,22 @@ type MapProps = {
   setSearchedCabinet: Function;
 };
 
-const NavMap = (props: MapProps) => {
+const NavMap = ({
+  floor,
+  setFloorNumber,
+  floorNumber,
+  buildingName,
+  setBuildingName,
+  searchedCabinet,
+  setSearchedCabinet,
+}: MapProps) => {
   const [buildingList, setBuildingList] = useState<Record<string, number[]>>(
     {}
   );
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(`${env.API_DOMAIN}/info`, {
-        method: 'GET',
-      });
+      const response = await getInfo();
       const info: InfoDTO[] = await response.json();
       const buildings: Record<string, number[]> = {};
       info.forEach((e) => {
@@ -33,33 +39,42 @@ const NavMap = (props: MapProps) => {
   }, []);
 
   function handleFloorChange(event: FormEvent<HTMLSelectElement>) {
-    props.setFloorNumber(event.currentTarget.value);
+    setFloorNumber(event.currentTarget.value);
   }
 
   function handleBuildingChange(event: FormEvent<HTMLSelectElement>) {
-    props.setBuildingName(event.currentTarget.value);
+    setBuildingName(event.currentTarget.value);
   }
 
   function handleCabinetChange(event: FormEvent<HTMLInputElement>) {
-    props.setSearchedCabinet(event.currentTarget.value);
+    let cabinet = event.currentTarget.value;
+    cabinet = cabinet.replace(/[р]/i, 'r');
+    cabinet = cabinet.replace(/\s+/g, '-');
+    cabinet = cabinet.replaceAll(/[а]/gmi, 'a')
+    if (!isNaN(parseInt(cabinet))) {
+      cabinet = 'r-' + cabinet;
+    } else if (cabinet[0] === 'r' && !isNaN(parseInt(cabinet[1]))) {
+      cabinet = 'r-' + cabinet.slice(1);
+    }
+    setSearchedCabinet(cabinet.toLowerCase());
   }
 
   return (
     <div className="app-header">
       <div className="floor-select">
-        <span>Floor: </span>
+        <span>Этаж: </span>
         <select
-          value={props.floorNumber}
+          value={floorNumber}
           onChange={handleFloorChange}
           onLoad={handleFloorChange}
         >
-          {buildingList[props.buildingName]?.map((floorNumber) => {
+          {buildingList[buildingName]?.map((floorNumber) => {
             return <option key={floorNumber}>{floorNumber}</option>;
           })}
         </select>
       </div>
       <div className="building-select">
-        <span>Building: </span>
+        <span>Здание: </span>
         <select onChange={handleBuildingChange} onLoad={handleBuildingChange}>
           {Object.keys(buildingList)?.map((buildingName) => {
             return <option key={buildingName}>{buildingName}</option>;
@@ -67,11 +82,10 @@ const NavMap = (props: MapProps) => {
         </select>
       </div>
       <div className="cabinet-select">
-        <span>Cabinet: </span>
+        <span>Кабинет: </span>
         <div>
           <input
-            placeholder="Search..."
-            value={props.searchedCabinet}
+            placeholder="Поиск..."
             onChange={handleCabinetChange}
             size={5}
           />

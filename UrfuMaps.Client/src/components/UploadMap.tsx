@@ -11,9 +11,6 @@ type UploadMapProps = {
 };
 
 const UploadMap = ({ setCoords, link, setLink }: UploadMapProps) => {
-  // async function handleImage(img: ImageListType) {
-  //   setImages(img);
-  // }
 
   function handleLinkChange(event: FormEvent<HTMLInputElement>) {
     setLink(event.currentTarget.value);
@@ -30,7 +27,7 @@ const UploadMap = ({ setCoords, link, setLink }: UploadMapProps) => {
   return (
     <div>
       <div className="link-insert">
-        <label>Link: </label>
+        <label>Ссылка: </label>
         <input value={link} onChange={handleLinkChange} />
       </div>
       <br />
@@ -42,23 +39,6 @@ const UploadMap = ({ setCoords, link, setLink }: UploadMapProps) => {
           onClick={handleClick}
         />
       ) : null}
-      {/* <ImageUploading value={images} onChange={handleImage} maxNumber={1}>
-        {({ imageList, onImageUpload, onImageUpdate, onImageRemove }) => (
-          <div className="upload-wrapper">
-            <button onClick={onImageUpload}>Upload Image</button>
-            <br />
-            {imageList.map((image, index) => (
-              <div key={index} className="image-item">
-                <img src={image.dataURL} alt="" onClick={handleClick} />
-                <div className="image-item-wrapper">
-                  <button onClick={() => onImageUpdate(index)}>Update</button>
-                  <button onClick={() => onImageRemove(index)}>Remove</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </ImageUploading> */}
     </div>
   );
 };

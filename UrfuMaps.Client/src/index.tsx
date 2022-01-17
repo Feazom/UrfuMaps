@@ -1,19 +1,19 @@
 import './index.css';
 import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';
-import { Routes, Route, HashRouter } from 'react-router-dom';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Main from './routes/Main';
 import AddMap from './routes/AddMap';
 import React from 'react';
 
 const rootElement = document.getElementById('root');
 ReactDOM.render(
-  <HashRouter>
+  <BrowserRouter>
     <Routes>
       <Route path="/" element={<Main />} />
       <Route path="/add" element={<AddMap />} />
     </Routes>
-  </HashRouter>,
+  </BrowserRouter>,
   rootElement
 );
 

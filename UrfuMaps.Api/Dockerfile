@@ -1,19 +1,27 @@
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-focal AS base
 WORKDIR /app
-EXPOSE 5000
+EXPOSE 80 8080 443 5000
 
-ENV ASPNETCORE_URLS=http://+:5000
 
-# Creates a non-root user with an explicit UID and adds permission to access the /app folder
-# For more info, please refer to https://aka.ms/vscode-docker-dotnet-configure-containers
-RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
-USER appuser
+
+ENV ASPNETCORE_URLS=http://+:80
+
+#RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
+#USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
+RUN apt-get update
+RUN apt-get install -y curl
+RUN apt-get install -y libpng-dev libjpeg-dev curl libxi6 build-essential libgl1-mesa-glx
+RUN curl -sL https://deb.nodesource.com/setup_15.x | bash -
+RUN apt-get install -y nodejs
 WORKDIR /src
 COPY ["UrfuMaps.Api/UrfuMaps.Api.csproj", "UrfuMaps.Api/"]
+COPY ["UrfuMaps.Client/package.json", "UrfuMaps.Client/"]
 RUN dotnet restore "UrfuMaps.Api/UrfuMaps.Api.csproj"
 COPY . .
+RUN npm install --only=prod --prefix UrfuMaps.Client/
+RUN npm run build --prefix UrfuMaps.Client/
 WORKDIR "/src/UrfuMaps.Api"
 RUN dotnet build "UrfuMaps.Api.csproj" -c Release -o /app/build
 
@@ -23,4 +31,5 @@ RUN dotnet publish "UrfuMaps.Api.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=publish /src/UrfuMaps.Client/build/ ./UrfuMaps.Client/build/
 ENTRYPOINT ["dotnet", "UrfuMaps.Api.dll"]

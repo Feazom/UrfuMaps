@@ -1,25 +1,23 @@
 .app {
-  font-weight: bold; 
-  font-size: 30px; 
-  -webkit-background-clip: text; 
-  -moz-background-clip: text; 
-  background-clip: text; 
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  margin:auto;
+  font-weight: bold;
+  font-size: 30px;
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
 }
 
 .App {
-  font-weight: bold;  
-  -webkit-background-clip: text; 
-  -moz-background-clip: text; 
-  background-clip: text; 
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  margin:auto;
+  font-weight: bold;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
   background: #032541;
 }

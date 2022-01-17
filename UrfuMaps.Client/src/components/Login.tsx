@@ -1,8 +1,12 @@
 import { FormEvent, useState } from 'react';
-import env from 'react-dotenv';
-import { User } from '../types';
+import { signin } from '../services/AuthService';
+import './Login.css';
 
-const Login = () => {
+type LoginProps = {
+  setIsAuth: Function;
+};
+
+const Login = ({ setIsAuth }: LoginProps) => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
@@ -14,52 +18,40 @@ const Login = () => {
     setPassword(event.currentTarget.value);
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    loginFetch({ login, password });
+    const response = await signin(login, password);
+    if (response) {
+      setIsAuth(true);
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>Login</h1>
-
-      <label>Login</label>
-      <input
-        name="login"
-        placeholder="Login"
-        value={login}
-        onChange={handleLoginChange}
-      />
-      <br />
-
-      <label>Password</label>
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={password}
-        onChange={handlePasswordChange}
-      />
-      <br />
-
+    <form onSubmit={handleSubmit} className="login-form">
+      <div className="login">
+        <label>Логин:</label>
+        <input
+          name="login"
+          placeholder="Логин"
+          size={15}
+          value={login}
+          onChange={handleLoginChange}
+        />
+      </div>
+      <div className="password">
+        <label>Пароль:</label>
+        <input
+          type="password"
+          name="password"
+          placeholder="Пароль"
+          size={15}
+          value={password}
+          onChange={handlePasswordChange}
+        />
+      </div>
       <input type="submit" />
     </form>
   );
 };
 
 export default Login;
-
-async function loginFetch(user: User) {
-  const response = await fetch(`${env.API_DOMAIN}/login`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    method: 'POST',
-    body: JSON.stringify(user),
-  });
-  console.log('dfs');
-  // const data = await response.json();
-  // console.log(data);
-  // localStorage.setItem('token', data);
-}

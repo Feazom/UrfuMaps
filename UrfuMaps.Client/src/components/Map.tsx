@@ -1,7 +1,7 @@
 import { useState, useEffect, CSSProperties } from 'react';
-import InfoDTO from '../DTOs/InfoDTO';
+import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import FloorDTO from '../DTOs/FloorDTO';
-import env from 'react-dotenv';
+import { getMap } from '../services/RequestService';
 import './Map.css';
 
 type MapProps = {
@@ -18,6 +18,7 @@ const Map = ({
 }: MapProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [floor, setFloor] = useState<FloorDTO>();
+  const [update, setUpdate] = useState(true);
 
   useEffect(() => {
     if (!isNaN(parseInt(searchedCabinet[searchedCabinet.search('-') + 1]))) {
@@ -29,21 +30,15 @@ const Map = ({
         }
       }
     }
-  }, [searchedCabinet]);
+  }, [searchedCabinet, setFloorNumber, update]);
 
   useEffect(() => {
     (async () => {
       if (floorNumber != null && buildingName != null) {
-        const schemeResponse = await fetch(
-          `${env.API_DOMAIN}/map?floor=${floorNumber}&building=${buildingName}`,
-          {
-            method: 'GET',
-          }
-        );
-
-        setFloor(await schemeResponse.json());
+        const schemeResponse = await getMap(floorNumber, buildingName);
 
         if (schemeResponse.ok) {
+          setFloor(await schemeResponse.json());
           setIsLoading(false);
         }
       }
@@ -51,30 +46,54 @@ const Map = ({
   }, [buildingName, floorNumber, searchedCabinet]);
 
   return (
-    <div className="map-scheme">
+    <>
       {isLoading ? (
         <img src="loading-icon.svg" className="loading-icon" alt="" />
       ) : (
-        <div className="container">
-          <img className="map-image" src={floor?.imageLink} alt="floor map" />
-          {floor?.positions.map((postition) => {
-            const positionCoords: CSSProperties = {
-              top: `${postition.y}%`,
-              left: `${postition.x}%`,
-            };
-            return postition.cabinet === searchedCabinet ? (
-              <img
-                className="map-marker"
-                key={postition.cabinet}
-                src="marker-icon.svg"
-                alt="mark"
-                style={positionCoords}
-              />
-            ) : null;
-          })}
-        </div>
+        <TransformWrapper limitToBounds>
+          {({ zoomToElement }) => (
+            <>
+              <div>
+                <button
+                  className="search-button"
+                  onClick={() => {
+                    setUpdate(!update);
+                    zoomToElement(searchedCabinet, 2);
+                  }}
+                >
+                  <img src="search-icon.svg" alt="🔎" />
+                </button>
+              </div>
+              <TransformComponent>
+                <div className="container">
+                  <img
+                    className="map-image"
+                    src={floor?.imageLink}
+                    alt="floor map"
+                  />
+                  {floor?.positions.map((position) => {
+                    const positionCoords: CSSProperties = {
+                      top: `${position.y}%`,
+                      left: `${position.x}%`,
+                    };
+                    return position.cabinet === searchedCabinet ? (
+                      <img
+                        className="map-marker"
+                        key={position.cabinet}
+                        id={position.cabinet}
+                        src="marker-icon.svg"
+                        alt="#"
+                        style={positionCoords}
+                      />
+                    ) : null;
+                  })}
+                </div>
+              </TransformComponent>
+            </>
+          )}
+        </TransformWrapper>
       )}
-    </div>
+    </>
   );
 };
 

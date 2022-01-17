@@ -17,15 +17,15 @@ namespace UrfuMaps.Api.Controllers
 		}
 
 		[HttpPost]
-		public async Task<ActionResult> Post([FromBody] User request)
+		public async Task<ActionResult<TokenDTO>> Post([FromBody] User request)
 		{
 			var user = await _userService.Authenticate(request);
 
 			if (user != null)
 			{
-				return Ok(new
+				return Ok(new TokenDTO
 				{
-					Jwt_token = $"Bearer {_userService.GenerateJWT(user)}"
+					Token = $"Bearer {_userService.GenerateJWT(user)}"
 				});
 			}
 
