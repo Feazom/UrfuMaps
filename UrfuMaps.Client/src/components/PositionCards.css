@@ -1,6 +1,7 @@
 .card-list {
   display: flex;
   flex-wrap: wrap;
+  width: 700px;
 }
 
 .card {

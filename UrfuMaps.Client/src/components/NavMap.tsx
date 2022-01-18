@@ -51,6 +51,7 @@ const NavMap = ({
     cabinet = cabinet.replace(/[р]/i, 'r');
     cabinet = cabinet.replace(/\s+/g, '-');
     cabinet = cabinet.replaceAll(/[а]/gmi, 'a')
+    cabinet = cabinet.replaceAll(/[б]/gmi, 'b')
     if (!isNaN(parseInt(cabinet))) {
       cabinet = 'r-' + cabinet;
     } else if (cabinet[0] === 'r' && !isNaN(parseInt(cabinet[1]))) {
