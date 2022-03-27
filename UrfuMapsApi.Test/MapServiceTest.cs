@@ -59,7 +59,7 @@ namespace UrfuMapsApi.Test
 				{
 					new PositionScheme
 					{
-						Cabinet = floorDTO.Positions[0].Cabinet,
+						Name = floorDTO.Positions[0].Cabinet,
 						Description = floorDTO.Positions[0].Description,
 						BuildingName = floorDTO.BuildingName,
 						FloorNumber = floorDTO.FloorNumber,
@@ -77,7 +77,7 @@ namespace UrfuMapsApi.Test
 			Assert.AreEqual(expectedFloorScheme.BuildingName, floorScheme.BuildingName);
 			Assert.AreEqual(expectedFloorScheme.FloorNumber, floorScheme.FloorNumber);
 			Assert.AreEqual(expectedFloorScheme.ImageLink, floorScheme.ImageLink);
-			Assert.AreEqual(expectedFloorScheme.Positions[0].Cabinet, floorScheme.Positions[0].Cabinet);
+			Assert.AreEqual(expectedFloorScheme.Positions[0].Name, floorScheme.Positions[0].Name);
 			Assert.AreEqual(expectedFloorScheme.Positions[0].Description, floorScheme.Positions[0].Description);
 			Assert.AreEqual(expectedFloorScheme.BuildingName, floorScheme.Positions[0].BuildingName);
 			Assert.AreEqual(expectedFloorScheme.FloorNumber, floorScheme.Positions[0].FloorNumber);
@@ -127,7 +127,7 @@ namespace UrfuMapsApi.Test
 						{
 							BuildingName = "testName",
 							FloorNumber = 1,
-							Cabinet = "testCabinet1",
+							Name = "testCabinet1",
 							Description = "long desctription about this cabinet",
 							X = 12.22,
 							Y = 89.32
@@ -145,7 +145,7 @@ namespace UrfuMapsApi.Test
 			Assert.AreEqual(expectedFloorScheme.BuildingName, floorScheme.BuildingName);
 			Assert.AreEqual(expectedFloorScheme.FloorNumber, floorScheme.FloorNumber);
 			Assert.AreEqual(expectedFloorScheme.ImageLink, floorScheme.ImageLink);
-			Assert.AreEqual(expectedFloorScheme.Positions[0].Cabinet, floorScheme.Positions[0].Cabinet);
+			Assert.AreEqual(expectedFloorScheme.Positions[0].Name, floorScheme.Positions[0].Cabinet);
 			Assert.AreEqual(expectedFloorScheme.Positions[0].Description, floorScheme.Positions[0].Description);
 			Assert.AreEqual(expectedFloorScheme.Positions[0].X, floorScheme.Positions[0].X);
 			Assert.AreEqual(expectedFloorScheme.Positions[0].Y, floorScheme.Positions[0].Y);

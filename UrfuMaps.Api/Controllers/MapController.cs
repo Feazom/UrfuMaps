@@ -35,7 +35,7 @@ namespace UrfuMaps.Api.Controllers
 
 		[Authorize]
 		[HttpPost]
-		public async Task<ActionResult<FloorDTO>> PostMap([FromBody] FloorDTO floor)
+		public async Task<ActionResult<FloorDTO>> PostMap([FromBody] CreateFloorDTO floor)
 		{
 			if (floor.BuildingName == null || floor.FloorNumber == null)
 			{
@@ -48,7 +48,7 @@ namespace UrfuMaps.Api.Controllers
 				return BadRequest(new { message = "duplicate schemes" });
 			}
 
-			await _mapService.Add(floor);
+			await _mapService.Create(floor);
 			return Ok(floor);
 		}
 

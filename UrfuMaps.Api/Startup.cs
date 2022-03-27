@@ -25,7 +25,7 @@ namespace UrfuMaps.Api
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddDbContext<AppDbContext>(options =>
-				options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_STRING")/*Configuration["ConnectionString"]*/));
+				options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_STRING")));
 			services.AddControllers();
 
 			services.AddSpaStaticFiles(configuration =>
@@ -35,6 +35,7 @@ namespace UrfuMaps.Api
 
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<IMapService, MapService>();
+			services.AddScoped<IRouteService, RouteService>();
 
 			var authOptionsConfiguration = Configuration.GetSection("Auth");
 			services.Configure<AuthOptions>(authOptionsConfiguration);
@@ -58,7 +59,7 @@ namespace UrfuMaps.Api
 						ValidateIssuerSigningKey = true,
 					};
 				});
-			services.AddCors();				
+			services.AddCors();
 
 			services.AddSwaggerGen(options =>
 			{

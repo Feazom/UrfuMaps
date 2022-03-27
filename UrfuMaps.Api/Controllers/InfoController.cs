@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
@@ -23,7 +21,7 @@ namespace UrfuMaps.Api.Controllers
 		public async Task<ActionResult<InfoDTO[]>> Get()
 		{
 			var floors = await _db.Floors
-				.Select(n => new FloorInfo {BuildingName = n.BuildingName, FloorNumber = n.FloorNumber})
+				.Select(n => new FloorInfo { BuildingName = n.BuildingName, FloorNumber = n.FloorNumber!.Value })
 				.AsNoTracking()
 				.ToArrayAsync();
 
@@ -31,7 +29,7 @@ namespace UrfuMaps.Api.Controllers
 				.Select(n => new InfoDTO
 				{
 					BuildingName = n.Key,
-					FloorList = n.Select(x => x.FloorNumber).ToList()
+					FloorList = n.Select(x => x.FloorNumber)
 				});
 
 			return Ok(result);

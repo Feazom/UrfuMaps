@@ -5,7 +5,7 @@ namespace UrfuMaps.Api.Services
 {
 	public interface IMapService
 	{
-		Task Add(FloorDTO floorScheme);
+		Task Create(CreateFloorDTO floorScheme);
 		Task<FloorDTO?> GetScheme(int floor, string building);
 		Task Delete(int floor, string building);
 	}

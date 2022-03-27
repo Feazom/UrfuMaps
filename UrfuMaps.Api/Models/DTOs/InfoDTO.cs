@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace UrfuMaps.Api.Models
 {
@@ -10,13 +7,13 @@ namespace UrfuMaps.Api.Models
 	{
 		[StringLength(10)]
 		public string? BuildingName { get; set; }
-		public List<int?> FloorList { get; set; } = new();
+		public IEnumerable<int> FloorList { get; set; } = new List<int>();
 	}
 
 	public class FloorInfo
 	{
 		[StringLength(10)]
 		public string? BuildingName { get; set; }
-		public int? FloorNumber { get; set; }
+		public int FloorNumber { get; set; }
 	}
 }
