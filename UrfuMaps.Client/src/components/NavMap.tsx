@@ -1,99 +1,113 @@
-import { useState, useEffect, FormEvent } from 'react';
+import {
+	useState,
+	useEffect,
+	FormEvent,
+	SetStateAction,
+	Dispatch,
+} from 'react';
 import InfoDTO from '../DTOs/InfoDTO';
 import './NavMap.css';
 import { getInfo } from '../services/RequestService';
+import { convertCabinet } from '../services/utils';
 
 type MapProps = {
-  floor: number | null;
-  setFloorNumber: Function;
-  floorNumber: number;
-  buildingName: string;
-  setBuildingName: Function;
-  searchedCabinet: string;
-  setSearchedCabinet: Function;
+	setFloorNumber: Function;
+	floorNumber: number;
+	buildingName: string;
+	setBuildingName: Dispatch<SetStateAction<string>>;
+	setDestination: Dispatch<SetStateAction<string>>;
+	setSource: Dispatch<SetStateAction<string>>;
 };
 
 const NavMap = ({
-  floor,
-  setFloorNumber,
-  floorNumber,
-  buildingName,
-  setBuildingName,
-  searchedCabinet,
-  setSearchedCabinet,
+	setFloorNumber,
+	floorNumber,
+	buildingName,
+	setBuildingName,
+	setDestination,
+	setSource,
 }: MapProps) => {
-  const [buildingList, setBuildingList] = useState<Record<string, number[]>>(
-    {}
-  );
+	const [buildingList, setBuildingList] = useState<Record<string, number[]>>(
+		{}
+	);
 
-  useEffect(() => {
-    (async () => {
-      const response = await getInfo();
-      const info: InfoDTO[] = await response.json();
-      const buildings: Record<string, number[]> = {};
-      info.forEach((e) => {
-        buildings[e.buildingName] = e.floorList;
-      });
-      setBuildingList(buildings);
-    })();
-  }, []);
+	useEffect(() => {
+		(async () => {
+			const response = await getInfo();
+			const info: InfoDTO[] = await response.json();
+			const buildings: Record<string, number[]> = {};
+			info.forEach((e) => {
+				buildings[e.buildingName] = e.floorList;
+			});
+			setBuildingList(buildings);
+		})();
+	}, []);
 
-  function handleFloorChange(event: FormEvent<HTMLSelectElement>) {
-    setFloorNumber(event.currentTarget.value);
-  }
+	function handleFloorChange(event: FormEvent<HTMLSelectElement>) {
+		setFloorNumber(event.currentTarget.value);
+	}
 
-  function handleBuildingChange(event: FormEvent<HTMLSelectElement>) {
-    setBuildingName(event.currentTarget.value);
-  }
+	function handleBuildingChange(event: FormEvent<HTMLSelectElement>) {
+		setBuildingName(event.currentTarget.value);
+	}
 
-  function handleCabinetChange(event: FormEvent<HTMLInputElement>) {
-    let cabinet = event.currentTarget.value;
-    cabinet = cabinet.replace(/[р]/i, 'r');
-    cabinet = cabinet.replace(/\s+/g, '-');
-    cabinet = cabinet.replaceAll(/[а]/gmi, 'a')
-    cabinet = cabinet.replaceAll(/[б]/gmi, 'b')
-    if (!isNaN(parseInt(cabinet))) {
-      cabinet = 'r-' + cabinet;
-    } else if (cabinet[0] === 'r' && !isNaN(parseInt(cabinet[1]))) {
-      cabinet = 'r-' + cabinet.slice(1);
-    }
-    setSearchedCabinet(cabinet.toLowerCase());
-  }
+	function handleDestinationChange(event: FormEvent<HTMLInputElement>) {
+		setDestination(convertCabinet(event.currentTarget.value));
+	}
 
-  return (
-    <div className="app-header">
-      <div className="floor-select">
-        <span>Этаж: </span>
-        <select
-          value={floorNumber}
-          onChange={handleFloorChange}
-          onLoad={handleFloorChange}
-        >
-          {buildingList[buildingName]?.map((floorNumber) => {
-            return <option key={floorNumber}>{floorNumber}</option>;
-          })}
-        </select>
-      </div>
-      <div className="building-select">
-        <span>Здание: </span>
-        <select onChange={handleBuildingChange} onLoad={handleBuildingChange}>
-          {Object.keys(buildingList)?.map((buildingName) => {
-            return <option key={buildingName}>{buildingName}</option>;
-          })}
-        </select>
-      </div>
-      <div className="cabinet-select">
-        <span>Кабинет: </span>
-        <div>
-          <input
-            placeholder="Поиск..."
-            onChange={handleCabinetChange}
-            size={5}
-          />
-        </div>
-      </div>
-    </div>
-  );
+	function handleSourceChange(event: FormEvent<HTMLInputElement>) {
+		setSource(convertCabinet(event.currentTarget.value));
+	}
+
+	return (
+		<div className="app-header">
+			<div className="floor-select">
+				<span>Этаж: </span>
+				<select
+					value={floorNumber}
+					onChange={handleFloorChange}
+					onLoad={handleFloorChange}
+				>
+					{buildingList[buildingName]?.map((floorNumber) => {
+						return <option key={floorNumber}>{floorNumber}</option>;
+					})}
+				</select>
+			</div>
+			<div className="building-select">
+				<span>Здание: </span>
+				<select
+					onChange={handleBuildingChange}
+					onLoad={handleBuildingChange}
+				>
+					{Object.keys(buildingList)?.map((buildingName) => {
+						return (
+							<option key={buildingName}>{buildingName}</option>
+						);
+					})}
+				</select>
+			</div>
+			<div className="src-select">
+				<span>Откуда: </span>
+				<div>
+					<input
+						placeholder="Поиск..."
+						onChange={handleSourceChange}
+						size={5}
+					/>
+				</div>
+			</div>
+			<div className="dest-select">
+				<span>Куда: </span>
+				<div>
+					<input
+						placeholder="Поиск..."
+						onChange={handleDestinationChange}
+						size={5}
+					/>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default NavMap;

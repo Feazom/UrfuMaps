@@ -10,7 +10,7 @@ using UrfuMaps.Api;
 namespace UrfuMaps.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220327172858_Initial")]
+    [Migration("20220411064305_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,11 +23,11 @@ namespace UrfuMaps.Api.Migrations
 
             modelBuilder.Entity("UrfuMaps.Api.Models.Edge", b =>
                 {
-                    b.Property<int>("FromId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("FromId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("ToId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("ToId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("FromId", "ToId");
 
@@ -38,10 +38,9 @@ namespace UrfuMaps.Api.Migrations
 
             modelBuilder.Entity("UrfuMaps.Api.Models.Floor", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("uuid");
 
                     b.Property<string>("BuildingName")
                         .HasMaxLength(10)
@@ -60,16 +59,15 @@ namespace UrfuMaps.Api.Migrations
 
             modelBuilder.Entity("UrfuMaps.Api.Models.Position", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<int>("FloorId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("FloorId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .HasMaxLength(10)
@@ -94,7 +92,7 @@ namespace UrfuMaps.Api.Migrations
                     b.HasIndex("Name", "X", "Y")
                         .IsUnique();
 
-                    b.ToTable("Position");
+                    b.ToTable("Positions");
                 });
 
             modelBuilder.Entity("UrfuMaps.Api.Models.PositionType", b =>
@@ -124,21 +122,21 @@ namespace UrfuMaps.Api.Migrations
 
             modelBuilder.Entity("UrfuMaps.Api.Models.Edge", b =>
                 {
-                    b.HasOne("UrfuMaps.Api.Models.Position", "PositionFrom")
-                        .WithMany("RelatedTo")
+                    b.HasOne("UrfuMaps.Api.Models.Position", "FromPosition")
+                        .WithMany()
                         .HasForeignKey("FromId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("UrfuMaps.Api.Models.Position", "PositionTo")
-                        .WithMany("RelatedFrom")
+                    b.HasOne("UrfuMaps.Api.Models.Position", "ToPosition")
+                        .WithMany()
                         .HasForeignKey("ToId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PositionFrom");
+                    b.Navigation("FromPosition");
 
-                    b.Navigation("PositionTo");
+                    b.Navigation("ToPosition");
                 });
 
             modelBuilder.Entity("UrfuMaps.Api.Models.Position", b =>
@@ -158,13 +156,6 @@ namespace UrfuMaps.Api.Migrations
             modelBuilder.Entity("UrfuMaps.Api.Models.Floor", b =>
                 {
                     b.Navigation("Positions");
-                });
-
-            modelBuilder.Entity("UrfuMaps.Api.Models.Position", b =>
-                {
-                    b.Navigation("RelatedFrom");
-
-                    b.Navigation("RelatedTo");
                 });
 
             modelBuilder.Entity("UrfuMaps.Api.Models.PositionType", b =>

@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace UrfuMaps.Api.Models
 {
 	public class Position
 	{
-		public int Id { get; set; }
+		public Guid Id { get; set; }
 		//public int FloorId { get; set; }
 		[StringLength(10)]
 		public string? Type { get; set; }
@@ -15,7 +16,9 @@ namespace UrfuMaps.Api.Models
 		public double? X { get; set; }
 		public double? Y { get; set; }
 
-		public virtual ICollection<Edge> RelatedTo { get; set; } = new List<Edge>();
-		public virtual ICollection<Edge> RelatedFrom { get; set; } = new List<Edge>();
+		//public virtual ICollection<Position> ToPosition { get; set; } = new List<Position>();
+		//public virtual ICollection<Position> FromPosition { get; set; } = new List<Position>();
+		//public virtual ICollection<Edge> FromEdges { get; set; } = new List<Edge>();
+		//public virtual ICollection<Edge> ToEdges { get; set; } = new List<Edge>();
 	}
 }

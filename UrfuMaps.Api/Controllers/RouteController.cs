@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
 using UrfuMaps.Api.Services;
@@ -17,7 +18,7 @@ namespace UrfuMaps.Api.Controllers
 		}
 
 		[HttpGet]
-		public async Task<RouteDTO> Get([FromQuery] uint source, [FromQuery] uint destination)
+		public async Task<IEnumerable<string>> Get([FromQuery] string source, [FromQuery] string destination)
 		{
 			var route = await _routeService.GetRoute(source, destination);
 			if (route == null)

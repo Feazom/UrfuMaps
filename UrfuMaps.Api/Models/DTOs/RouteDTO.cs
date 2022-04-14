@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace UrfuMaps.Api.Models
 {
@@ -9,7 +10,7 @@ namespace UrfuMaps.Api.Models
 
 	public class EdgeDTO
 	{
-		public uint SourceId { get; set; }
-		public uint DestinationId { get; set; }
+		public Guid SourceId { get; set; }
+		public Guid DestinationId { get; set; }
 	}
 }

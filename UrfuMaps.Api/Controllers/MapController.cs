@@ -11,6 +11,7 @@ namespace UrfuMaps.Api.Controllers
 {
 	[ApiController]
 	[Route("/map")]
+	[Produces("application/json")]
 	public class MapController : ControllerBase
 	{
 		private readonly IMapService _mapService;
@@ -35,7 +36,7 @@ namespace UrfuMaps.Api.Controllers
 
 		[Authorize]
 		[HttpPost]
-		public async Task<ActionResult<FloorDTO>> PostMap([FromBody] CreateFloorDTO floor)
+		public async Task<ActionResult> PostMap([FromBody] CreateFloorDTO floor)
 		{
 			if (floor.BuildingName == null || floor.FloorNumber == null)
 			{
@@ -49,7 +50,7 @@ namespace UrfuMaps.Api.Controllers
 			}
 
 			await _mapService.Create(floor);
-			return Ok(floor);
+			return Ok();
 		}
 
 		[Authorize]

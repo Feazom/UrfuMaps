@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
+using System;
 
 namespace UrfuMaps.Api.Services
 {
@@ -40,6 +41,7 @@ namespace UrfuMaps.Api.Services
 				{
 					positions.Add(position.LocalId, new Position
 					{
+						Id = Guid.NewGuid(),
 						Type = position.Type,
 						Name = position.Name,
 						Description = position.Description,
@@ -48,16 +50,31 @@ namespace UrfuMaps.Api.Services
 					});
 				}
 
-				var edges = new List<Edge>();
+				var edges = new HashSet<Edge>();
 				foreach (var position in floorRequest.Positions)
 				{
-					positions[position.LocalId].RelatedTo = position.RelatedWith
+					var firstEdges = position.RelatedWith
 						.Select(n => new Edge
 						{
-							PositionTo = positions[n],
-							PositionFrom = positions[position.LocalId]
+							ToId = positions[n].Id,
+							FromId = positions[position.LocalId].Id
 						})
 						.ToList();
+
+					var secondEdges = position.RelatedWith
+						.Select(n => new Edge
+						{
+							FromId = positions[n].Id,
+							ToId = positions[position.LocalId].Id,
+						})
+						.ToList();
+
+					//foreach (var edge in firstEdges.Concat(secondEdges))
+					//{
+					//	edges.Add(edge);
+					//}
+					edges.UnionWith(firstEdges);
+					edges.UnionWith(secondEdges);
 				}
 
 				_db.Floors.Add(new Floor
@@ -68,7 +85,16 @@ namespace UrfuMaps.Api.Services
 					Positions = positions.Values
 				});
 
+				_db.Edges.AddRange(edges);
+
 				await _db.SaveChangesAsync();
+
+				//foreach (var edge in edges)
+				//{
+				//	_db.DetachLocalEdge(edge);
+				//}
+				
+				//await _db.SaveChangesAsync();
 			}
 		}
 

@@ -36,6 +36,8 @@ namespace UrfuMaps.Api
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<IMapService, MapService>();
 			services.AddScoped<IRouteService, RouteService>();
+			services.AddScoped<IInfoService, InfoService>();
+			services.AddScoped<ITypeService, TypeService>();
 
 			var authOptionsConfiguration = Configuration.GetSection("Auth");
 			services.Configure<AuthOptions>(authOptionsConfiguration);

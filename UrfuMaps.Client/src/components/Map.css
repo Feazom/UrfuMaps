@@ -24,6 +24,15 @@
   margin-left: -13px;
 }
 
+.map-canvas {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  height: 100%;
+  width: 100%;
+  z-index: 100;
+}
+
 .map-c {
   height: 1px;
   width: auto;

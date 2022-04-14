@@ -6,9 +6,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
+using Graphalo;
+using Graphalo.Traversal;
 
 namespace UrfuMaps.Api.Services
 {
+	class Point
+	{
+		public Guid Id { get; set; }
+		public double? X { get; set; }
+		public double? Y { get; set; }
+	}
+
+	class RelativePoints
+	{
+		public Point? FromPoint { get; set; }
+		public Point? ToPoint { get; set; }
+	}
+
 	public class RouteService : IRouteService
 	{
 		private readonly AppDbContext _db;
@@ -18,74 +33,89 @@ namespace UrfuMaps.Api.Services
 			_db = context;
 		}
 
-		public async Task<RouteDTO?> GetRoute(uint source, uint destination)
+		public async Task<IEnumerable<string>?> GetRoute(string source, string destination)
 		{
-			List<(PositionDTO sourcePosition, PositionDTO destinationPosition)> edges = new();
+			//List<(Point sourcePosition, Point destinationPosition)> edges = new();
 
-			await _db.Edges
-				.Where(n => n.PositionFrom != null && n.PositionTo != null &&
-					n.PositionFrom.X != null && n.PositionFrom.Y != null &&
-					n.PositionTo.X != null && n.PositionTo.Y != null)
-				.ForEachAsync(n =>
+			var edges = await _db.Edges
+				.Include(e => e.FromPosition)
+				.Include(e => e.ToPosition)
+				.Select(e => new RelativePoints
 				{
-					edges.Add((new PositionDTO
+					FromPoint = new Point
 					{
-						Id = n.PositionFrom!.Id,
-						X = n.PositionFrom.X,
-						Y = n.PositionFrom.Y
-
-					}, new PositionDTO
+						Id = e.FromPosition!.Id,
+						X = e.FromPosition.X,
+						Y = e.FromPosition.Y
+					},
+					ToPoint = new Point
 					{
-						Id = n.PositionTo!.Id,
-						X = n.PositionTo.X,
-						Y = n.PositionTo.Y
+						Id = e.ToPosition!.Id,
+						X = e.ToPosition.X,
+						Y = e.ToPosition.Y
+					}
+				})
+				.AsNoTracking()
+				.ToArrayAsync();
 
-					}));
-				});
+			//foreach (var edge in edgesScheme)
+			//{
+			//	//if (edge.FromPosition != null && edge.ToPosition != null)
+			//	//{
+			//		edges.Add((new PositionDTO
+			//		{
+			//			Id = edge.FromPosition.Id,
+			//			X = edge.FromPosition.X,
+			//			Y = edge.FromPosition.Y
 
-			var graph = new Graph<uint, bool>();
+			//		}, new PositionDTO
+			//		{
+			//			Id = edge.ToPosition.Id,
+			//			X = edge.ToPosition.X,
+			//			Y = edge.ToPosition.Y
 
-			foreach (var (sourcePosition, destinationPosition) in edges)
+			//		}));
+			//	//}
+			//}
+
+			var graph = new DirectedGraph<string>();
+
+			foreach (var edge in edges)
 			{
-				graph.AddNode((uint)sourcePosition.Id);
-				graph.AddNode((uint)destinationPosition.Id);
-
-				graph.Connect
-				(
-					(uint)sourcePosition.Id,
-					(uint)destinationPosition.Id,
-					GetLength(
-						(double)sourcePosition.X!,
-						(double)destinationPosition.X!,
-						(double)sourcePosition.Y!,
-						(double)destinationPosition.Y!),
-					true
+				graph.AddEdge(new Edge<string>(
+					edge.FromPoint!.Id.ToString(),
+					edge.ToPoint!.Id.ToString(),
+					GetLength(edge.FromPoint, edge.ToPoint))
 				);
 			}
 
-			var result = graph.Dijkstra(source, destination);
+			var traversalResult = graph.Traverse(TraversalKind.Dijkstra, source, destination);
 
-			if (result.IsFounded)
+			if (!traversalResult.Success)
 			{
-				var previous = result.GetPath().First();
-				var route = new RouteDTO();
-
-				route.Edges = result.GetPath()
-					.Skip(1)
-					.Select(n => new EdgeDTO
-					{
-						SourceId = previous,
-						DestinationId = n
-					});
-
-				return route;
+				return null;
 			}
-			return null;
+
+			return traversalResult.Results;
 		}
 
-		private static int GetLength(double x1, double x2, double y1, double y2)
+		private static int GetLength(Point source, Point destination)
 		{
-			return (int)Math.Round(Math.Sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) * 10000);
+			if (source.X.HasValue && source.Y.HasValue &&
+				destination.X.HasValue && destination.Y.HasValue)
+			{
+
+				var x1 = source.X.Value;
+				var x2 = destination.X.Value;
+				var y1 = source.Y.Value;
+				var y2 = destination.Y.Value;
+
+				return (int)Math.Round(Math.Sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) * 10000);
+			}
+			else
+			{
+				throw new ArgumentNullException("one of the coordinates was null");
+			}
 		}
 	}
 }

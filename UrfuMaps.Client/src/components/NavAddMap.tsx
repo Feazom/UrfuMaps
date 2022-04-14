@@ -1,108 +1,190 @@
-import { FormEvent, useEffect, useState } from 'react';
-import FloorDTO from '../DTOs/FloorDTO';
-import PositionDTO from '../DTOs/PositionDTO';
+import {
+	Dispatch,
+	FormEvent,
+	SetStateAction,
+	useEffect,
+	useState,
+} from 'react';
+import CreateFloorDTO from '../DTOs/CreateFloorDTO';
+import CreatePositionDTO from '../DTOs/CreatePositionDTO';
 import { addMap } from '../services/RequestService';
-import { Position } from '../types';
 import './NavMap.css';
+import Position from './Position';
 
 type AddMapProps = {
-  setEditedPosition: Function;
-  editedPosition: PositionDTO;
-  setCoords: Function;
-  coords: Position;
-  link: string;
-  positions: PositionDTO[];
-  setPositions: Function;
+	setEditedPosition: Dispatch<SetStateAction<CreatePositionDTO | null>>;
+	editedPosition: CreatePositionDTO | null;
+	link: string;
+	positions: CreatePositionDTO[];
+	setPositions: Dispatch<SetStateAction<CreatePositionDTO[]>>;
+	setLink: Dispatch<SetStateAction<string>>;
+	// selected: PointSelected;
+	// setSelected: Dispatch<SetStateAction<PointSelected>>;
+	// sourceId: number | undefined;
+	// destinationId: number | undefined;
+	// addingEdge: boolean;
+	// setAddingEdge: Dispatch<SetStateAction<boolean>>;
 };
 
 const NavAddMap = ({
-  setEditedPosition,
-  editedPosition,
-  setCoords,
-  coords,
-  link,
-  positions,
-  setPositions,
+	// addingEdge,
+	// setAddingEdge,
+	// sourceId,
+	// destinationId,
+	// selected,
+	// setSelected,
+	setEditedPosition,
+	editedPosition,
+	setLink,
+	link,
+	positions,
+	setPositions,
 }: AddMapProps) => {
-  const [floorNumber, setFloorNumber] = useState(NaN);
-  const [buildingName, setBuildingName] = useState('');
-  const [cabinet, setCabinet] = useState('');
-  const [description, setDescription] = useState('');
+	const [floorNumber, setFloorNumber] = useState(NaN);
+	const [buildingName, setBuildingName] = useState('');
+	const [message, setMessage] = useState('');
 
-  function handleFloorChange(event: FormEvent<HTMLInputElement>) {
-    setFloorNumber(parseInt(event.currentTarget.value));
-  }
-  function handleBuildingChange(event: FormEvent<HTMLInputElement>) {
-    setBuildingName(event.currentTarget.value);
-  }
-  function handleCabinetChange(event: FormEvent<HTMLInputElement>) {
-    setCabinet(event.currentTarget.value);
-  }
-  function handleDescriptionChange(event: FormEvent<HTMLInputElement>) {
-    setDescription(event.currentTarget.value);
-  }
+	useEffect(() => {
+		setTimeout(() => {
+			setMessage('');
+		}, 10 * 1000);
+	}, [message]);
 
-  function submitPosition(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setPositions([...positions, editedPosition]);
-    setCoords({ x: NaN, y: NaN });
-    setCabinet('');
-    setDescription('');
-  }
+	function handleFloorChange(event: FormEvent<HTMLInputElement>) {
+		setFloorNumber(parseInt(event.currentTarget.value));
+	}
+	function handleBuildingChange(event: FormEvent<HTMLInputElement>) {
+		setBuildingName(event.currentTarget.value);
+	}
 
-  async function submitMap(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+	function handleLinkChange(event: FormEvent<HTMLInputElement>) {
+		setLink(event.currentTarget.value);
+	}
 
-    const data: FloorDTO = {
-      floorNumber,
-      buildingName,
-      imageLink: link,
-      positions,
-    };
-    await addMap(data);
-  }
+	// function handleButtonClick() {
+	// 	setAddingEdge(true);
+	// }
 
-  useEffect(() => {
-    setEditedPosition({
-      cabinet,
-      description,
-      x: coords?.x,
-      y: coords?.y,
-    });
-  }, [cabinet, description, coords, setEditedPosition]);
+	async function submitMap(event: FormEvent<HTMLFormElement>) {
+		event.preventDefault();
 
-  return (
-    <div className="app-header-edit">
-      <form className="floor-edit" onSubmit={submitMap}>
-        <label>Этаж:</label>
-        <input onChange={handleFloorChange} size={5} />
-        <label>Здание:</label>
-        <input onChange={handleBuildingChange} size={5} />
-        <input type="submit" value="Загрузить карту" />
-      </form>
+		const data: CreateFloorDTO = {
+			floorNumber,
+			buildingName,
+			imageLink: link,
+			positions,
+		};
 
-      <form
-        id="cabinet-form"
-        className="cabinet-edit"
-        onSubmit={submitPosition}
-      >
-        <div>
-          <label htmlFor="cabinet">Кабинет:</label>
-          <input id="cabinet" size={5} onChange={handleCabinetChange} />
-          <label htmlFor="description">Описание</label>
-          <input id="description" size={5} onChange={handleDescriptionChange} />
-        </div>
+		// console.log(data);
+		console.log(
+			floorNumber &&
+				buildingName &&
+				link &&
+				positions.every(
+					(p) =>
+						p.type &&
+						p.localId &&
+						p.type &&
+						p.relatedWith.length !== 0 &&
+						p.x &&
+						p.y
+				)
+		);
 
-        <div>
-          <label htmlFor="x">X:</label>
-          <input readOnly id="x" size={5} value={coords.x} />
-          <label htmlFor="y">Y:</label>
-          <input readOnly id="y" size={5} value={coords.y} />
-          <input className="edit-button" type="submit" value="Добавить кабинет" />
-        </div>
-      </form>
-    </div>
-  );
+		if (
+			floorNumber &&
+			buildingName &&
+			link &&
+			positions.every(
+				(p) =>
+					p.type &&
+					p.localId &&
+					p.type &&
+					p.relatedWith.length !== 0 &&
+					p.x &&
+					p.y
+			)
+		) {
+			console.log(data);
+
+			await addMap(data);
+		} else {
+			setMessage(
+				'все нужные поля должны быть заполнены, каждая точка должна иметь хотя бы одну связь'
+			);
+		}
+	}
+
+	return (
+		<div
+			className="app-header-edit"
+			style={{
+				display: 'flex',
+				alignItems: 'flex-start',
+				marginTop: '5px',
+			}}
+		>
+			<form
+				className="floor-edit"
+				onSubmit={submitMap}
+				style={{ width: '50vw' }}
+			>
+				<div>
+					<input
+						type="submit"
+						value="Загрузить карту"
+						style={{ width: '200px', height: '40px' }}
+					/>
+					<span style={{ margin: '5px', color: 'red' }}>
+						{message}
+					</span>
+				</div>
+				<div
+					style={{
+						display: 'grid',
+						gridTemplateColumns: '130px 1fr',
+						gridTemplateRows: 'repeat(3, 29px)',
+						padding: '10px',
+						alignItems: 'center',
+					}}
+				>
+					<label>Номер этажа:</label>
+					<input onChange={handleFloorChange} size={5} />
+
+					<label>Здание: </label>
+					<input onChange={handleBuildingChange} size={5} />
+
+					<label>Ссылка: </label>
+					<input
+						style={{ width: '95%' }}
+						value={link}
+						onChange={handleLinkChange}
+					/>
+				</div>
+			</form>
+
+			<Position
+				position={editedPosition}
+				setPosition={setEditedPosition}
+			/>
+
+			{/* {addingEdge ? (
+				<Edge
+					positions={positions}
+					setPositions={setPositions}
+					setAddingEdge={setAddingEdge}
+					setSelected={setSelected}
+					selected={selected}
+					sourceId={sourceId}
+					destinationId={destinationId}
+				/>
+			) : (
+				<button style={{ margin: '10px' }} onClick={handleButtonClick}>
+					+ связь
+				</button>
+			)} */}
+		</div>
+	);
 };
 
 export default NavAddMap;
