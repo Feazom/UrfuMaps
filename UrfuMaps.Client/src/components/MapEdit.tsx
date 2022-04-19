@@ -246,8 +246,6 @@ const MapEdit = ({
 						<>
 							<URLImage
 								src={link}
-								x={0}
-								y={0}
 								maxWidth={width}
 								maxHeight={height}
 								onClick={handleMapClick}

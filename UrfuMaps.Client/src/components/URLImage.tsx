@@ -41,9 +41,8 @@ const URLImage = ({
 
 	return (
 		<Image
-			x={x ? x : 0}
+			x={width ? width / 2 : 0}
 			y={y ? y : 0}
-			offsetX={width ? width / 2 : 0}
 			image={image}
 			width={width}
 			height={height}
