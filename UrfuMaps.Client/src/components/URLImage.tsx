@@ -33,7 +33,7 @@ const URLImage = ({
 			width = ratio * maxHeight;
 		} else {
 			width = maxWidth;
-			height = ratio * maxWidth;
+			height = maxWidth / ratio;
 		}
 	}
 
@@ -41,8 +41,9 @@ const URLImage = ({
 
 	return (
 		<Image
-			x={x ? x - (image ? image.width / 2 : 0) : 0}
-			y={y}
+			x={x ? x : 0}
+			y={y ? y : 0}
+			offsetX={width ? width / 2 : 0}
 			image={image}
 			width={width}
 			height={height}
