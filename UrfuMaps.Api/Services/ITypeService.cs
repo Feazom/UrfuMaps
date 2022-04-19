@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace UrfuMaps.Api.Models
+namespace UrfuMaps.Api.Services
 {
-	public class TokenDTO
+	public interface ITypeService
 	{
-		public string? Token { get; set; }
+		Task<string[]> GetTypes();
 	}
 }

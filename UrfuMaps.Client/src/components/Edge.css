@@ -1,0 +1,19 @@
+.edge {
+	background: #e6cece;
+	display: grid;
+	grid-template-columns: 90px 60px;
+	grid-template-rows: repeat(5, 20px);
+	align-items: center;
+	font-size: 14px;
+	gap: 5px;
+	padding: 10px;
+}
+
+/* .edge label {
+	display: block;
+} */
+
+/* .edge label,
+.edge input {
+	height: 15px;
+} */

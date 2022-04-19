@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
+using UrfuMaps.Api.Services;
 
 namespace UrfuMaps.Api.Controllers
 {
@@ -12,27 +11,17 @@ namespace UrfuMaps.Api.Controllers
 	[Route("/info")]
 	public class InfoController : ControllerBase
 	{
-		private readonly AppDbContext _db;
+		private readonly IInfoService _infoService;
 
-		public InfoController(AppDbContext dbContext)
+		public InfoController(IInfoService infoService)
 		{
-			_db = dbContext;
+			_infoService = infoService;
 		}
 
 		[HttpGet]
 		public async Task<ActionResult<InfoDTO[]>> Get()
 		{
-			var floors = await _db.Floors
-				.Select(n => new FloorInfo {BuildingName = n.BuildingName, FloorNumber = n.FloorNumber})
-				.AsNoTracking()
-				.ToArrayAsync();
-
-			var result = floors.GroupBy(n => n.BuildingName)
-				.Select(n => new InfoDTO
-				{
-					BuildingName = n.Key,
-					FloorList = n.Select(x => x.FloorNumber).ToList()
-				});
+			var result = await _infoService.GetInfo();
 
 			return Ok(result);
 		}

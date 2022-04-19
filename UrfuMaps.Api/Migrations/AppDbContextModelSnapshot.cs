@@ -19,38 +19,61 @@ namespace UrfuMaps.Api.Migrations
                 .HasAnnotation("ProductVersion", "5.0.10")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("UrfuMaps.Api.Models.FloorScheme", b =>
+            modelBuilder.Entity("UrfuMaps.Api.Models.Edge", b =>
                 {
-                    b.Property<int?>("FloorNumber")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("FromId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ToId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("FromId", "ToId");
+
+                    b.HasIndex("ToId");
+
+                    b.ToTable("Edges");
+                });
+
+            modelBuilder.Entity("UrfuMaps.Api.Models.Floor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<string>("BuildingName")
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
+
+                    b.Property<int?>("FloorNumber")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ImageLink")
                         .HasColumnType("text");
 
-                    b.HasKey("FloorNumber", "BuildingName");
+                    b.HasKey("Id");
 
                     b.ToTable("Floors");
                 });
 
-            modelBuilder.Entity("UrfuMaps.Api.Models.PositionScheme", b =>
+            modelBuilder.Entity("UrfuMaps.Api.Models.Position", b =>
                 {
-                    b.Property<string>("Cabinet")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<string>("BuildingName")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<int?>("FloorNumber")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("FloorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
 
                     b.Property<double?>("X")
                         .HasColumnType("double precision");
@@ -58,11 +81,27 @@ namespace UrfuMaps.Api.Migrations
                     b.Property<double?>("Y")
                         .HasColumnType("double precision");
 
-                    b.HasKey("Cabinet");
+                    b.HasKey("Id");
 
-                    b.HasIndex("FloorNumber", "BuildingName");
+                    b.HasIndex("FloorId");
+
+                    b.HasIndex("Type");
+
+                    b.HasIndex("Name", "X", "Y")
+                        .IsUnique();
 
                     b.ToTable("Positions");
+                });
+
+            modelBuilder.Entity("UrfuMaps.Api.Models.PositionType", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("Types");
                 });
 
             modelBuilder.Entity("UrfuMaps.Api.Models.User", b =>
@@ -79,15 +118,45 @@ namespace UrfuMaps.Api.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("UrfuMaps.Api.Models.PositionScheme", b =>
+            modelBuilder.Entity("UrfuMaps.Api.Models.Edge", b =>
                 {
-                    b.HasOne("UrfuMaps.Api.Models.FloorScheme", null)
-                        .WithMany("Positions")
-                        .HasForeignKey("FloorNumber", "BuildingName")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.HasOne("UrfuMaps.Api.Models.Position", "FromPosition")
+                        .WithMany()
+                        .HasForeignKey("FromId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UrfuMaps.Api.Models.Position", "ToPosition")
+                        .WithMany()
+                        .HasForeignKey("ToId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FromPosition");
+
+                    b.Navigation("ToPosition");
                 });
 
-            modelBuilder.Entity("UrfuMaps.Api.Models.FloorScheme", b =>
+            modelBuilder.Entity("UrfuMaps.Api.Models.Position", b =>
+                {
+                    b.HasOne("UrfuMaps.Api.Models.Floor", null)
+                        .WithMany("Positions")
+                        .HasForeignKey("FloorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UrfuMaps.Api.Models.PositionType", null)
+                        .WithMany("Positions")
+                        .HasForeignKey("Type")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("UrfuMaps.Api.Models.Floor", b =>
+                {
+                    b.Navigation("Positions");
+                });
+
+            modelBuilder.Entity("UrfuMaps.Api.Models.PositionType", b =>
                 {
                     b.Navigation("Positions");
                 });
