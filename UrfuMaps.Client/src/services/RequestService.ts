@@ -3,7 +3,7 @@ import FloorDTO from '../DTOs/FloorDTO';
 import UserDTO from '../DTOs/UserDTO';
 import authHeader from './AuthHeader';
 
-const ApiUrl = 'http://localhost:5000';
+const ApiUrl = '';
 
 export function getMap(floorNumber: number, buildingName: string) {
 	return fetch(
