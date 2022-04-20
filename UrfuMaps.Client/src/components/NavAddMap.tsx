@@ -95,6 +95,7 @@ const NavAddMap = ({
 			floorNumber &&
 			buildingName &&
 			link &&
+			positions.length > 0 &&
 			positions.every(
 				(p) =>
 					p.type &&

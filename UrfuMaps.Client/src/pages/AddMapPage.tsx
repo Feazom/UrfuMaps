@@ -19,10 +19,6 @@ const AddMap = () => {
 	Konva.dragButtons = [1];
 
 	useEffect(() => {
-		console.log(positions);
-	}, [positions]);
-
-	useEffect(() => {
 		(async () => {
 			const response = await checkAuth();
 			if (response.ok) {

@@ -234,7 +234,7 @@ const MapConvas = ({
 						maxHeight={height}
 						src={floor?.imageLink}
 						x={width / 2}
-						y={0}
+						centered
 					/>
 				) : null}
 				<Line

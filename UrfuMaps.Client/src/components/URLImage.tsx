@@ -8,6 +8,7 @@ interface URLImageProps {
 	src: string;
 	maxWidth?: number;
 	maxHeight?: number;
+	centered?: boolean;
 	onClick?: (evt: KonvaEventObject<globalThis.MouseEvent>) => void;
 	x?: number;
 	y?: number;
@@ -19,10 +20,13 @@ const URLImage = ({
 	y,
 	maxWidth,
 	maxHeight,
+	centered,
 	onClick,
 }: URLImageProps) => {
 	const image = useImage(src)[0];
 
+	const localX = x ? x : 0;
+	const localY = y ? y : 0;
 	let ratio = 0;
 	let width = maxWidth;
 	let height = maxHeight;
@@ -41,9 +45,8 @@ const URLImage = ({
 
 	return (
 		<Image
-			x={x ? x : 0}
-			y={y ? y : 0}
-			offsetX={width ? width / 2 : 0}
+			x={centered && width ? localX - width / 2 : localX}
+			y={localY}
 			image={image}
 			width={width}
 			height={height}
