@@ -8,6 +8,7 @@ import {
 import CreateFloorDTO from '../DTOs/CreateFloorDTO';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
 import { EdgeDTO } from '../DTOs/EdgeDTO';
+import EdgeDTOSet from '../EdgeDTOSet';
 import { addMap } from '../services/RequestService';
 import './NavMap.css';
 import Position from './Position';
@@ -19,7 +20,7 @@ type AddMapProps = {
 	positions: CreatePositionDTO[];
 	setPositions: Dispatch<SetStateAction<CreatePositionDTO[]>>;
 	setLink: Dispatch<SetStateAction<string>>;
-	edges: Set<EdgeDTO>;
+	edges: EdgeDTOSet;
 };
 
 const NavAddMap = ({
@@ -66,9 +67,7 @@ const NavAddMap = ({
 			positions,
 			edges: Array.from(edges),
 		};
-
-		// console.log(data);
-
+		
 		if (
 			floorNumber &&
 			buildingName &&
@@ -77,8 +76,6 @@ const NavAddMap = ({
 			Array.from(edges).length > 0 &&
 			positions.every((p) => p.type && p.localId && p.type && p.x && p.y)
 		) {
-			console.log(data);
-
 			await addMap(data);
 		} else {
 			setMessage(

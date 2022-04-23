@@ -8,13 +8,14 @@ import CreatePositionDTO from '../DTOs/CreatePositionDTO';
 import Konva from 'konva';
 import { PointSelected } from '../types';
 import { EdgeDTO } from '../DTOs/EdgeDTO';
+import EdgeDTOSet from '../EdgeDTOSet';
 
 const AddMap = () => {
 	const [editedPosition, setEditedPosition] =
 		useState<CreatePositionDTO | null>(null);
 	const [link, setLink] = useState('');
 	const [positions, setPositions] = useState<CreatePositionDTO[]>([]);
-	const [edges, setEdges] = useState<Set<EdgeDTO>>(new Set());
+	const [edges, setEdges] = useState<EdgeDTOSet>(new EdgeDTOSet([]));
 	const [selected, setSelected] = useState<PointSelected>({ type: null });
 	const [isAuth, setIsAuth] = useState(false);
 

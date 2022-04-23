@@ -10,7 +10,9 @@ import {
 import { Circle, Layer, Line, Stage } from 'react-konva';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
 import { EdgeDTO } from '../DTOs/EdgeDTO';
-import { Point, PointSelected } from '../types';
+import EdgeDTOSet from '../EdgeDTOSet';
+import EdgeSet from '../EdgeSet';
+import { Edge, Point, PointSelected } from '../types';
 import './UploadMap.css';
 import URLImage from './URLImage';
 
@@ -20,12 +22,7 @@ type MapEditProps = {
 	link: string;
 	selected: PointSelected;
 	setSelected: Dispatch<SetStateAction<PointSelected>>;
-	setEdges: Dispatch<SetStateAction<Set<EdgeDTO>>>;
-};
-
-type Edge = {
-	source?: Point;
-	destination?: Point;
+	setEdges: Dispatch<SetStateAction<EdgeDTOSet>>;
 };
 
 const MapEdit = ({
@@ -41,7 +38,7 @@ const MapEdit = ({
 	const layerRef = useRef<any>(null);
 	const circleRadius = 5;
 	const [lastId, setLastId] = useState(1);
-	const [pointEdges, setPointEdges] = useState<Set<Edge>>(new Set());
+	const [pointEdges, setPointEdges] = useState<EdgeSet>(new EdgeSet([]));
 	const [edgeSetted, setEdgeSetted] = useState(false);
 	const [edge, setEdge] = useState<Edge>();
 
@@ -54,7 +51,7 @@ const MapEdit = ({
 	}, [edgeSetted]);
 
 	useEffect(() => {
-		const newEdges = new Set<EdgeDTO>();
+		const newEdges = new EdgeDTOSet([]);
 		for (const edge of pointEdges) {
 			if (edge.source?.id && edge.destination?.id)
 				newEdges.add({
@@ -62,7 +59,13 @@ const MapEdit = ({
 					destinationId: edge.destination.id,
 				});
 		}
-		setEdges(newEdges);
+		setEdges((e) => {
+			if (newEdges.edges.length === e.edges.length) {
+				return e;
+			} else {
+				return newEdges;
+			}
+		});
 	}, [pointEdges]);
 
 	useEffect(() => {
@@ -78,47 +81,13 @@ const MapEdit = ({
 		} else {
 			if (edge?.source?.id && edge?.destination?.id) {
 				setPointEdges((e) => {
-					const newEdges = new Set(e);
+					const newEdges = new EdgeSet(e.edges);
 					newEdges.add(edge);
 					return newEdges;
 				});
 			}
 		}
 	}, [edge]);
-
-	// useEffect(() => {
-	// 	setPositions((p) =>
-	// 		p.map((position) => {
-	// 			const relative = edges.find(
-	// 				(e) =>
-	// 					e.dest?.id === position.localId ||
-	// 					e.source?.id === position.localId
-	// 			);
-
-	// 			if (relative) {
-	// 				if (position.localId === relative.source?.id) {
-	// 					const newPosition = position;
-	// 					newPosition.relatedWith.push(relative.dest!.id);
-	// 					return newPosition;
-	// 				}
-	// 				if (position.localId === relative.dest?.id) {
-	// 					const newPosition = position;
-	// 					newPosition.relatedWith.push(relative.source!.id);
-	// 					return newPosition;
-	// 				}
-	// 			}
-	// 			return {
-	// 				localId: position.localId,
-	// 				name: position.name,
-	// 				description: position.description,
-	// 				type: position.type,
-	// 				x: position.x,
-	// 				y: position.y,
-	// 				relatedWith: [],
-	// 			};
-	// 		})
-	// 	);
-	// }, [edges]);
 
 	function handleRightClick(event: KonvaEventObject<PointerEvent>) {
 		event.evt.preventDefault();
@@ -162,7 +131,7 @@ const MapEdit = ({
 
 	function handleDragMove(event: KonvaEventObject<DragEvent>) {
 		setPointEdges((e) => {
-			const newPointEdges = new Set<Edge>();
+			const newPointEdges = new EdgeSet(e.edges);
 			for (const edge of e) {
 				let src = edge.source;
 				let dst = edge.destination;

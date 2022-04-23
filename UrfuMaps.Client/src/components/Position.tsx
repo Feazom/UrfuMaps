@@ -93,7 +93,6 @@ const Position = ({ position, setPosition }: PositionProps) => {
 				if (element.__isNew__) {
 					setNewType(element);
 				}
-				console.log(element.value);
 
 				setPosition({
 					localId: position.localId,
