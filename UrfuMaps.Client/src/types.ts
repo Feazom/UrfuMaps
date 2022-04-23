@@ -8,3 +8,8 @@ export type PointSelected = {
 	type: 'position' | 'source' | 'destination' | null;
 	id?: number;
 };
+
+export type Edge = {
+	source?: Point;
+	destination?: Point;
+};

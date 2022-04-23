@@ -7,20 +7,19 @@ import { logout } from '../services/AuthService';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
 import Konva from 'konva';
 import { PointSelected } from '../types';
+import { EdgeDTO } from '../DTOs/EdgeDTO';
+import EdgeDTOSet from '../EdgeDTOSet';
 
 const AddMap = () => {
 	const [editedPosition, setEditedPosition] =
 		useState<CreatePositionDTO | null>(null);
 	const [link, setLink] = useState('');
 	const [positions, setPositions] = useState<CreatePositionDTO[]>([]);
+	const [edges, setEdges] = useState<EdgeDTOSet>(new EdgeDTOSet([]));
 	const [selected, setSelected] = useState<PointSelected>({ type: null });
 	const [isAuth, setIsAuth] = useState(false);
 
 	Konva.dragButtons = [1];
-
-	useEffect(() => {
-		console.log(positions);
-	}, [positions]);
 
 	useEffect(() => {
 		(async () => {
@@ -71,6 +70,7 @@ const AddMap = () => {
 					<NavAddMap
 						editedPosition={editedPosition}
 						setEditedPosition={setEditedPosition}
+						edges={edges}
 						setLink={setLink}
 						link={link}
 						positions={positions}
@@ -84,6 +84,7 @@ const AddMap = () => {
 						setPositions={setPositions}
 						setSelected={setSelected}
 						selected={selected}
+						setEdges={setEdges}
 						link={link}
 						positions={positions}
 						// setSourceId={setSourceId}

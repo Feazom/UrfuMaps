@@ -8,7 +8,7 @@ export async function signin(login: string, password: string) {
 	let result: TokenDTO | undefined;
 	if (response.ok) {
 		result = await response.json();
-		console.log(result);
+		
 		if (result?.token) {
 			localStorage.setItem('user', JSON.stringify(result));
 		}

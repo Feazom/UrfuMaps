@@ -1,4 +1,4 @@
 export type EdgeDTO = {
-	sourceId: string;
-	destinationId: string;
+	sourceId: number;
+	destinationId: number;
 };

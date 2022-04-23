@@ -13,6 +13,18 @@ namespace UrfuMaps.Api.Models
 		public string? Description { get; set; }
 		public double? X { get; set; }
 		public double? Y { get; set; }
-		public IEnumerable<int> RelatedWith { get; set; } = new List<int>();
+
+		public Position ToSchemeWithoutId(int floorId)
+		{
+			return new Position
+			{
+				FloorId = floorId,
+				Type = Type,
+				Name = Name,
+				Description = Description,
+				X = X,
+				Y = Y
+			};
+		}
 	}
 }

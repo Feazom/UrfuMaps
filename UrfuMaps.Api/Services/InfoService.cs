@@ -1,29 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
+using UrfuMaps.Api.Repositories;
 
 namespace UrfuMaps.Api.Services
 {
-	public class InfoService: IInfoService
+	public class InfoService : IInfoService
 	{
-		private readonly AppDbContext _db;
+		private readonly IFloorRepository _floors;
 
-		public InfoService(AppDbContext dbContext)
+		public InfoService(IFloorRepository floors)
 		{
-			_db = dbContext;
+			_floors = floors;
 		}
 
 		public async Task<IEnumerable<InfoDTO>?> GetInfo()
 		{
-			var floors = await _db.Floors
-				.Select(n => new FloorInfo { BuildingName = n.BuildingName, FloorNumber = n.FloorNumber!.Value })
-				.AsNoTracking()
-				.ToArrayAsync();
+			var floorsInfo = await _floors.GetInfo();
 
-			var result = floors.GroupBy(n => n.BuildingName)
+			var result = floorsInfo.GroupBy(n => n.BuildingName)
 				.Select(n => new InfoDTO
 				{
 					BuildingName = n.Key,

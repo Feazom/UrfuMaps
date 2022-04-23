@@ -67,7 +67,6 @@ const Position = ({ position, setPosition }: PositionProps) => {
 				description: position.description,
 				x: position.x,
 				y: position.y,
-				relatedWith: position.relatedWith,
 			});
 		}
 	}
@@ -81,7 +80,6 @@ const Position = ({ position, setPosition }: PositionProps) => {
 				description: event.currentTarget.value,
 				x: position.x,
 				y: position.y,
-				relatedWith: position.relatedWith,
 			});
 		}
 	}
@@ -95,7 +93,6 @@ const Position = ({ position, setPosition }: PositionProps) => {
 				if (element.__isNew__) {
 					setNewType(element);
 				}
-				console.log(element.value);
 
 				setPosition({
 					localId: position.localId,
@@ -104,7 +101,6 @@ const Position = ({ position, setPosition }: PositionProps) => {
 					description: position.description,
 					x: position.x,
 					y: position.y,
-					relatedWith: position.relatedWith,
 				});
 			}
 		}

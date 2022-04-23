@@ -5,7 +5,6 @@ type CreatePositionDTO = {
 	type: string;
 	x: number;
 	y: number;
-	relatedWith: number[];
 };
 
 export default CreatePositionDTO;
