@@ -1,26 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UrfuMaps.Api.Repositories;
 
 namespace UrfuMaps.Api.Services
 {
 	public class TypeService : ITypeService
 	{
-		private readonly AppDbContext _db;
+		private readonly ITypeRepository _types;
 
-		public TypeService(AppDbContext dbContext)
+		public TypeService(ITypeRepository types)
 		{
-			_db = dbContext;
+			_types = types;
 		}
 
-		public Task<string[]> GetTypes()
+		public async Task<IEnumerable<string>> GetTypes()
 		{
-			return _db.Types
-				.Select(n => n.Name!)
-				.AsNoTracking()
-				.ToArrayAsync();
+			return await _types.GetAll();
 		}
 	}
 }

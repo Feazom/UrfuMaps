@@ -21,7 +21,7 @@ const MapConvas = ({
 	source,
 }: MapProps) => {
 	const [floor, setFloor] = useState<FloorDTO>();
-	const [route, setRoute] = useState<string[]>([]);
+	const [route, setRoute] = useState<number[]>([]);
 	const scaleBy = 1.2;
 	const width = window.innerWidth - 50;
 	const height = window.innerHeight - 120;
@@ -66,6 +66,8 @@ const MapConvas = ({
 						destinationId
 					);
 					setRoute(await routeResponse.json());
+				} else {
+					setRoute([]);
 				}
 			} else {
 				setRoute([]);
@@ -240,13 +242,11 @@ const MapConvas = ({
 				<Line
 					points={
 						route
-							.filter((id) =>
-								floor?.positions.map((p) => p.id).includes(id)
-							)
 							.flatMap((id) => {
 								const position = floor?.positions.find(
-									(p) => p.id === id
+									(p) => p.id == id
 								);
+
 								if (position) {
 									const backgroundHeight: number =
 										layerRef?.current?.children?.[0]?.attrs

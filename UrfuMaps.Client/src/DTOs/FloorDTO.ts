@@ -1,7 +1,7 @@
 import PositionDTO from './PositionDTO';
 
 type FloorDTO = {
-	id: string;
+	id: number;
 	buildingName: string;
 	floorNumber: number;
 	imageLink: string;

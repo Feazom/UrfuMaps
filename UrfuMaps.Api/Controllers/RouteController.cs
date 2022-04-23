@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UrfuMaps.Api.Models;
 using UrfuMaps.Api.Services;
 
 namespace UrfuMaps.Api.Controllers

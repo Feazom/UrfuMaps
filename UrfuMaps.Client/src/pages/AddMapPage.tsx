@@ -7,12 +7,14 @@ import { logout } from '../services/AuthService';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
 import Konva from 'konva';
 import { PointSelected } from '../types';
+import { EdgeDTO } from '../DTOs/EdgeDTO';
 
 const AddMap = () => {
 	const [editedPosition, setEditedPosition] =
 		useState<CreatePositionDTO | null>(null);
 	const [link, setLink] = useState('');
 	const [positions, setPositions] = useState<CreatePositionDTO[]>([]);
+	const [edges, setEdges] = useState<Set<EdgeDTO>>(new Set());
 	const [selected, setSelected] = useState<PointSelected>({ type: null });
 	const [isAuth, setIsAuth] = useState(false);
 
@@ -67,6 +69,7 @@ const AddMap = () => {
 					<NavAddMap
 						editedPosition={editedPosition}
 						setEditedPosition={setEditedPosition}
+						edges={edges}
 						setLink={setLink}
 						link={link}
 						positions={positions}
@@ -80,6 +83,7 @@ const AddMap = () => {
 						setPositions={setPositions}
 						setSelected={setSelected}
 						selected={selected}
+						setEdges={setEdges}
 						link={link}
 						positions={positions}
 						// setSourceId={setSourceId}

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
+using UrfuMaps.Api.Repositories;
 using UrfuMaps.Api.Services;
 
 namespace UrfuMaps.Api
@@ -24,14 +25,20 @@ namespace UrfuMaps.Api
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			var postgresString = Environment.GetEnvironmentVariable("POSTGRES_STRING");
 			services.AddDbContext<AppDbContext>(options =>
-				options.UseNpgsql(Environment.GetEnvironmentVariable("POSTGRES_STRING")));
+				options.UseNpgsql(postgresString));
 			services.AddControllers();
-
 			services.AddSpaStaticFiles(configuration =>
 			{
 				configuration.RootPath = "UrfuMaps.Client/build";
 			});
+
+			services.AddScoped<IEdgeRepository, EdgeRepository>();
+			services.AddScoped<IFloorRepository, FloorRepository>();
+			services.AddScoped<IPositionRepository, PositionRepository>();
+			services.AddScoped<ITypeRepository, TypeRepository>();
+			services.AddScoped<IUserRepository, UserRepository>();
 
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<IMapService, MapService>();

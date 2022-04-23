@@ -1,144 +1,147 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
-using System;
+using UrfuMaps.Api.Repositories;
 
 namespace UrfuMaps.Api.Services
 {
 	public class MapService : IMapService
 	{
-		private readonly AppDbContext _db;
+		private readonly IFloorRepository _floors;
+		private readonly ITypeRepository _types;
+		private readonly IPositionRepository _positions;
+		private readonly IEdgeRepository _edges;
 
-		public MapService(AppDbContext context)
+		public MapService(IFloorRepository floor, ITypeRepository types, IPositionRepository positions, IEdgeRepository edges)
 		{
-			_db = context;
+			_floors = floor;
+			_types = types;
+			_positions = positions;
+			_edges = edges;
 		}
 
 		public async Task Create(CreateFloorDTO floorRequest)
 		{
-			var floorCount = await _db.Floors
-				.Where(n => n.FloorNumber == floorRequest.FloorNumber &&
-					n.BuildingName == floorRequest.BuildingName)
-				.AsNoTracking()
-				.CountAsync();
-
-			foreach (var type in floorRequest.Positions.Select(n => n.Type))
+			if (floorRequest.BuildingName != null &&
+				floorRequest.FloorNumber != null &&
+				floorRequest.ImageLink != null)
 			{
-				var positionType = new PositionType { Name = type };
-				if (!await _db.Types.ContainsAsync(positionType))
-				{
-					_db.Types.Add(positionType);
-					await _db.SaveChangesAsync();
-				}
-			}
+				var floorCount = await _floors.Count(
+					floorRequest.FloorNumber.Value,
+					floorRequest.BuildingName);
 
-			if (floorRequest.Positions.Any() && floorCount == 0)
-			{
-				var positions = new Dictionary<int, Position>();
-				foreach (var position in floorRequest.Positions)
+				foreach (var type in floorRequest.Positions.Select(n => n.Type))
 				{
-					positions.Add(position.LocalId, new Position
+					if (type == null)
 					{
-						Id = Guid.NewGuid(),
-						Type = position.Type,
-						Name = position.Name,
-						Description = position.Description,
-						X = position.X,
-						Y = position.Y
+						continue;
+					}
+					await _types.AddIfNotExist(type);
+				}
+
+				if (floorRequest.Positions.Any() && floorCount == 0)
+				{
+					var floorId = await _floors.Add(new Floor
+					{
+						BuildingName = floorRequest.BuildingName,
+						FloorNumber = floorRequest.FloorNumber.Value,
+						ImageLink = floorRequest.ImageLink
 					});
-				}
 
-				var edges = new HashSet<Edge>();
-				foreach (var position in floorRequest.Positions)
-				{
-					var firstEdges = position.RelatedWith
-						.Select(n => new Edge
+					if (floorId == null)
+					{
+						throw new Exception("FloorId was null");
+					}
+
+					var positions = new Dictionary<int, Position>();
+					foreach (var position in floorRequest.Positions)
+					{
+						if (position.X != null &&
+							position.Y != null &&
+							position.Type != null &&
+							position.Name != null &&
+							position.Description != null)
 						{
-							ToId = positions[n].Id,
-							FromId = positions[position.LocalId].Id
-						})
-						.ToList();
+							positions.Add(position.LocalId, position.ToSchemeWithoutId((int)floorId));
+						}
+					}
 
-					var secondEdges = position.RelatedWith
-						.Select(n => new Edge
+					foreach (var key in positions.Keys)
+					{
+						positions[key].Id = await _positions.Add(positions[key]);
+					}
+
+					var edges = new HashSet<Edge>();
+					foreach (var edge in floorRequest.Edges)
+					{
+						if (positions[edge.SourceId].Id.HasValue &&
+							positions[edge.DestinationId].Id.HasValue)
 						{
-							FromId = positions[n].Id,
-							ToId = positions[position.LocalId].Id,
-						})
-						.ToList();
+							var firtsEdge = new Edge
+							{
+								FromId = positions[edge.DestinationId].Id!.Value,
+								ToId = positions[edge.SourceId].Id!.Value
+							};
 
-					//foreach (var edge in firstEdges.Concat(secondEdges))
-					//{
-					//	edges.Add(edge);
-					//}
-					edges.UnionWith(firstEdges);
-					edges.UnionWith(secondEdges);
+							var secondEdge = firtsEdge.Reverse();
+
+							//var firstEdges = edge.RelatedWith
+							//	.Where(n => positions[n].Id.HasValue)
+							//	.Select(n => new Edge
+							//	{
+							//		FromId = positions[edge.LocalId].Id!.Value,
+							//		ToId = positions[n].Id!.Value
+							//	})
+							//	.ToList();
+
+							//var secondEdges = edge.RelatedWith
+							//	.Where(n => positions[n].Id.HasValue)
+							//	.Select(n => new Edge
+							//	{
+							//		FromId = positions[n].Id!.Value,
+							//		ToId = positions[edge.LocalId].Id!.Value
+							//	})
+							//	.ToList();
+
+							edges.Add(firtsEdge);
+							edges.Add(secondEdge);
+						}
+					}
+
+					foreach (var edge in edges)
+					{
+						await _edges.Add(edge);
+					}
 				}
-
-				_db.Floors.Add(new Floor
-				{
-					BuildingName = floorRequest.BuildingName,
-					FloorNumber = floorRequest.FloorNumber,
-					ImageLink = floorRequest.ImageLink,
-					Positions = positions.Values
-				});
-
-				_db.Edges.AddRange(edges);
-
-				await _db.SaveChangesAsync();
-
-				//foreach (var edge in edges)
-				//{
-				//	_db.DetachLocalEdge(edge);
-				//}
-				
-				//await _db.SaveChangesAsync();
+			}
+			else
+			{
+				throw new ArgumentNullException(nameof(floorRequest));
 			}
 		}
 
-		public async Task Delete(int floor, string building)
+		public Task Delete(int floor, string building)
 		{
-			var floorScheme = await _db.Floors
-				.Where(n => n.FloorNumber == floor && n.BuildingName == building)
-				.Include(n => n.Positions)
-				.FirstOrDefaultAsync();
-
-			_db.Floors.Remove(floorScheme);
-			await _db.SaveChangesAsync();
+			return _floors.Delete(building, floor);
 		}
 
-		public async Task<FloorDTO?> GetScheme(int floor, string building)
+		public async Task<FloorDTO?> GetScheme(int floorNumber, string buildingName)
 		{
-			var floorScheme = await _db.Floors
-				.Where(n => n.FloorNumber == floor && n.BuildingName == building)
-				.Include(n => n.Positions)
-				.AsNoTracking()
-				.FirstOrDefaultAsync();
+			var floor = await _floors.GetFloor(floorNumber, buildingName);
+			if (floor == null || floor.Id == null)
+			{
+				return null;
+			}
+			var positions = await _positions.GetFloorPositions(floor.Id.Value);
 
-			if (floorScheme == null || !floorScheme.Positions.Any())
+			if (!positions.Any())
 			{
 				return null;
 			}
 
-			return new FloorDTO
-			{
-				Id = floorScheme.Id,
-				BuildingName = floorScheme.BuildingName,
-				FloorNumber = floorScheme.FloorNumber,
-				ImageLink = floorScheme.ImageLink,
-				Positions = floorScheme.Positions
-					.Select(n => new PositionDTO
-					{
-						Id = n.Id,
-						Type = n.Type,
-						Name = n.Name,
-						Description = n.Description,
-						X = n.X,
-						Y = n.Y
-					})
-			};
+			return floor.ToDTO(positions.Select(n => n.ToDTO()));
 		}
 	}
 }

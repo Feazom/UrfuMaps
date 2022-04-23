@@ -6,24 +6,25 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
+using UrfuMaps.Api.Repositories;
 using BC = BCrypt.Net.BCrypt;
 
 namespace UrfuMaps.Api.Services
 {
 	public class UserService : IUserService
 	{
-		private readonly AppDbContext _db;
+		private readonly IUserRepository _users;
 		private readonly IOptions<AuthOptions> _authOptions;
 
-		public UserService(AppDbContext context, IOptions<AuthOptions> authOptions)
+		public UserService(IUserRepository users, IOptions<AuthOptions> authOptions)
 		{
-			_db = context;
+			_users = users;
 			_authOptions = authOptions;
 		}
 
 		public async Task<User?> Authenticate(User user)
 		{
-			var account = await _db.Users.FindAsync(user.Login);
+			var account = await _users.Find(user.Login);
 
 			if (account == null || !BC.Verify(user.Password, account.Password, true, BCrypt.Net.HashType.SHA256))
 			{
@@ -42,8 +43,7 @@ namespace UrfuMaps.Api.Services
 					true,
 					BCrypt.Net.HashType.SHA256));
 
-			_db.Users.Add(account);
-			await _db.SaveChangesAsync();
+			await _users.Add(account);
 		}
 
 		public string GenerateJWT(User user)

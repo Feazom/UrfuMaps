@@ -1,5 +1,5 @@
 type PositionDTO = {
-	id: string;
+	id: number;
 	name: string;
 	description: string;
 	x: number;

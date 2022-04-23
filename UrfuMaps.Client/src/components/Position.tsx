@@ -67,7 +67,6 @@ const Position = ({ position, setPosition }: PositionProps) => {
 				description: position.description,
 				x: position.x,
 				y: position.y,
-				relatedWith: position.relatedWith,
 			});
 		}
 	}
@@ -81,7 +80,6 @@ const Position = ({ position, setPosition }: PositionProps) => {
 				description: event.currentTarget.value,
 				x: position.x,
 				y: position.y,
-				relatedWith: position.relatedWith,
 			});
 		}
 	}
@@ -104,7 +102,6 @@ const Position = ({ position, setPosition }: PositionProps) => {
 					description: position.description,
 					x: position.x,
 					y: position.y,
-					relatedWith: position.relatedWith,
 				});
 			}
 		}

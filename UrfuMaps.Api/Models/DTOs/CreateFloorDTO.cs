@@ -10,5 +10,6 @@ namespace UrfuMaps.Api.Models
 		public int? FloorNumber { get; set; }
 		public string? ImageLink { get; set; }
 		public IEnumerable<CreatePositionDTO> Positions { get; set; } = new List<CreatePositionDTO>();
+		public IEnumerable<EdgeDTO> Edges { get; set; } = new List<EdgeDTO>();
 	}
 }

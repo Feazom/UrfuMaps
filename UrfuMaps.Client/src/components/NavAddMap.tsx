@@ -7,6 +7,7 @@ import {
 } from 'react';
 import CreateFloorDTO from '../DTOs/CreateFloorDTO';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
+import { EdgeDTO } from '../DTOs/EdgeDTO';
 import { addMap } from '../services/RequestService';
 import './NavMap.css';
 import Position from './Position';
@@ -18,21 +19,11 @@ type AddMapProps = {
 	positions: CreatePositionDTO[];
 	setPositions: Dispatch<SetStateAction<CreatePositionDTO[]>>;
 	setLink: Dispatch<SetStateAction<string>>;
-	// selected: PointSelected;
-	// setSelected: Dispatch<SetStateAction<PointSelected>>;
-	// sourceId: number | undefined;
-	// destinationId: number | undefined;
-	// addingEdge: boolean;
-	// setAddingEdge: Dispatch<SetStateAction<boolean>>;
+	edges: Set<EdgeDTO>;
 };
 
 const NavAddMap = ({
-	// addingEdge,
-	// setAddingEdge,
-	// sourceId,
-	// destinationId,
-	// selected,
-	// setSelected,
+	edges,
 	setEditedPosition,
 	editedPosition,
 	setLink,
@@ -73,38 +64,18 @@ const NavAddMap = ({
 			buildingName,
 			imageLink: link,
 			positions,
+			edges: Array.from(edges),
 		};
 
 		// console.log(data);
-		console.log(
-			floorNumber &&
-				buildingName &&
-				link &&
-				positions.every(
-					(p) =>
-						p.type &&
-						p.localId &&
-						p.type &&
-						p.relatedWith.length !== 0 &&
-						p.x &&
-						p.y
-				)
-		);
 
 		if (
 			floorNumber &&
 			buildingName &&
 			link &&
 			positions.length > 0 &&
-			positions.every(
-				(p) =>
-					p.type &&
-					p.localId &&
-					p.type &&
-					p.relatedWith.length !== 0 &&
-					p.x &&
-					p.y
-			)
+			Array.from(edges).length > 0 &&
+			positions.every((p) => p.type && p.localId && p.type && p.x && p.y)
 		) {
 			console.log(data);
 

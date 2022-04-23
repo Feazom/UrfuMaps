@@ -14,7 +14,7 @@ export function getMap(floorNumber: number, buildingName: string) {
 	);
 }
 
-export function getRoute(sourceId: string, destinationId: string) {
+export function getRoute(sourceId: number, destinationId: number) {
 	return fetch(
 		`${ApiUrl}/route?source=${sourceId}&destination=${destinationId}`,
 		{
