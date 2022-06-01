@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace UrfuMaps.Api.Models
+﻿namespace UrfuMaps.Api.Models
 {
 	public class EdgeDTO
 	{

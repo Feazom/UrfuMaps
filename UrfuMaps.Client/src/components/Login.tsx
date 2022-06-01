@@ -1,56 +1,40 @@
-import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
+import { FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { signin } from '../services/AuthService';
-import './Login.css';
+import '../styles/login.css';
 
-type LoginProps = {
-	setIsAuth: Dispatch<SetStateAction<boolean>>;
-};
-
-const Login = ({ setIsAuth }: LoginProps) => {
-	const [login, setLogin] = useState('');
-	const [password, setPassword] = useState('');
-
-	function handleLoginChange(event: FormEvent<HTMLInputElement>) {
-		setLogin(event.currentTarget.value);
-	}
-
-	function handlePasswordChange(event: FormEvent<HTMLInputElement>) {
-		setPassword(event.currentTarget.value);
-	}
+const Login = () => {
+	const navigate = useNavigate();
 
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
-		const response = await signin(login, password);
-		if (response) {
-			setIsAuth(true);
+
+		const formData = new FormData(event.currentTarget);
+
+		const login = formData.get('login')?.toString();
+		const password = formData.get('password')?.toString();
+
+		if (login && password) {
+			await signin(login, password);
 		}
+		navigate('/add', { replace: true });
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className="login-form">
-			<div className="login">
+		<div>
+			<form onSubmit={handleSubmit} className="login-form">
 				<label>Логин:</label>
-				<input
-					name="login"
-					placeholder="Логин"
-					size={15}
-					value={login}
-					onChange={handleLoginChange}
-				/>
-			</div>
-			<div className="password">
+				<input name="login" placeholder="Логин" size={15} />
 				<label>Пароль:</label>
 				<input
 					type="password"
 					name="password"
 					placeholder="Пароль"
 					size={15}
-					value={password}
-					onChange={handlePasswordChange}
 				/>
-			</div>
-			<input type="submit" />
-		</form>
+				<input type="submit" />
+			</form>
+		</div>
 	);
 };
 

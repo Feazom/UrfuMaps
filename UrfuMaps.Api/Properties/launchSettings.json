@@ -1,35 +1,35 @@
 {
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:61180/",
-      "sslPort": 44387
-    }
-  },
-  "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+    "iisSettings": {
+        "windowsAuthentication": false,
+        "anonymousAuthentication": true,
+        "iisExpress": {
+            "applicationUrl": "http://localhost:61180/",
+            "sslPort": 44387
+        }
     },
-    "UrfuMaps.Api": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "dotnetRunMessages": "true",
-      "nativeDebugging": false,
-      "applicationUrl": "http://localhost:5000"
-    },
-    "WSL": {
-      "commandName": "WSL2",
-      "environmentVariables": {
-        "ASPNETCORE_URLS": "http://localhost:5000",
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "distributionName": ""
+    "profiles": {
+        "IIS Express": {
+            "commandName": "IISExpress",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        "UrfuMaps.Api": {
+            "commandName": "Project",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "dotnetRunMessages": "true",
+            "nativeDebugging": false,
+            "applicationUrl": "http://192.168.1.102:5000"
+        },
+        "WSL": {
+            "commandName": "WSL2",
+            "environmentVariables": {
+                "ASPNETCORE_URLS": "http://localhost:5000",
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "distributionName": ""
+        }
     }
-  }
 }

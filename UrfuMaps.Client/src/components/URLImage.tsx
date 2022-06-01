@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { LegacyRef } from 'react';
+import { Dispatch, forwardRef, memo, SetStateAction, useEffect } from 'react';
 import { Image } from 'react-konva';
 import useImage from 'use-image';
 
@@ -12,53 +12,64 @@ interface URLImageProps {
 	onClick?: (evt: KonvaEventObject<globalThis.MouseEvent>) => void;
 	x?: number;
 	y?: number;
+	setUpdate?: Dispatch<SetStateAction<boolean>>;
 }
 
-const URLImage = ({
-	src,
-	x,
-	y,
-	maxWidth,
-	maxHeight,
-	centered,
-	onClick,
-}: URLImageProps) => {
-	const image = useImage(src)[0];
+let previousStatus = 'loading';
 
-	const localX = x ? x : 0;
-	const localY = y ? y : 0;
-	let ratio = 0;
-	let width = maxWidth;
-	let height = maxHeight;
-	if (maxHeight && maxWidth && image) {
-		ratio = image.width / image.height;
-		if (maxWidth / maxHeight > ratio) {
-			height = maxHeight;
-			width = ratio * maxHeight;
-		} else {
+const URLImage = forwardRef<Konva.Image, URLImageProps>(
+	({ src, x, y, maxWidth, maxHeight, centered, onClick, setUpdate }, ref) => {
+		const [image, status] = useImage(src);
+
+		useEffect(() => {
+			if (setUpdate && status !== previousStatus) {
+				previousStatus = status;
+				setUpdate((v) => !v);
+			}
+		});
+
+		const handleClick = (evt: KonvaEventObject<MouseEvent>) => {
+			if (onClick) {
+				return onClick(evt);
+			}
+		};
+
+		const localX = x ? x : 0;
+		const localY = y ? y : 0;
+		let width: number | undefined;
+		let height: number | undefined;
+
+		if (status === 'loaded') {
 			width = maxWidth;
-			height = maxWidth / ratio;
-		}
-	}
-
-	function handleClick(event: KonvaEventObject<MouseEvent>) {}
-
-	return (
-		<Image
-			x={centered && width ? localX - width / 2 : localX}
-			y={localY}
-			image={image}
-			width={width}
-			height={height}
-			onClick={(evt) => {
-				if (onClick) {
-					return onClick(evt);
+			height = maxHeight;
+			if (maxHeight && maxWidth && image) {
+				const ratio = image.width / image.height;
+				if (maxWidth / maxHeight > ratio) {
+					height = maxHeight;
+					width = ratio * maxHeight;
 				} else {
-					return handleClick(evt);
+					width = maxWidth;
+					height = maxWidth / ratio;
 				}
-			}}
-		/>
-	);
-};
+			}
+		}
 
-export default URLImage;
+		return (
+			<>
+				{status === 'loaded' && (
+					<Image
+						ref={ref}
+						x={centered && width ? localX - width / 2 : localX}
+						y={centered && height ? localY - height / 2 : localY}
+						image={image}
+						width={width}
+						height={height}
+						onClick={handleClick}
+					/>
+				)}
+			</>
+		);
+	}
+);
+
+export default memo(URLImage);

@@ -1,5 +1,12 @@
 import { Vector2d } from 'konva/lib/types';
 
+export type TouchMoveResult = {
+	scale: number;
+	newPosition: Vector2d;
+	lastDistance: number;
+	lastCenter: Vector2d;
+};
+
 export type Point = Vector2d & {
 	id: number;
 };

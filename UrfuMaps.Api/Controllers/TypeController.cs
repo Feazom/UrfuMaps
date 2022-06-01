@@ -6,6 +6,7 @@ namespace UrfuMaps.Api.Controllers
 {
 	[ApiController]
 	[Route("/type")]
+	[Produces("application/json")]
 	public class TypeController : ControllerBase
 	{
 		private readonly ITypeService _typeService;

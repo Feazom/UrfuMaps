@@ -5,12 +5,13 @@ import {
 	useEffect,
 	useState,
 } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CreateFloorDTO from '../DTOs/CreateFloorDTO';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
-import { EdgeDTO } from '../DTOs/EdgeDTO';
 import EdgeDTOSet from '../EdgeDTOSet';
+import { logout } from '../services/AuthService';
 import { addMap } from '../services/RequestService';
-import './NavMap.css';
+import '../styles/navMap.css';
 import Position from './Position';
 
 type AddMapProps = {
@@ -35,6 +36,7 @@ const NavAddMap = ({
 	const [floorNumber, setFloorNumber] = useState(NaN);
 	const [buildingName, setBuildingName] = useState('');
 	const [message, setMessage] = useState('');
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -53,10 +55,6 @@ const NavAddMap = ({
 		setLink(event.currentTarget.value);
 	}
 
-	// function handleButtonClick() {
-	// 	setAddingEdge(true);
-	// }
-
 	async function submitMap(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
@@ -67,7 +65,7 @@ const NavAddMap = ({
 			positions,
 			edges: Array.from(edges),
 		};
-		
+
 		if (
 			floorNumber &&
 			buildingName &&
@@ -137,21 +135,15 @@ const NavAddMap = ({
 				setPosition={setEditedPosition}
 			/>
 
-			{/* {addingEdge ? (
-				<Edge
-					positions={positions}
-					setPositions={setPositions}
-					setAddingEdge={setAddingEdge}
-					setSelected={setSelected}
-					selected={selected}
-					sourceId={sourceId}
-					destinationId={destinationId}
-				/>
-			) : (
-				<button style={{ margin: '10px' }} onClick={handleButtonClick}>
-					+ связь
-				</button>
-			)} */}
+			<input
+				className="logout-button"
+				type="submit"
+				onClick={() => {
+					logout();
+					navigate('/');
+				}}
+				value="Выйти"
+			/>
 		</div>
 	);
 };

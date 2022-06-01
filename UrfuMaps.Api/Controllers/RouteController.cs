@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using UrfuMaps.Api.Models;
 using UrfuMaps.Api.Services;
 
 namespace UrfuMaps.Api.Controllers
 {
 	[ApiController]
 	[Route("/route")]
+	[Produces("application/json")]
 	public class RouteController : ControllerBase
 	{
 		private readonly IRouteService _routeService;
@@ -17,14 +20,14 @@ namespace UrfuMaps.Api.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IEnumerable<string>> Get([FromQuery] string source, [FromQuery] string destination)
+		public async Task<ActionResult<IEnumerable<RouteSegment>>> Get([FromQuery] int source, [FromQuery] int destination)
 		{
 			var route = await _routeService.GetRoute(source, destination);
-			if (route == null)
+			if (route is null)
 			{
 				NoContent();
 			}
-			return route!;
+			return Ok(await _routeService.GetSegments(route!.ToArray()));
 		}
 	}
 }

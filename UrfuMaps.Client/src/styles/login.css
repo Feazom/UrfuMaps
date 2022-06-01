@@ -1,0 +1,21 @@
+.login-page {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: space-around;
+}
+
+.login-form {
+	margin: 20px;
+	display: grid;
+	grid-template-columns: 80px 100px;
+	gap: 5px;
+	width: 250px;
+}
+
+.login-form .login,
+.login-form .password {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 5px;
+}

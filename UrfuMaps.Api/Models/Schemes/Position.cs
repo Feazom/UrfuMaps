@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UrfuMaps.Api.Models
 {
-	public class Position: ICloneable
+	public class Position : ICloneable
 	{
 		public int? Id { get; set; }
 		public int? FloorId { get; set; }

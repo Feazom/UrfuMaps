@@ -1,113 +1,90 @@
-import {
-	useState,
-	useEffect,
-	FormEvent,
-	SetStateAction,
-	Dispatch,
-} from 'react';
-import InfoDTO from '../DTOs/InfoDTO';
-import './NavMap.css';
-import { getInfo } from '../services/RequestService';
+import { FormEvent, SetStateAction, Dispatch, memo, useContext } from 'react';
+import '../styles/navMap.css';
 import { convertCabinet } from '../services/utils';
+import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
+import { OrientationContext } from '../context';
 
 type MapProps = {
-	setFloorNumber: Function;
-	floorNumber: number;
-	buildingName: string;
-	setBuildingName: Dispatch<SetStateAction<string>>;
+	destination: string;
+	source: string;
 	setDestination: Dispatch<SetStateAction<string>>;
+	segmentSelector: JSX.Element;
 	setSource: Dispatch<SetStateAction<string>>;
+	route: RouteSegmentDTO[];
 };
 
 const NavMap = ({
-	setFloorNumber,
-	floorNumber,
-	buildingName,
-	setBuildingName,
+	destination,
+	source,
 	setDestination,
 	setSource,
+	route,
+	segmentSelector,
 }: MapProps) => {
-	const [buildingList, setBuildingList] = useState<Record<string, number[]>>(
-		{}
-	);
+	const orientation = useContext(OrientationContext);
 
-	useEffect(() => {
-		(async () => {
-			const response = await getInfo();
-			const info: InfoDTO[] = await response.json();
-			const buildings: Record<string, number[]> = {};
-			info.forEach((e) => {
-				buildings[e.buildingName] = e.floorList;
-			});
-			setBuildingList(buildings);
-		})();
-	}, []);
-
-	function handleFloorChange(event: FormEvent<HTMLSelectElement>) {
-		setFloorNumber(event.currentTarget.value);
-	}
-
-	function handleBuildingChange(event: FormEvent<HTMLSelectElement>) {
-		setBuildingName(event.currentTarget.value);
-	}
-
-	function handleDestinationChange(event: FormEvent<HTMLInputElement>) {
+	const handleDestinationChange = (event: FormEvent<HTMLInputElement>) => {
 		setDestination(convertCabinet(event.currentTarget.value));
-	}
+	};
 
-	function handleSourceChange(event: FormEvent<HTMLInputElement>) {
+	const handleSourceChange = (event: FormEvent<HTMLInputElement>) => {
 		setSource(convertCabinet(event.currentTarget.value));
-	}
+	};
+
+	const handlePosition = () => {};
 
 	return (
-		<div className="app-header">
-			<div className="floor-select">
-				<span>Этаж: </span>
-				<select
-					value={floorNumber}
-					onChange={handleFloorChange}
-					onLoad={handleFloorChange}
-				>
-					{buildingList[buildingName]?.map((floorNumber) => {
-						return <option key={floorNumber}>{floorNumber}</option>;
-					})}
-				</select>
-			</div>
-			<div className="building-select">
-				<span>Здание: </span>
-				<select
-					onChange={handleBuildingChange}
-					onLoad={handleBuildingChange}
-				>
-					{Object.keys(buildingList)?.map((buildingName) => {
-						return (
-							<option key={buildingName}>{buildingName}</option>
-						);
-					})}
-				</select>
-			</div>
-			<div className="src-select">
-				<span>Откуда: </span>
-				<div>
-					<input
-						placeholder="Поиск..."
-						onChange={handleSourceChange}
-						size={5}
-					/>
-				</div>
-			</div>
-			<div className="dest-select">
+		<div
+			className={
+				orientation === 'landscape'
+					? 'nav-landscape nav-header'
+					: 'nav-portrait nav-header'
+			}
+		>
+			<div
+				className={
+					orientation === 'landscape'
+						? 'cab-select-landscape'
+						: 'cab-select-portrait'
+				}
+			>
 				<span>Куда: </span>
+
 				<div>
+					<img
+						onClick={handlePosition}
+						className="marker-icon"
+						src="marker.svg"
+					/>
 					<input
+						value={destination}
 						placeholder="Поиск..."
 						onChange={handleDestinationChange}
 						size={5}
 					/>
 				</div>
 			</div>
+			<div
+				className={
+					orientation === 'landscape'
+						? 'cab-select-landscape'
+						: 'cab-select-portrait'
+				}
+			>
+				<span>Откуда: </span>
+
+				<div>
+					<img className="marker-icon" src="point.svg" />
+					<input
+						value={source}
+						placeholder="Поиск..."
+						onChange={handleSourceChange}
+						size={5}
+					/>
+				</div>
+			</div>
+			{segmentSelector}
 		</div>
 	);
 };
-
-export default NavMap;
+export default memo(NavMap);

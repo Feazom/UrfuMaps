@@ -9,11 +9,10 @@ import {
 } from 'react';
 import { Circle, Layer, Line, Stage } from 'react-konva';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
-import { EdgeDTO } from '../DTOs/EdgeDTO';
 import EdgeDTOSet from '../EdgeDTOSet';
 import EdgeSet from '../EdgeSet';
-import { Edge, Point, PointSelected } from '../types';
-import './UploadMap.css';
+import { Edge, PointSelected } from '../types';
+import '../styles/uploadMap.css';
 import URLImage from './URLImage';
 
 type MapEditProps = {
@@ -71,13 +70,23 @@ const MapEdit = ({
 	useEffect(() => {
 		if (edge?.source?.id === edge?.destination?.id && edge?.source?.id) {
 			const id = edge?.source.id;
-			if (selected.type === 'position' || selected.type == null) {
-				if (selected.id === id) {
-					setSelected({ type: null });
-				} else {
-					setSelected({ type: 'position', id });
+			setSelected((sel) => {
+				if (sel.type === 'position' || sel.type == null) {
+					if (sel.id === id) {
+						return { type: null };
+					} else {
+						return { type: 'position', id };
+					}
 				}
-			}
+				return sel;
+			});
+			// if (selected.type === 'position' || selected.type == null) {
+			// 	if (selected.id === id) {
+			// 		setSelected({ type: null });
+			// 	} else {
+			// 		setSelected({ type: 'position', id });
+			// 	}
+			// }
 		} else {
 			if (edge?.source?.id && edge?.destination?.id) {
 				setPointEdges((e) => {
