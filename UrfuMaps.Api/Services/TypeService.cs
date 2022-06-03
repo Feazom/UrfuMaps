@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Repositories;
 
 namespace UrfuMaps.Api.Services
 {
+	public interface ITypeService
+	{
+		Task<IEnumerable<string>> GetTypes();
+	}
+
 	public class TypeService : ITypeService
 	{
 		private readonly ITypeRepository _types;

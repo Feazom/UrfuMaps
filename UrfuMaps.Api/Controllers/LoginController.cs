@@ -7,6 +7,7 @@ namespace UrfuMaps.Api.Controllers
 {
 	[ApiController]
 	[Route("/login")]
+	[Produces("application/json")]
 	public class LoginController : ControllerBase
 	{
 		private readonly IUserService _userService;

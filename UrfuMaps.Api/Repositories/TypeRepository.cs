@@ -1,12 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using UrfuMaps.Api.Models;
 
 namespace UrfuMaps.Api.Repositories
 {
+	public interface ITypeRepository
+	{
+		public Task AddIfNotExist(string type);
+		public Task<List<string>> GetAll();
+	}
+
 	public class TypeRepository : Repository, ITypeRepository
 	{
 		public TypeRepository(AppDbContext context) : base(context) { }

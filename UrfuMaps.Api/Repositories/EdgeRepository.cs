@@ -1,13 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
+using System.Linq;
+using System;
 
 namespace UrfuMaps.Api.Repositories
 {
+	public interface IEdgeRepository
+	{
+		public Task Add(Edge edge);
+		public Task<List<GraphEdge>> GetAll();
+	}
+
 	public class EdgeRepository : Repository, IEdgeRepository
 	{
 		public EdgeRepository(AppDbContext context) : base(context) { }
@@ -31,9 +37,11 @@ namespace UrfuMaps.Api.Repositories
 					fromPoint.""Id"",
 					fromPoint.""X"",
                     fromPoint.""Y"",
+					fromPoint.""Type"",
                     toPoint.""Id"",
                     toPoint.""X"",
-                    toPoint.""Y""
+                    toPoint.""Y"",
+					toPoint.""Type""
 				from ""Edges""
 					join ""Positions"" fromPoint on fromPoint.""Id"" = ""Edges"".""FromId""
 					join ""Positions"" toPoint on toPoint.""Id"" = ""Edges"".""ToId""";
@@ -52,11 +60,13 @@ namespace UrfuMaps.Api.Repositories
 							new PositionNode(
 								reader.GetInt32(0),
 								reader.GetDouble(1),
-								reader.GetDouble(2)
+								reader.GetDouble(2),
+								reader.GetString(3)
 							), new PositionNode(
-								reader.GetInt32(3),
-								reader.GetDouble(4),
-								reader.GetDouble(5)
+								reader.GetInt32(4),
+								reader.GetDouble(5),
+								reader.GetDouble(6),
+								reader.GetString(7)
 							)
 						));
 					}

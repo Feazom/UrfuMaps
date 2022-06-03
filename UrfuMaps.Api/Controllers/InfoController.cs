@@ -7,6 +7,7 @@ namespace UrfuMaps.Api.Controllers
 {
 	[ApiController]
 	[Route("/info")]
+	[Produces("application/json")]
 	public class InfoController : ControllerBase
 	{
 		private readonly IInfoService _infoService;

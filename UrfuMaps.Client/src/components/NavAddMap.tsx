@@ -5,12 +5,13 @@ import {
 	useEffect,
 	useState,
 } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CreateFloorDTO from '../DTOs/CreateFloorDTO';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
-import { EdgeDTO } from '../DTOs/EdgeDTO';
-import EdgeDTOSet from '../EdgeDTOSet';
+import { logout } from '../services/AuthService';
 import { addMap } from '../services/RequestService';
-import './NavMap.css';
+import '../styles/navMap.css';
+import { EdgeDTODict } from '../types';
 import Position from './Position';
 
 type AddMapProps = {
@@ -18,9 +19,8 @@ type AddMapProps = {
 	editedPosition: CreatePositionDTO | null;
 	link: string;
 	positions: CreatePositionDTO[];
-	setPositions: Dispatch<SetStateAction<CreatePositionDTO[]>>;
 	setLink: Dispatch<SetStateAction<string>>;
-	edges: EdgeDTOSet;
+	edges: React.MutableRefObject<EdgeDTODict>;
 };
 
 const NavAddMap = ({
@@ -30,11 +30,11 @@ const NavAddMap = ({
 	setLink,
 	link,
 	positions,
-	setPositions,
 }: AddMapProps) => {
 	const [floorNumber, setFloorNumber] = useState(NaN);
 	const [buildingName, setBuildingName] = useState('');
 	const [message, setMessage] = useState('');
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -53,10 +53,6 @@ const NavAddMap = ({
 		setLink(event.currentTarget.value);
 	}
 
-	// function handleButtonClick() {
-	// 	setAddingEdge(true);
-	// }
-
 	async function submitMap(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
@@ -65,15 +61,16 @@ const NavAddMap = ({
 			buildingName,
 			imageLink: link,
 			positions,
-			edges: Array.from(edges),
+			edges: edges.current.keys(),
 		};
-		
+		console.log(data);
+
 		if (
 			floorNumber &&
 			buildingName &&
 			link &&
 			positions.length > 0 &&
-			Array.from(edges).length > 0 &&
+			edges.current.keys().length > 0 &&
 			positions.every((p) => p.type && p.localId && p.type && p.x && p.y)
 		) {
 			await addMap(data);
@@ -137,21 +134,15 @@ const NavAddMap = ({
 				setPosition={setEditedPosition}
 			/>
 
-			{/* {addingEdge ? (
-				<Edge
-					positions={positions}
-					setPositions={setPositions}
-					setAddingEdge={setAddingEdge}
-					setSelected={setSelected}
-					selected={selected}
-					sourceId={sourceId}
-					destinationId={destinationId}
-				/>
-			) : (
-				<button style={{ margin: '10px' }} onClick={handleButtonClick}>
-					+ связь
-				</button>
-			)} */}
+			<input
+				className="logout-button"
+				type="submit"
+				onClick={() => {
+					logout();
+					navigate('/');
+				}}
+				value="Выйти"
+			/>
 		</div>
 	);
 };

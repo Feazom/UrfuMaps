@@ -1,36 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import NavAddMap from '../components/NavAddMap';
 import MapEdit from '../components/MapEdit';
-import Login from '../components/Login';
-import { checkAuth } from '../services/RequestService';
-import { logout } from '../services/AuthService';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
 import Konva from 'konva';
-import { PointSelected } from '../types';
-import { EdgeDTO } from '../DTOs/EdgeDTO';
-import EdgeDTOSet from '../EdgeDTOSet';
+import { EdgeDTODict, PointSelected } from '../types';
 
 const AddMap = () => {
 	const [editedPosition, setEditedPosition] =
 		useState<CreatePositionDTO | null>(null);
 	const [link, setLink] = useState('');
 	const [positions, setPositions] = useState<CreatePositionDTO[]>([]);
-	const [edges, setEdges] = useState<EdgeDTOSet>(new EdgeDTOSet([]));
+	// const [edges, setEdges] = useState<EdgeDTOSet>(new EdgeDTOSet([]));
+	const edges = useRef<EdgeDTODict>(new EdgeDTODict([]));
 	const [selected, setSelected] = useState<PointSelected>({ type: null });
-	const [isAuth, setIsAuth] = useState(false);
 
 	Konva.dragButtons = [1];
 
-	useEffect(() => {
-		(async () => {
-			const response = await checkAuth();
-			if (response.ok) {
-				setIsAuth(true);
-			} else {
-				setIsAuth(false);
-			}
-		})();
-	}, []);
+	// useEffect(() => {
+	// 	console.log(edges.current);
+	// }, [edges.current]);
 
 	useEffect(() => {
 		setPositions((elements) =>
@@ -56,46 +44,24 @@ const AddMap = () => {
 
 	return (
 		<div className="App">
-			{isAuth ? (
-				<div>
-					<input
-						className="logout-button"
-						type="submit"
-						onClick={() => {
-							logout();
-							setIsAuth(false);
-						}}
-						value="Выйти"
-					/>
-					<NavAddMap
-						editedPosition={editedPosition}
-						setEditedPosition={setEditedPosition}
-						edges={edges}
-						setLink={setLink}
-						link={link}
-						positions={positions}
-						setPositions={setPositions}
-						// selected={selected}
-						// setSelected={setSelected}
-						// sourceId={sourceId}
-						// destinationId={destinationId}
-					/>
-					<MapEdit
-						setPositions={setPositions}
-						setSelected={setSelected}
-						selected={selected}
-						setEdges={setEdges}
-						link={link}
-						positions={positions}
-						// setSourceId={setSourceId}
-						// setDestinationId={setDestinationId}
-						// sourceId={sourceId}
-						// destinationId={destinationId}
-					/>
-				</div>
-			) : (
-				<Login setIsAuth={setIsAuth} />
-			)}
+			<div>
+				<NavAddMap
+					editedPosition={editedPosition}
+					setEditedPosition={setEditedPosition}
+					edges={edges}
+					setLink={setLink}
+					link={link}
+					positions={positions}
+				/>
+				<MapEdit
+					setPositions={setPositions}
+					setSelected={setSelected}
+					selected={selected}
+					edges={edges}
+					link={link}
+					positions={positions}
+				/>
+			</div>
 		</div>
 	);
 };

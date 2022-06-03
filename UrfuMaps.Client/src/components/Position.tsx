@@ -7,7 +7,7 @@ import {
 } from 'react';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
 import CreatebleSelect from 'react-select/creatable';
-import './Position.css';
+import '../styles/position.css';
 import { getTypes } from '../services/RequestService';
 import { ActionMeta, SingleValue } from 'react-select';
 
@@ -28,8 +28,7 @@ const Position = ({ position, setPosition }: PositionProps) => {
 
 	useEffect(() => {
 		(async () => {
-			const response = await getTypes();
-			const types: string[] = await response.json();
+			const types = await getTypes();
 			if (types.length > 0) {
 				setTypes((t) => {
 					let arr = t;
@@ -104,10 +103,6 @@ const Position = ({ position, setPosition }: PositionProps) => {
 				});
 			}
 		}
-	}
-
-	async function loadTypes() {
-		return types;
 	}
 
 	return (

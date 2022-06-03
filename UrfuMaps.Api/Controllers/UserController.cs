@@ -5,6 +5,7 @@ namespace UrfuMaps.Api.Controllers
 {
 	[ApiController]
 	[Route("/user")]
+	[Produces("application/json")]
 	public class UserController : ControllerBase
 	{
 		[Authorize]

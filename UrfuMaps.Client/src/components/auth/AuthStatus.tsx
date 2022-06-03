@@ -1,20 +1,19 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthProvider';
+import { logout, useAuth } from '../../services/AuthService';
 
 export const AuthStatus = () => {
 	const auth = useAuth();
 	const navigate = useNavigate();
 
-	if (!auth.user) {
+	if (!auth) {
 		return <p>You are not logged in.</p>;
 	}
 
 	return (
 		<p>
-			Welcome {auth.user}!{' '}
 			<button
 				onClick={async () => {
-					await auth.signout();
+					logout()
 					navigate('/');
 				}}
 			>

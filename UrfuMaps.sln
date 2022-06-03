@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrfuMaps.Api", "UrfuMaps.Api\UrfuMaps.Api.csproj", "{AB4FB04C-27EB-46C1-B973-DC6E7F473899}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrfuMapsApi.Test", "UrfuMapsApi.Test\UrfuMapsApi.Test.csproj", "{93D57294-C9CB-4FDC-AD04-F2D9AFC1A67D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrfuMaps.Api.Test", "UrfuMaps.Api.Test\UrfuMaps.Api.Test.csproj", "{93D57294-C9CB-4FDC-AD04-F2D9AFC1A67D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

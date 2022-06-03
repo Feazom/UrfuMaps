@@ -7,6 +7,7 @@ namespace UrfuMaps.Api.Controllers
 {
 	[ApiController]
 	[Route("/register")]
+	[Produces("application/json")]
 	public class RegisterController : ControllerBase
 	{
 		private readonly IUserService _userService;

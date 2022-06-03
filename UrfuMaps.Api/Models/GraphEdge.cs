@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace UrfuMaps.Api.Models
+﻿namespace UrfuMaps.Api.Models
 {
 	public class GraphEdge
 	{
@@ -17,17 +12,19 @@ namespace UrfuMaps.Api.Models
 		public PositionNode ToNode { get; set; }
 	}
 
-	public class PositionNode 
+	public class PositionNode
 	{
-		public PositionNode(int id, double x, double y)
+		public PositionNode(int id, double x, double y, string type)
 		{
 			Id = id;
 			X = x;
 			Y = y;
+			Type = type;
 		}
 
 		public int Id { get; set; }
 		public double X { get; set; }
 		public double Y { get; set; }
+		public string Type { get; set; }
 	}
 }

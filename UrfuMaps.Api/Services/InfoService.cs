@@ -6,6 +6,11 @@ using UrfuMaps.Api.Repositories;
 
 namespace UrfuMaps.Api.Services
 {
+	public interface IInfoService
+	{
+		Task<IEnumerable<InfoDTO>?> GetInfo();
+	}
+
 	public class InfoService : IInfoService
 	{
 		private readonly IFloorRepository _floors;

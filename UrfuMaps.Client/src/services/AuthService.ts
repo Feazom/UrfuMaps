@@ -1,14 +1,10 @@
 import UserDTO from '../DTOs/UserDTO';
-import TokenDTO from '../DTOs/TokenDTO';
 import { login as loginRequest } from './RequestService';
 
 export async function signin(login: string, password: string) {
 	const user: UserDTO = { login, password };
-	const response = await loginRequest(user);
-	let result: TokenDTO | undefined;
-	if (response.ok) {
-		result = await response.json();
-		
+	const result = await loginRequest(user);
+	if (result) {
 		if (result?.token) {
 			localStorage.setItem('user', JSON.stringify(result));
 		}
@@ -23,4 +19,12 @@ export function logout() {
 
 export function getCurrentUser() {
 	return JSON.stringify(localStorage.getItem('user'));
+}
+
+export function useAuth(): string | null {
+	const token = localStorage.getItem('user');
+	if (token) {
+		return token;
+	}
+	return null;
 }
