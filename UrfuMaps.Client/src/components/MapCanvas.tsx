@@ -49,18 +49,11 @@ const MapCanvas = ({
 	const [width, setWidth] = useState(window.innerWidth * 0.8);
 	const [height, setHeight] = useState(window.innerHeight * 0.95);
 	const forceUpdate = useForceUpdate();
-	const timeout = useRef<NodeJS.Timeout>();
+	const timeout = useRef<number>();
 	const orientation = useContext(OrientationContext);
 	const imageRef = useRef<Konva.Image>(null);
 	const [destinationMarker, setDestinationMarker] = useState<Point>();
 	const [sourceMarker, setSourceMarker] = useState<Point>();
-
-	// const backgroundHeight: number = imageRef.current?.getHeight();
-	// const backgroundWidth: number = imageRef.current?.getWidth();
-	// const offset = {
-	// 	x: imageRef.current?.x() || 0,
-	// 	y: imageRef.current?.y() || 0,
-	// };
 
 	useEffect(() => {
 		if (orientation === 'landscape') {
@@ -92,11 +85,11 @@ const MapCanvas = ({
 	}, [buildingName, floorNumber]);
 
 	useEffect(() => {
-		clearTimeout(timeout.current);
+		window.clearTimeout(timeout.current);
 		if (!source || !destination) {
 			setRoute([]);
 		} else {
-			timeout.current = setTimeout(async () => {
+			timeout.current = window.setTimeout(async () => {
 				try {
 					const sourceData = await getPosition(source);
 					const destinationData = await getPosition(destination);

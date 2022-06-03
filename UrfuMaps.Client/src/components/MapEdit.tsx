@@ -55,7 +55,7 @@ const MapEdit = ({
 	const lastId = useRef(1);
 	const [pointEdges, setPointEdges] = useState<EdgeDict>(new EdgeDict({}));
 	const [edgeSetted, setEdgeSetted] = useState(false);
-	const timeout = useRef<NodeJS.Timeout>();
+	const timeout = useRef<number>();
 	const [edge, setEdge] = useState<Edge>();
 	const forceUpdate = useForceUpdate();
 
@@ -73,8 +73,8 @@ const MapEdit = ({
 	}, [edgeSetted]);
 
 	useEffect(() => {
-		clearTimeout(timeout.current);
-		timeout.current = setTimeout(() => {
+		window.clearTimeout(timeout.current);
+		timeout.current = window.setTimeout(() => {
 			for (const key of pointEdges.keys()) {
 				edges.current.add(key);
 			}
