@@ -7,7 +7,7 @@ import TokenDTO from '../DTOs/TokenDTO';
 import UserDTO from '../DTOs/UserDTO';
 import authHeader from './AuthHeader';
 
-const ApiUrl = 'http://192.168.1.102:5000';
+const ApiUrl = '';
 
 export async function getMap(
 	floorNumber: number,
