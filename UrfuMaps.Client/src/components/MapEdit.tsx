@@ -6,14 +6,24 @@ import {
 	Dispatch,
 	useState,
 	useEffect,
+	MutableRefObject,
 } from 'react';
-import { Circle, Layer, Line, Stage } from 'react-konva';
+import { Circle, Layer, Line } from 'react-konva';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
-import EdgeDTOSet from '../EdgeDTOSet';
-import EdgeSet from '../EdgeSet';
-import { Edge, PointSelected } from '../types';
-import '../styles/uploadMap.css';
+import {
+	Edge,
+	EdgeDict,
+	EdgeDTODict,
+	keyFromString,
+	pair,
+	PointSelected,
+} from '../types';
+import styles from '../styles/mapEdit.module.css';
 import URLImage from './URLImage';
+import Konva from 'konva';
+import { apiPosition, canvaPosition, clone } from '../services/utils';
+import { useForceUpdate } from '../hooks';
+import DraggableStage from './DraggableStage';
 
 type MapEditProps = {
 	setPositions: Dispatch<SetStateAction<CreatePositionDTO[]>>;
@@ -21,25 +31,38 @@ type MapEditProps = {
 	link: string;
 	selected: PointSelected;
 	setSelected: Dispatch<SetStateAction<PointSelected>>;
-	setEdges: Dispatch<SetStateAction<EdgeDTOSet>>;
+	edges: MutableRefObject<EdgeDTODict>;
+};
+
+const circleRadius = 2;
+const lineWidth = 3;
+const bound = {
+	min: 0.5,
+	max: 20,
 };
 
 const MapEdit = ({
-	setEdges,
+	edges,
 	selected,
 	setSelected,
 	setPositions,
 	link,
 	positions,
 }: MapEditProps) => {
-	const width = window.innerWidth - 50;
-	const height = window.innerHeight - 170;
-	const layerRef = useRef<any>(null);
-	const circleRadius = 5;
-	const [lastId, setLastId] = useState(1);
-	const [pointEdges, setPointEdges] = useState<EdgeSet>(new EdgeSet([]));
+	const width = useRef(window.innerWidth - 40);
+	const height = useRef(window.innerHeight - 180);
+	const imageRef = useRef<Konva.Image>(null);
+	const lastId = useRef(1);
+	const [pointEdges, setPointEdges] = useState<EdgeDict>(new EdgeDict({}));
 	const [edgeSetted, setEdgeSetted] = useState(false);
+	const timeout = useRef<NodeJS.Timeout>();
 	const [edge, setEdge] = useState<Edge>();
+	const forceUpdate = useForceUpdate();
+
+	const offset = {
+		x: imageRef.current?.x() || 0,
+		y: imageRef.current?.y() || 0,
+	};
 
 	useEffect(() => {
 		if (edgeSetted) {
@@ -50,22 +73,19 @@ const MapEdit = ({
 	}, [edgeSetted]);
 
 	useEffect(() => {
-		const newEdges = new EdgeDTOSet([]);
-		for (const edge of pointEdges) {
-			if (edge.source?.id && edge.destination?.id)
-				newEdges.add({
-					sourceId: edge.source.id,
-					destinationId: edge.destination.id,
-				});
-		}
-		setEdges((e) => {
-			if (newEdges.edges.length === e.edges.length) {
-				return e;
-			} else {
-				return newEdges;
+		clearTimeout(timeout.current);
+		timeout.current = setTimeout(() => {
+			for (const key of pointEdges.keys()) {
+				edges.current.add(key);
 			}
-		});
-	}, [pointEdges]);
+			for (const keyString of edges.current
+				.keysString()
+				.filter((x) => !pointEdges.keysString().includes(x))) {
+				const key = keyFromString(keyString);
+				edges.current.remove(key);
+			}
+		}, 100);
+	}, [pointEdges, edges]);
 
 	useEffect(() => {
 		if (edge?.source?.id === edge?.destination?.id && edge?.source?.id) {
@@ -80,17 +100,10 @@ const MapEdit = ({
 				}
 				return sel;
 			});
-			// if (selected.type === 'position' || selected.type == null) {
-			// 	if (selected.id === id) {
-			// 		setSelected({ type: null });
-			// 	} else {
-			// 		setSelected({ type: 'position', id });
-			// 	}
-			// }
 		} else {
 			if (edge?.source?.id && edge?.destination?.id) {
 				setPointEdges((e) => {
-					const newEdges = new EdgeSet(e.edges);
+					const newEdges = clone(e);
 					newEdges.add(edge);
 					return newEdges;
 				});
@@ -98,34 +111,48 @@ const MapEdit = ({
 		}
 	}, [edge]);
 
-	function handleRightClick(event: KonvaEventObject<PointerEvent>) {
+	function handleRightClickCircle(event: KonvaEventObject<PointerEvent>) {
 		event.evt.preventDefault();
 		if (selected.type === 'position' || selected.type === null) {
 			const id = parseFloat(event.currentTarget.attrs.id);
 			setPositions((p) => p.filter((n) => n.localId !== id));
+			setPointEdges((e) => {
+				const newEdges = clone(e);
+				for (const key of e.keys()) {
+					if (id === key.destinationId || id === key.sourceId) {
+						newEdges.remove(key);
+					}
+				}
+				return newEdges;
+			});
 		}
+	}
+
+	function handleRightClickLine(event: KonvaEventObject<PointerEvent>) {
+		event.evt.preventDefault();
+		const key = keyFromString(event.target.attrs.id);
+		setPointEdges((e) => {
+			const newEdges = clone(e);
+			newEdges.remove(key);
+			return newEdges;
+		});
 	}
 
 	function handleMapClick(event: KonvaEventObject<globalThis.MouseEvent>) {
 		if (selected.type === 'position' || selected.type == null) {
-			const backgroundHeight: number =
-				layerRef?.current?.children?.[0]?.attrs?.height;
-			const backgroundWidth: number =
-				layerRef?.current?.children?.[0]?.attrs?.width;
-
 			const point = event.currentTarget.getRelativePointerPosition();
 
-			point.x = parseFloat(
-				((point.x / backgroundWidth) * 100).toFixed(4)
-			);
-			point.y = parseFloat(
-				((point.y / backgroundHeight) * 100).toFixed(4)
+			const newPoint = apiPosition(
+				point,
+				imageRef.current?.getHeight(),
+				imageRef.current?.getWidth(),
+				offset
 			);
 
 			const newPosition = {
-				localId: lastId,
-				x: point.x,
-				y: point.y,
+				localId: lastId.current,
+				x: newPoint.x,
+				y: newPoint.y,
 				name: '',
 				description: '',
 				relatedWith: [],
@@ -134,40 +161,38 @@ const MapEdit = ({
 
 			setPositions((p) => [...p, newPosition]);
 			setSelected({ type: 'position', id: newPosition.localId });
-			setLastId((l) => l + 1);
+			lastId.current = lastId.current + 1;
 		}
 	}
 
 	function handleDragMove(event: KonvaEventObject<DragEvent>) {
 		setPointEdges((e) => {
-			const newPointEdges = new EdgeSet(e.edges);
-			for (const edge of e) {
-				let src = edge.source;
-				let dst = edge.destination;
-				if (src && dst) {
-					if (src.id === parseInt(event.target.attrs.id)) {
-						src.x = parseFloat(event.target.attrs.x);
-						src.y = parseFloat(event.target.attrs.y);
-					}
+			const newEdge = clone(e);
+			const targetId = parseInt(event.target.attrs.id);
+			const x = parseFloat(event.target.attrs.x);
+			const y = parseFloat(event.target.attrs.y);
 
-					if (dst.id === parseInt(event.target.attrs.id)) {
-						dst.x = parseFloat(event.target.attrs.x);
-						dst.y = parseFloat(event.target.attrs.y);
-					}
-					newPointEdges.add({ source: src, destination: dst });
+			for (const key of newEdge.keys()) {
+				if (targetId === key.sourceId) {
+					const temp = newEdge.get(key.sourceId, key.destinationId)!;
+					newEdge.remove(key);
+					temp.source!.x = x;
+					temp.source!.y = y;
+					newEdge.add(temp);
 				}
-				newPointEdges.add(edge);
+				if (targetId === key.destinationId) {
+					const temp = newEdge.get(key.sourceId, key.destinationId)!;
+					newEdge.remove(key);
+					temp.destination!.x = x;
+					temp.destination!.y = y;
+					newEdge.add(temp);
+				}
 			}
-			return newPointEdges;
+			return newEdge;
 		});
 	}
 
 	function handleDragEnd(event: KonvaEventObject<DragEvent>) {
-		const backgroundHeight: number =
-			layerRef?.current?.children?.[0]?.attrs?.height;
-		const backgroundWidth: number =
-			layerRef?.current?.children?.[0]?.attrs?.width;
-
 		setPositions((p) =>
 			p.map((position) => {
 				if (position.localId === parseInt(event.target.attrs.id)) {
@@ -175,18 +200,20 @@ const MapEdit = ({
 						x: parseFloat(event.target.attrs.x),
 						y: parseFloat(event.target.attrs.y),
 					};
+					const convertedPoint = apiPosition(
+						point,
+						imageRef.current?.getHeight(),
+						imageRef.current?.getWidth(),
+						offset
+					);
 
 					return {
 						localId: position.localId,
 						name: position.name,
 						description: position.description,
 						type: position.type,
-						x: parseFloat(
-							((point.x / backgroundWidth) * 100).toFixed(4)
-						),
-						y: parseFloat(
-							((point.y / backgroundHeight) * 100).toFixed(4)
-						),
+						x: convertedPoint.x,
+						y: convertedPoint.y,
 					};
 				}
 				return position;
@@ -224,60 +251,70 @@ const MapEdit = ({
 				{ display: 'flex', flexDirection: 'column' } as CSSProperties
 			}
 		>
-			<Stage width={width} height={height} className="edited-map-image">
-				<Layer ref={layerRef}>
-					{link.length !== 0 ? (
+			<DraggableStage
+				width={width.current}
+				height={height.current}
+				className={styles.editmap}
+				scaleBound={bound}
+				imageRef={imageRef}
+			>
+				<Layer>
+					{link.length !== 0 && (
 						<>
 							<URLImage
+								ref={imageRef}
 								src={link}
-								maxWidth={width}
-								maxHeight={height}
+								maxWidth={width.current}
+								maxHeight={height.current}
 								onClick={handleMapClick}
+								setUpdate={forceUpdate}
 							/>
-							{Array.from(pointEdges).map((edge) => {
-								if (edge.destination && edge.source) {
-									return (
-										<Line
-											key={
-												edge.source.id.toString() +
-												edge.destination.id.toString()
-											}
-											lineJoin="round"
-											lineCap="round"
-											stroke="red"
-											strokeWidth={4}
-											points={[
-												edge.source.x,
-												edge.source.y,
-												edge.destination.x,
-												edge.destination.y,
-											]}
-										/>
-									);
-								}
-								return null;
+							{pointEdges.keys().map((key) => {
+								const keyString = pair(
+									key.sourceId,
+									key.destinationId
+								);
+								const edge = pointEdges.get(
+									key.sourceId,
+									key.destinationId
+								)!;
+								return (
+									<Line
+										id={keyString}
+										key={keyString}
+										lineJoin="round"
+										lineCap="round"
+										onContextMenu={handleRightClickLine}
+										stroke="red"
+										strokeWidth={lineWidth}
+										points={[
+											edge.source!.x,
+											edge.source!.y,
+											edge.destination!.x,
+											edge.destination!.y,
+										]}
+									/>
+								);
 							})}
 							{positions.map((position) => {
-								const backgroundHeight: number =
-									layerRef?.current?.children?.[0]?.attrs
-										?.height;
-								const backgroundWidth: number =
-									layerRef?.current?.children?.[0]?.attrs
-										?.width;
-
+								const convertedPoint = canvaPosition(
+									{
+										x: position.x,
+										y: position.y,
+									},
+									imageRef.current?.getHeight(),
+									imageRef.current?.getWidth(),
+									offset
+								);
 								return (
 									<Circle
 										id={position.localId.toString()}
 										key={position.localId}
-										x={(position.x / 100) * backgroundWidth}
-										y={
-											(position.y / 100) *
-											backgroundHeight
-										}
+										x={convertedPoint.x}
+										y={convertedPoint.y}
 										fill="red"
 										radius={circleRadius}
-										// onClick={handleCircleClick}
-										onContextMenu={handleRightClick}
+										onContextMenu={handleRightClickCircle}
 										strokeWidth={circleRadius / 2}
 										onDragEnd={handleDragEnd}
 										onDragMove={handleDragMove}
@@ -293,9 +330,9 @@ const MapEdit = ({
 								);
 							})}
 						</>
-					) : null}
+					)}
 				</Layer>
-			</Stage>
+			</DraggableStage>
 		</div>
 	);
 };

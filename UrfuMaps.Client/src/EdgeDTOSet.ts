@@ -13,7 +13,9 @@ class EdgeDTOSet {
 			exists =
 				exists ||
 				(e.destinationId === edge.destinationId &&
-					e.sourceId === edge.sourceId);
+					e.sourceId === edge.sourceId) ||
+				(e.destinationId === edge.sourceId &&
+					e.sourceId === edge.destinationId);
 			if (exists) {
 				break;
 			}

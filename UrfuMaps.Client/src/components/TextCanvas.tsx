@@ -8,9 +8,10 @@ type TextCanvasProps = {
 	y: number;
 };
 
+const fontSize = 12;
+const fontFamily = 'Calibry';
+
 const TextCanvas = ({ text, x, y }: TextCanvasProps) => {
-	const fontSize = 12;
-	const fontFamily = 'Calibry';
 	const textShape = new Konva.Text({
 		text,
 		fontSize,

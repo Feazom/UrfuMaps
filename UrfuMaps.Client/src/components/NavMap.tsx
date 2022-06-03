@@ -54,6 +54,7 @@ const NavMap = ({
 					<img
 						onClick={handlePosition}
 						className="marker-icon"
+						alt="dest-marker"
 						src="marker.svg"
 					/>
 					<input
@@ -74,7 +75,11 @@ const NavMap = ({
 				<span>Откуда: </span>
 
 				<div>
-					<img className="marker-icon" src="point.svg" />
+					<img
+						className="marker-icon"
+						src="point.svg"
+						alt="src-marker"
+					/>
 					<input
 						value={source}
 						placeholder="Поиск..."

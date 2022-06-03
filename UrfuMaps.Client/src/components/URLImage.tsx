@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
-import { Dispatch, forwardRef, memo, SetStateAction, useEffect } from 'react';
+import { forwardRef, memo, useEffect } from 'react';
 import { Image } from 'react-konva';
 import useImage from 'use-image';
 
@@ -12,21 +12,18 @@ interface URLImageProps {
 	onClick?: (evt: KonvaEventObject<globalThis.MouseEvent>) => void;
 	x?: number;
 	y?: number;
-	setUpdate?: Dispatch<SetStateAction<boolean>>;
+	setUpdate?: Function;
 }
-
-let previousStatus = 'loading';
 
 const URLImage = forwardRef<Konva.Image, URLImageProps>(
 	({ src, x, y, maxWidth, maxHeight, centered, onClick, setUpdate }, ref) => {
 		const [image, status] = useImage(src);
 
 		useEffect(() => {
-			if (setUpdate && status !== previousStatus) {
-				previousStatus = status;
-				setUpdate((v) => !v);
+			if (setUpdate && status === 'loaded') {
+				setUpdate();
 			}
-		});
+		}, [status]);
 
 		const handleClick = (evt: KonvaEventObject<MouseEvent>) => {
 			if (onClick) {

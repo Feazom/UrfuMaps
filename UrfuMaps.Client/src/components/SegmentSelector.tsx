@@ -34,7 +34,7 @@ const SegmentSelector = ({
 		}
 
 		return i + 1;
-	}, [buildingName, floorNumber]);
+	}, [buildingName, floorNumber, route]);
 
 	const [selectedSegment, setSelectedSegment] = useState<number>(segmentFind);
 	const previousSegmentCount = useRef(0);
@@ -42,12 +42,12 @@ const SegmentSelector = ({
 	// useEffect(() => {
 	// 	setSelectedSegment((s) => {
 	// 		const newSegment = segmentFind();
-	// 		if (s != newSegment) {
+	// 		if (s !== newSegment) {
 	// 			return newSegment;
 	// 		}
 	// 		return s;
 	// 	});
-	// }, [floorNumber, buildingName]);
+	// }, [segmentFind]);
 
 	useEffect(() => {
 		if (route.length > 0 && selectedSegment > 0) {

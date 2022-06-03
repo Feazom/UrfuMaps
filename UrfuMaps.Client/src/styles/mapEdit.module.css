@@ -1,0 +1,7 @@
+.editmap {
+	border: 2px solid black;
+	position: relative;
+	display: block;
+	overflow: auto;
+	box-sizing: border-box;
+}

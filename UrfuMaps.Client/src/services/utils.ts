@@ -86,6 +86,22 @@ export function getCenter(a: Vector2d, b: Vector2d): Vector2d {
 	};
 }
 
+export function clone<T>(origin: T): T {
+	return Object.assign(Object.create(Object.getPrototypeOf(origin)), origin);
+}
+
+export function apiPosition(
+	position: Vector2d,
+	height: number,
+	width: number,
+	offset: Vector2d
+) {
+	return {
+		x: ((position.x - offset.x) / width) * 100,
+		y: ((position.y - offset.y) / height) * 100,
+	};
+}
+
 export function canvaPosition(
 	position: Vector2d,
 	height: number,

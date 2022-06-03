@@ -1,47 +1,58 @@
 import Konva from 'konva';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { Vector2d } from 'konva/lib/types';
-import { memo, useContext, useEffect, useRef, useState } from 'react';
-import { Layer, Stage } from 'react-konva';
+import {
+	memo,
+	RefObject,
+	useContext,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from 'react';
+import { Stage } from 'react-konva';
 import { getCenter, getDistance } from '../services/utils';
 import { OrientationContext } from '../context';
-import styles from '../styles/map.module.css';
+import { useForceUpdate } from '../hooks';
 
 type DraggableStageProps = {
+	className?: string;
 	children: JSX.Element;
+	width: number;
+	height: number;
+	dragButtons?: Array<0 | 1 | 2>;
+	scaleBound?: { min: number; max: number };
+	imageRef: RefObject<Konva.Image>;
 };
 
-const DraggableStage = ({ children }: DraggableStageProps) => {
+const wheelScale = 1.2;
+
+const DraggableStage = ({
+	children,
+	className,
+	width,
+	height,
+	dragButtons,
+	scaleBound,
+	imageRef,
+}: DraggableStageProps) => {
 	Konva.hitOnDragEnabled = true;
-	const scaleBy = 1.2;
-	const [width, setWidth] = useState(window.innerWidth * 0.8);
-	const [height, setHeight] = useState(window.innerHeight * 0.95);
-	const forceUpdate = useState(false)[1];
-	const orientation = useContext(OrientationContext);
-	const scaleBound = {
-		min: 0.5,
-		max: 5,
-	};
+	if (dragButtons && dragButtons.length > 0) {
+		Konva.dragButtons = dragButtons;
+	}
+	const bound = useMemo(
+		() =>
+			scaleBound || {
+				min: 0.5,
+				max: 5,
+			},
+		[scaleBound]
+	);
+
+	// const forceUpdate = useForceUpdate();
+	// const orientation = useContext(OrientationContext);
 	const lastCenter = useRef<Vector2d>();
 	const lastDistance = useRef<number>();
-
-	// const backgroundHeight: number = imageRef.current?.getHeight();
-	// const backgroundWidth: number = imageRef.current?.getWidth();
-	// const offset = {
-	// 	x: imageRef.current?.x() || 0,
-	// 	y: imageRef.current?.y() || 0,
-	// };
-
-	useEffect(() => {
-		if (orientation === 'landscape') {
-			setWidth(window.innerWidth * 0.8);
-			setHeight(window.innerHeight * 0.95);
-		} else {
-			setWidth(window.innerWidth);
-			setHeight(window.innerHeight * 0.8);
-		}
-		forceUpdate((v) => !v);
-	}, [orientation]);
 
 	const handleTouchMove = (event: KonvaEventObject<TouchEvent>) => {
 		event.evt.preventDefault();
@@ -105,6 +116,7 @@ const DraggableStage = ({ children }: DraggableStageProps) => {
 
 		const stage = event.currentTarget;
 		const oldScale = stage.scaleX();
+
 		const pointer = stage.getRelativePointerPosition();
 
 		const mousePointTo = {
@@ -119,37 +131,35 @@ const DraggableStage = ({ children }: DraggableStageProps) => {
 		}
 
 		const newScale =
-			direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+			direction > 0 ? oldScale * wheelScale : oldScale / wheelScale;
 		const newPosition = {
 			x: pointer.x - mousePointTo.x * newScale,
 			y: pointer.y - mousePointTo.y * newScale,
 		};
-		if (
-			newScale > scaleBound.min &&
-			newScale < scaleBound.max &&
-			stage.getSize().width - Math.abs(newPosition.x) > 20 &&
-			stage.getSize().height - Math.abs(newPosition.y) > 20
-		) {
-			stage.scale({ x: newScale, y: newScale });
+		// if (
+		// 	newScale > bound.min &&
+		// 	newScale < bound.max &&
+		// 	stage.getSize().width - Math.abs(newPosition.x) > 20 &&
+		// 	stage.getSize().height - Math.abs(newPosition.y) > 20
+		// ) {
+		stage.scale({ x: newScale, y: newScale });
 
-			stage.position(newPosition);
-		}
+		stage.position(newPosition);
+		// }
 	};
 
 	return (
-		<div className={styles.map}>
-			<Stage
-				className="map-canva"
-				onWheel={handleWheel}
-				onTouchMove={handleTouchMove}
-				onTouchEnd={handleTouchEnd}
-				width={width}
-				height={height}
-				draggable
-			>
-				<Layer>{children}</Layer>
-			</Stage>
-		</div>
+		<Stage
+			className={className}
+			onWheel={handleWheel}
+			onTouchMove={handleTouchMove}
+			onTouchEnd={handleTouchEnd}
+			width={width}
+			height={height}
+			draggable
+		>
+			{children}
+		</Stage>
 	);
 };
 export default memo(DraggableStage);
