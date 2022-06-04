@@ -32,13 +32,14 @@ type MapEditProps = {
 	selected: PointSelected;
 	setSelected: Dispatch<SetStateAction<PointSelected>>;
 	edges: MutableRefObject<EdgeDTODict>;
+	lastType: MutableRefObject<string>;
 };
 
 const circleRadius = 2;
 const lineWidth = 3;
 const bound = {
 	min: 0.5,
-	max: 20,
+	max: 200,
 };
 
 const MapEdit = ({
@@ -48,10 +49,12 @@ const MapEdit = ({
 	setPositions,
 	link,
 	positions,
+	lastType,
 }: MapEditProps) => {
 	const width = useRef(window.innerWidth - 40);
 	const height = useRef(window.innerHeight - 180);
 	const imageRef = useRef<Konva.Image>(null);
+	const stageRef = useRef<Konva.Stage>(null);
 	const lastId = useRef(1);
 	const [pointEdges, setPointEdges] = useState<EdgeDict>(new EdgeDict({}));
 	const [edgeSetted, setEdgeSetted] = useState(false);
@@ -156,7 +159,7 @@ const MapEdit = ({
 				name: '',
 				description: '',
 				relatedWith: [],
-				type: '',
+				type: lastType.current,
 			};
 
 			setPositions((p) => [...p, newPosition]);
@@ -245,18 +248,28 @@ const MapEdit = ({
 		}));
 	}
 
+	function handleCenter() {
+		stageRef.current?.scale({ x: 1, y: 1 });
+		stageRef.current?.position({ x: 0, y: 0 });
+	}
+
 	return (
 		<div
 			style={
 				{ display: 'flex', flexDirection: 'column' } as CSSProperties
 			}
 		>
+			<button
+				style={{ width: '120px' }}
+				children="сброс позиции"
+				onClick={handleCenter}
+			/>
 			<DraggableStage
+				ref={stageRef}
 				width={width.current}
 				height={height.current}
 				className={styles.editmap}
 				scaleBound={bound}
-				imageRef={imageRef}
 			>
 				<Layer>
 					{link.length !== 0 && (

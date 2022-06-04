@@ -10,15 +10,11 @@ const AddMap = () => {
 		useState<CreatePositionDTO | null>(null);
 	const [link, setLink] = useState('');
 	const [positions, setPositions] = useState<CreatePositionDTO[]>([]);
-	// const [edges, setEdges] = useState<EdgeDTOSet>(new EdgeDTOSet([]));
+	const lastType = useRef<string>('');
 	const edges = useRef<EdgeDTODict>(new EdgeDTODict([]));
 	const [selected, setSelected] = useState<PointSelected>({ type: null });
 
 	Konva.dragButtons = [1];
-
-	// useEffect(() => {
-	// 	console.log(edges.current);
-	// }, [edges.current]);
 
 	useEffect(() => {
 		setPositions((elements) =>
@@ -54,6 +50,7 @@ const AddMap = () => {
 					positions={positions}
 				/>
 				<MapEdit
+					lastType={lastType}
 					setPositions={setPositions}
 					setSelected={setSelected}
 					selected={selected}

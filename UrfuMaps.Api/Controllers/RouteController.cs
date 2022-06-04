@@ -23,11 +23,11 @@ namespace UrfuMaps.Api.Controllers
 		public async Task<ActionResult<IEnumerable<RouteSegment>>> Get([FromQuery] int source, [FromQuery] int destination)
 		{
 			var route = await _routeService.GetRoute(source, destination);
-			if (route is null)
+			if (route != null)
 			{
-				NoContent();
+				return Ok(await _routeService.GetSegments(route.ToArray()));
 			}
-			return Ok(await _routeService.GetSegments(route!.ToArray()));
+			return NoContent();
 		}
 	}
 }
