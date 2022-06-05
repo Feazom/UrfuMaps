@@ -12,6 +12,7 @@ namespace UrfuMaps.Api.Repositories
 	{
 		public Task Add(Edge edge);
 		public Task<List<GraphEdge>> GetAll();
+		public Task FixMissingEdges();
 	}
 
 	public class EdgeRepository : Repository, IEdgeRepository
@@ -23,6 +24,14 @@ namespace UrfuMaps.Api.Repositories
 			var newEdge = (Edge)edge.Clone();
 			_context.Edges.Add(newEdge);
 			return _context.SaveChangesAsync();
+		}
+
+		public Task FixMissingEdges()
+		{
+			return _context.Database.ExecuteSqlRawAsync(@"insert into ""Edges"" (""ToId"", ""FromId"")
+				select e.""FromId"", e.""ToId""
+				from ""Edges"" e
+				where(""ToId"", ""FromId"") not in (select ne.""FromId"", ne.""ToId"" from ""Edges"" ne)");
 		}
 
 		public async Task<List<GraphEdge>> GetAll()

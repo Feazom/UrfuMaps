@@ -12,6 +12,7 @@ namespace UrfuMaps.Api
 		public DbSet<User> Users => Set<User>();
 		public DbSet<Edge> Edges => Set<Edge>();
 		public DbSet<PositionType> Types => Set<PositionType>();
+		public DbSet<Prefix> Prefixes => Set<Prefix>();
 
 		protected override void OnModelCreating(ModelBuilder model)
 		{
@@ -30,6 +31,10 @@ namespace UrfuMaps.Api
 			model.Entity<PositionType>()
 				.ToTable("Types")
 				.HasKey(x => x.Name);
+
+			model.Entity<Prefix>()
+				.ToTable("Prefixes")
+				.HasKey(x => x.Value);
 
 			model.Entity<Position>()
 				.HasOne<Floor>()

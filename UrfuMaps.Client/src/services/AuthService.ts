@@ -3,7 +3,7 @@ import { login as loginRequest } from './RequestService';
 
 export async function signin(login: string, password: string) {
 	const user: UserDTO = { login, password };
-	const result = await loginRequest(user);
+	const { data: result } = await loginRequest(user);
 	if (result) {
 		if (result?.token) {
 			localStorage.setItem('user', JSON.stringify(result));

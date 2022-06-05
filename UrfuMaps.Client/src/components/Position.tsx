@@ -1,6 +1,7 @@
 import {
 	ChangeEvent,
 	Dispatch,
+	MutableRefObject,
 	SetStateAction,
 	useEffect,
 	useState,
@@ -8,12 +9,14 @@ import {
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
 import CreatebleSelect from 'react-select/creatable';
 import '../styles/position.css';
-import { getTypes } from '../services/RequestService';
-import { ActionMeta, SingleValue } from 'react-select';
+import { getTypes, wrapRequest } from '../services/RequestService';
+import { SingleValue } from 'react-select';
+import { useQuery } from 'react-query';
 
 type PositionProps = {
 	position: CreatePositionDTO | null;
 	setPosition: Dispatch<SetStateAction<CreatePositionDTO | null>>;
+	lastType: MutableRefObject<string>;
 };
 
 type TypeOption = {
@@ -22,29 +25,29 @@ type TypeOption = {
 	__isNew__?: boolean;
 };
 
-const Position = ({ position, setPosition }: PositionProps) => {
+const Position = ({ position, setPosition, lastType }: PositionProps) => {
 	const [types, setTypes] = useState<TypeOption[]>([]);
+	const { data: typesData } = useQuery('types', () => {
+		return wrapRequest(getTypes());
+	});
 	const [newType, setNewType] = useState<TypeOption | null>(null);
 
 	useEffect(() => {
-		(async () => {
-			const types = await getTypes();
-			if (types.length > 0) {
-				setTypes((t) => {
-					let arr = t;
-					arr.push(
-						...types.map((n) => ({
-							value: n,
-							label: n,
-						}))
-					);
-					const result: TypeOption[] = [];
-					new Set(arr).forEach((type) => result.push(type));
-					return result;
-				});
-			}
-		})();
-	}, []);
+		if (typesData && typesData.length > 0) {
+			setTypes((t) => {
+				let arr = t;
+				arr.push(
+					...typesData.map((n) => ({
+						value: n,
+						label: n,
+					}))
+				);
+				const result: TypeOption[] = [];
+				new Set(arr).forEach((type) => result.push(type));
+				return result;
+			});
+		}
+	}, [typesData]);
 
 	useEffect(() => {
 		if (newType) {
@@ -83,16 +86,14 @@ const Position = ({ position, setPosition }: PositionProps) => {
 		}
 	}
 
-	function handleTypeChange(
-		element: SingleValue<TypeOption>,
-		meta: ActionMeta<TypeOption>
-	) {
+	function handleTypeChange(element: SingleValue<TypeOption>) {
 		if (position) {
 			if (element) {
 				if (element.__isNew__) {
 					setNewType(element);
 				}
 
+				lastType.current = element.value;
 				setPosition({
 					localId: position.localId,
 					name: position.name,
@@ -142,22 +143,6 @@ const Position = ({ position, setPosition }: PositionProps) => {
 				options={types}
 				onChange={handleTypeChange}
 			/>
-			{/* <label htmlFor="x">X:</label>
-			<input
-				disabled={position ? false : true}
-				readOnly
-				id="x"
-				size={5}
-				value={position ? position?.x : ''}
-			/>
-			<label htmlFor="y">Y:</label>
-			<input
-				disabled={position ? false : true}
-				readOnly
-				id="y"
-				size={5}
-				value={position ? position?.y : ''}
-			/> */}
 		</div>
 	);
 };

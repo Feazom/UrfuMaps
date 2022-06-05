@@ -1,26 +1,38 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import NavMap from '../components/NavMap';
 import '../styles/main.css';
 import MapCanvas from '../components/MapCanvas';
 import Konva from 'konva';
 import { getInfo } from '../services/RequestService';
 import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
-import { useSearchParams } from 'react-router-dom';
+import { Route, useSearchParams } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
 import SegmentSelector from '../components/SegmentSelector';
 import BuildingSelect from '../components/BuildingSelect';
 import FloorSelect from '../components/FloorSelect';
 import { OrientationContext } from '../context';
+import { useQuery } from 'react-query';
 
 const Main = memo(() => {
 	Konva.dragButtons = [0];
 	const [buildingName, setBuildingName] = useState<string>();
 	const [floorNumber, setFloorNumber] = useState<number>();
 	const [destination, setDestination] = useState('');
-	const [source, setSource] = useState('entry');
+	const [source, setSource] = useState('');
 	const [route, setRoute] = useState<RouteSegmentDTO[]>([]);
-	const [buildingList, setBuildingList] =
-		useState<Record<string, number[]>>();
+	// const route = useRef<RouteSegmentDTO[]>([]);
+	const { data: buildings, isLoading } = useQuery('info', async () => {
+		try {
+			const { data } = await getInfo();
+			const buildings: Record<string, number[]> = {};
+			for (const info of data) {
+				buildings[info.buildingName] = info.floorList;
+			}
+			return buildings;
+		} catch (error) {
+			throw error;
+		}
+	});
 	const [queryParams] = useSearchParams();
 	const [orientation, setOrientation] = useState('landscape');
 
@@ -28,16 +40,6 @@ const Main = memo(() => {
 		const type = window.screen.orientation.type;
 		setOrientation(type.substring(0, type.indexOf('-')));
 		window.addEventListener('orientationchange', handleOrientation);
-
-		(async () => {
-			const info = await getInfo();
-
-			const buildings: Record<string, number[]> = {};
-			info.forEach((e) => {
-				buildings[e.buildingName] = e.floorList;
-			});
-			setBuildingList(buildings);
-		})();
 
 		return () => {
 			window.removeEventListener('orientationchange', handleOrientation);
@@ -57,10 +59,10 @@ const Main = memo(() => {
 	useEffect(() => {
 		const building = queryParams.get('building');
 		const floor = queryParams.get('floor');
-		if (buildingList) {
+		if (buildings) {
 			if (building) {
 				const includesBuilding =
-					Object.keys(buildingList).includes(building);
+					Object.keys(buildings).includes(building);
 
 				if (includesBuilding) {
 					setBuildingName(building);
@@ -69,18 +71,18 @@ const Main = memo(() => {
 				if (
 					includesBuilding &&
 					floor &&
-					buildingList[building].includes(parseInt(floor))
+					buildings[building].includes(parseInt(floor))
 				) {
 					setFloorNumber(parseInt(floor));
 				} else {
 					setFloorNumber(1);
 				}
 			} else {
-				setBuildingName(Object.keys(buildingList)[0]);
+				setBuildingName(Object.keys(buildings)[0]);
 				setFloorNumber(1);
 			}
 		}
-	}, [buildingList, queryParams]);
+	}, [buildings, queryParams]);
 
 	const handleOrientation = () => {
 		const type = window.screen.orientation.type;
@@ -103,22 +105,24 @@ const Main = memo(() => {
 	const buildingSelect = useMemo(
 		() => (
 			<BuildingSelect
-				buildingList={buildingList ? buildingList : {}}
+				buildings={Object.keys(buildings || {})}
+				buildingName={buildingName}
 				setBuildingName={setBuildingName}
 			/>
 		),
-		[buildingList]
+		[buildings, buildingName]
 	);
 	const floorSelect = useMemo(
 		() => (
 			<FloorSelect
 				floorNumber={floorNumber ? floorNumber : 0}
 				setFloorNumber={setFloorNumber}
-				buildingName={buildingName ? buildingName : ''}
-				buildingList={buildingList ? buildingList : {}}
+				floors={
+					buildings && buildingName ? buildings[buildingName] : []
+				}
 			/>
 		),
-		[buildingList, floorNumber, buildingName]
+		[buildings, buildingName]
 	);
 
 	return (
@@ -136,9 +140,8 @@ const Main = memo(() => {
 					setSource={setSource}
 					destination={destination}
 					source={source}
-					route={route}
 				/>
-				{floorNumber && buildingName && buildingList ? (
+				{floorNumber && buildingName && !isLoading ? (
 					<MapCanvas
 						buildingSelect={buildingSelect}
 						floorSelect={floorSelect}

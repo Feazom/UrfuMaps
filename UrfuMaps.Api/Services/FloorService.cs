@@ -92,6 +92,7 @@ namespace UrfuMaps.Api.Services
 					{
 						await _edges.Add(edge);
 					}
+					await _edges.FixMissingEdges();
 					return CreateResult.Completed;
 				}
 				else

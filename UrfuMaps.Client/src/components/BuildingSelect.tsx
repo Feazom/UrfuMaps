@@ -1,30 +1,36 @@
+import { Select } from 'antd';
 import { Dispatch, FormEvent, memo, SetStateAction } from 'react';
 
 type BuildingSelectProps = {
+	buildingName: string | undefined;
 	setBuildingName: Dispatch<SetStateAction<string | undefined>>;
-	buildingList: Record<string, number[]>;
+	buildings: string[];
 };
 
 const BuildingSelect = ({
+	buildingName,
 	setBuildingName,
-	buildingList,
+	buildings,
 }: BuildingSelectProps) => {
-	function handleBuildingChange(event: FormEvent<HTMLSelectElement>) {
-		setBuildingName(event.currentTarget.value);
+	function handleBuildingChange(building: string) {
+		setBuildingName(building);
 	}
 
 	return (
-		<div className="building-select">
+		<>
 			<span>Здание: </span>
-			<select
+			<Select
 				onChange={handleBuildingChange}
-				onLoad={handleBuildingChange}
+				loading={buildings.length == 0}
+				defaultValue={buildingName}
 			>
-				{Object.keys(buildingList)?.map((buildingName) => {
-					return <option key={buildingName}>{buildingName}</option>;
-				})}
-			</select>
-		</div>
+				{buildings.map((building) => (
+					<Select.Option key={building} value={building}>
+						{building}
+					</Select.Option>
+				))}
+			</Select>
+		</>
 	);
 };
 export default memo(BuildingSelect);

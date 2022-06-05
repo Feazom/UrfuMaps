@@ -2,6 +2,7 @@ import Konva from 'konva';
 import {
 	Dispatch,
 	memo,
+	MutableRefObject,
 	SetStateAction,
 	useContext,
 	useEffect,
@@ -10,7 +11,12 @@ import {
 } from 'react';
 import { Line, Layer } from 'react-konva';
 import FloorDTO from '../DTOs/FloorDTO';
-import { getMap, getPosition, getRoute } from '../services/RequestService';
+import {
+	getMap,
+	getPosition,
+	getRoute,
+	wrapRequest,
+} from '../services/RequestService';
 import URLImage from './URLImage';
 import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
 import { canvaPosition } from '../services/utils';
@@ -22,6 +28,7 @@ import DraggableStage from './DraggableStage';
 import styles from '../styles/map.module.css';
 import TextCanvas from './TextCanvas';
 import { useForceUpdate } from '../hooks';
+import { useQuery } from 'react-query';
 
 type MapProps = {
 	floorNumber: number;
@@ -44,24 +51,55 @@ const MapCanvas = ({
 	route,
 	setRoute,
 }: MapProps) => {
-	const [floor, setFloor] = useState<FloorDTO>();
 	const [segment, setSegment] = useState<RouteSegmentDTO>();
 	const [width, setWidth] = useState(window.innerWidth * 0.8);
 	const [height, setHeight] = useState(window.innerHeight * 0.95);
 	const forceUpdate = useForceUpdate();
-	const timeout = useRef<number>();
+
 	const orientation = useContext(OrientationContext);
 	const imageRef = useRef<Konva.Image>(null);
 	const [destinationMarker, setDestinationMarker] = useState<Point>();
 	const [sourceMarker, setSourceMarker] = useState<Point>();
+	const { data: floor } = useQuery(
+		['floor', floorNumber, buildingName],
+		() => {
+			return wrapRequest(getMap(floorNumber, buildingName));
+		}
+	);
+	const { data: sourceData } = useQuery(
+		['position', source],
+		() => {
+			return wrapRequest(getPosition(source));
+		},
+		{ retry: false, enabled: source.length > 0 }
+	);
+	const { data: destinationData } = useQuery(
+		['position', destination],
+		() => {
+			return wrapRequest(getPosition(destination));
+		},
+		{ retry: false, enabled: destination.length > 0 }
+	);
+	const { data: routeData } = useQuery(
+		['route', sourceData?.id, destinationData?.id],
+		() => {
+			return wrapRequest(getRoute(sourceData!.id, destinationData!.id));
+		},
+		{ enabled: !!sourceData?.id && !!destinationData?.id }
+	);
+
+	useEffect(() => {
+		console.log(routeData);
+		setRoute(routeData || []);
+	}, [routeData]);
 
 	useEffect(() => {
 		if (orientation === 'landscape') {
 			setWidth(window.innerWidth * 0.8);
-			setHeight(window.innerHeight * 0.95);
+			setHeight(window.innerHeight * 0.94);
 		} else {
 			setWidth(window.innerWidth);
-			setHeight(window.innerHeight * 0.8);
+			setHeight(window.innerHeight * 0.75);
 		}
 		forceUpdate();
 	}, [orientation]);
@@ -77,71 +115,42 @@ const MapCanvas = ({
 	}, [route, floor]);
 
 	useEffect(() => {
-		(async () => {
-			if (floorNumber != null && buildingName != null) {
-				setFloor(await getMap(floorNumber, buildingName));
-			}
-		})();
-	}, [buildingName, floorNumber]);
-
-	useEffect(() => {
-		window.clearTimeout(timeout.current);
-		if (!source || !destination) {
-			setRoute([]);
-		} else {
-			timeout.current = window.setTimeout(async () => {
-				try {
-					const sourceData = await getPosition(source);
-					const destinationData = await getPosition(destination);
-
-					if (sourceData && destinationData) {
-						setSourceMarker({
-							...canvaPosition(
-								{
-									x: sourceData.x,
-									y: sourceData.y,
-								},
-								imageRef.current?.getHeight(),
-								imageRef.current?.getWidth(),
-								{
-									x: imageRef.current?.x() || 0,
-									y: imageRef.current?.y() || 0,
-								}
-							),
-							id: sourceData.id,
-						});
-						setDestinationMarker({
-							...canvaPosition(
-								{
-									x: destinationData.x,
-									y: destinationData.y,
-								},
-								imageRef.current?.getHeight(),
-								imageRef.current?.getWidth(),
-								{
-									x: imageRef.current?.x() || 0,
-									y: imageRef.current?.y() || 0,
-								}
-							),
-							id: destinationData.id,
-						});
-
-						const sourceId = sourceData.id;
-						const destinationId = destinationData.id;
-
-						if (sourceId && destinationId) {
-							setRoute(await getRoute(sourceId, destinationId));
-							return;
-						}
+		if (sourceData && destinationData) {
+			setSourceMarker({
+				...canvaPosition(
+					{
+						x: sourceData.x,
+						y: sourceData.y,
+					},
+					imageRef.current?.getHeight(),
+					imageRef.current?.getWidth(),
+					{
+						x: imageRef.current?.x() || 0,
+						y: imageRef.current?.y() || 0,
 					}
-				} catch (error) {}
-
-				setDestinationMarker(undefined);
-				setSourceMarker(undefined);
-				setRoute([]);
-			}, 300);
+				),
+				id: sourceData.id,
+			});
+			setDestinationMarker({
+				...canvaPosition(
+					{
+						x: destinationData.x,
+						y: destinationData.y,
+					},
+					imageRef.current?.getHeight(),
+					imageRef.current?.getWidth(),
+					{
+						x: imageRef.current?.x() || 0,
+						y: imageRef.current?.y() || 0,
+					}
+				),
+				id: destinationData.id,
+			});
+		} else {
+			setDestinationMarker(undefined);
+			setSourceMarker(undefined);
 		}
-	}, [source, destination]);
+	}, [sourceData, destinationData]);
 
 	return (
 		<div className={styles.map}>
@@ -149,7 +158,7 @@ const MapCanvas = ({
 				{buildingSelect}
 				{floorSelect}
 			</div>
-			<DraggableStage width={width} height={height} imageRef={imageRef}>
+			<DraggableStage width={width} height={height}>
 				<Layer>
 					{floor?.imageLink && (
 						<URLImage

@@ -5,6 +5,7 @@ import {
 	useEffect,
 	useState,
 } from 'react';
+import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import CreateFloorDTO from '../DTOs/CreateFloorDTO';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
@@ -12,11 +13,9 @@ import { logout } from '../services/AuthService';
 import { addMap } from '../services/RequestService';
 import '../styles/navMap.css';
 import { EdgeDTODict } from '../types';
-import Position from './Position';
 
 type AddMapProps = {
-	setEditedPosition: Dispatch<SetStateAction<CreatePositionDTO | null>>;
-	editedPosition: CreatePositionDTO | null;
+	positionElement: JSX.Element;
 	link: string;
 	positions: CreatePositionDTO[];
 	setLink: Dispatch<SetStateAction<string>>;
@@ -25,8 +24,7 @@ type AddMapProps = {
 
 const NavAddMap = ({
 	edges,
-	setEditedPosition,
-	editedPosition,
+	positionElement,
 	setLink,
 	link,
 	positions,
@@ -35,6 +33,7 @@ const NavAddMap = ({
 	const [buildingName, setBuildingName] = useState('');
 	const [message, setMessage] = useState('');
 	const navigate = useNavigate();
+	const mutation = useMutation(addMap, { retry: false });
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -53,7 +52,7 @@ const NavAddMap = ({
 		setLink(event.currentTarget.value);
 	}
 
-	async function submitMap(event: FormEvent<HTMLFormElement>) {
+	function submitMap(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
 		const data: CreateFloorDTO = {
@@ -73,7 +72,8 @@ const NavAddMap = ({
 			edges.current.keys().length > 0 &&
 			positions.every((p) => p.type && p.localId && p.type && p.x && p.y)
 		) {
-			await addMap(data);
+			// await addMap(data);
+			mutation.mutate(data);
 		} else {
 			setMessage(
 				'все нужные поля должны быть заполнены, каждая точка должна иметь хотя бы одну связь'
@@ -129,10 +129,7 @@ const NavAddMap = ({
 				</div>
 			</form>
 
-			<Position
-				position={editedPosition}
-				setPosition={setEditedPosition}
-			/>
+			{positionElement}
 
 			<input
 				className="logout-button"

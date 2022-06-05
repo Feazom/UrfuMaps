@@ -1,4 +1,13 @@
-import { FormEvent, SetStateAction, Dispatch, memo, useContext } from 'react';
+import {
+	FormEvent,
+	SetStateAction,
+	Dispatch,
+	memo,
+	useContext,
+	useRef,
+	useState,
+	useEffect,
+} from 'react';
 import '../styles/navMap.css';
 import { convertCabinet } from '../services/utils';
 import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
@@ -10,7 +19,6 @@ type MapProps = {
 	setDestination: Dispatch<SetStateAction<string>>;
 	segmentSelector: JSX.Element;
 	setSource: Dispatch<SetStateAction<string>>;
-	route: RouteSegmentDTO[];
 };
 
 const NavMap = ({
@@ -18,17 +26,36 @@ const NavMap = ({
 	source,
 	setDestination,
 	setSource,
-	route,
 	segmentSelector,
 }: MapProps) => {
 	const orientation = useContext(OrientationContext);
+	const timeoutSrc = useRef<number>();
+	const timeoutDst = useRef<number>();
+	const [sourceInput, setSourceInput] = useState(source || '');
+	const [destinationInput, setDestinationInput] = useState(destination || '');
+
+	useEffect(() => {
+		window.clearTimeout(timeoutSrc.current);
+		timeoutSrc.current = window.setTimeout(() => {
+			setSource(sourceInput);
+		}, 300);
+	}, [sourceInput]);
+
+	useEffect(() => {
+		window.clearTimeout(timeoutDst.current);
+		timeoutDst.current = window.setTimeout(() => {
+			setDestination(destinationInput);
+		}, 300);
+	}, [destinationInput]);
 
 	const handleDestinationChange = (event: FormEvent<HTMLInputElement>) => {
-		setDestination(convertCabinet(event.currentTarget.value));
+		const value = event.currentTarget.value;
+		setDestinationInput(convertCabinet(value));
 	};
 
 	const handleSourceChange = (event: FormEvent<HTMLInputElement>) => {
-		setSource(convertCabinet(event.currentTarget.value));
+		const value = event.currentTarget.value;
+		setSourceInput(convertCabinet(value));
 	};
 
 	const handlePosition = () => {};
@@ -52,13 +79,12 @@ const NavMap = ({
 
 				<div>
 					<img
-						onClick={handlePosition}
 						className="marker-icon"
 						alt="dest-marker"
 						src="marker.svg"
 					/>
 					<input
-						value={destination}
+						value={destinationInput}
 						placeholder="Поиск..."
 						onChange={handleDestinationChange}
 						size={5}
@@ -76,12 +102,13 @@ const NavMap = ({
 
 				<div>
 					<img
+						onClick={handlePosition}
 						className="marker-icon"
 						src="point.svg"
 						alt="src-marker"
 					/>
 					<input
-						value={source}
+						value={sourceInput}
 						placeholder="Поиск..."
 						onChange={handleSourceChange}
 						size={5}

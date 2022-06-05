@@ -1,24 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import NavAddMap from '../components/NavAddMap';
 import MapEdit from '../components/MapEdit';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
 import Konva from 'konva';
 import { EdgeDTODict, PointSelected } from '../types';
+import Position from '../components/Position';
 
 const AddMap = () => {
 	const [editedPosition, setEditedPosition] =
 		useState<CreatePositionDTO | null>(null);
 	const [link, setLink] = useState('');
 	const [positions, setPositions] = useState<CreatePositionDTO[]>([]);
-	// const [edges, setEdges] = useState<EdgeDTOSet>(new EdgeDTOSet([]));
+	const lastType = useRef<string>('');
 	const edges = useRef<EdgeDTODict>(new EdgeDTODict([]));
 	const [selected, setSelected] = useState<PointSelected>({ type: null });
 
 	Konva.dragButtons = [1];
-
-	// useEffect(() => {
-	// 	console.log(edges.current);
-	// }, [edges.current]);
 
 	useEffect(() => {
 		setPositions((elements) =>
@@ -42,18 +39,31 @@ const AddMap = () => {
 		}
 	}, [selected, positions]);
 
+	const positionElement = useMemo(() => {
+		return (
+			<Position
+				lastType={lastType}
+				position={editedPosition}
+				setPosition={setEditedPosition}
+			/>
+		);
+	}, [editedPosition]);
+
 	return (
 		<div className="App">
 			<div>
 				<NavAddMap
-					editedPosition={editedPosition}
-					setEditedPosition={setEditedPosition}
+					positionElement={positionElement}
+					// lastType={lastType}
+					// editedPosition={editedPosition}
+					// setEditedPosition={setEditedPosition}
 					edges={edges}
 					setLink={setLink}
 					link={link}
 					positions={positions}
 				/>
 				<MapEdit
+					lastType={lastType}
 					setPositions={setPositions}
 					setSelected={setSelected}
 					selected={selected}
