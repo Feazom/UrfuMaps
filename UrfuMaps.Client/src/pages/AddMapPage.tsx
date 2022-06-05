@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import NavAddMap from '../components/NavAddMap';
 import MapEdit from '../components/MapEdit';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
 import Konva from 'konva';
 import { EdgeDTODict, PointSelected } from '../types';
+import Position from '../components/Position';
 
 const AddMap = () => {
 	const [editedPosition, setEditedPosition] =
@@ -38,12 +39,24 @@ const AddMap = () => {
 		}
 	}, [selected, positions]);
 
+	const positionElement = useMemo(() => {
+		return (
+			<Position
+				lastType={lastType}
+				position={editedPosition}
+				setPosition={setEditedPosition}
+			/>
+		);
+	}, [editedPosition]);
+
 	return (
 		<div className="App">
 			<div>
 				<NavAddMap
-					editedPosition={editedPosition}
-					setEditedPosition={setEditedPosition}
+					positionElement={positionElement}
+					// lastType={lastType}
+					// editedPosition={editedPosition}
+					// setEditedPosition={setEditedPosition}
 					edges={edges}
 					setLink={setLink}
 					link={link}

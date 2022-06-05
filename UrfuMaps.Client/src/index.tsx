@@ -1,3 +1,4 @@
+import 'antd/dist/antd.css';
 import './styles/index.css';
 import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';

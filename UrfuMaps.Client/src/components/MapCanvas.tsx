@@ -96,10 +96,10 @@ const MapCanvas = ({
 	useEffect(() => {
 		if (orientation === 'landscape') {
 			setWidth(window.innerWidth * 0.8);
-			setHeight(window.innerHeight * 0.95);
+			setHeight(window.innerHeight * 0.94);
 		} else {
 			setWidth(window.innerWidth);
-			setHeight(window.innerHeight * 0.8);
+			setHeight(window.innerHeight * 0.75);
 		}
 		forceUpdate();
 	}, [orientation]);

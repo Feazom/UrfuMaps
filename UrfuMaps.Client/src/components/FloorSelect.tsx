@@ -1,35 +1,36 @@
-import { Dispatch, FormEvent, memo, SetStateAction } from 'react';
+import Select from 'antd/lib/select';
+import { Dispatch, memo, SetStateAction } from 'react';
 
 type FloorSelectProps = {
 	floorNumber: number;
 	setFloorNumber: Dispatch<SetStateAction<number | undefined>>;
-	buildingList: Record<string, number[]>;
-	buildingName: string;
+	floors: number[];
 };
 
 const FloorSelect = ({
 	floorNumber,
 	setFloorNumber,
-	buildingName,
-	buildingList,
+	floors,
 }: FloorSelectProps) => {
-	function handleFloorChange(event: FormEvent<HTMLSelectElement>) {
-		setFloorNumber(parseInt(event.currentTarget.value));
+	function handleFloorChange(floor: number) {
+		setFloorNumber(floor);
 	}
 
 	return (
-		<div className="floor-select">
+		<>
 			<span>Этаж: </span>
-			<select
-				value={floorNumber}
+			<Select
 				onChange={handleFloorChange}
-				onLoad={handleFloorChange}
+				loading={floors.length == 0}
+				defaultValue={floorNumber}
 			>
-				{buildingList[buildingName]?.map((floorNumber) => {
-					return <option key={floorNumber}>{floorNumber}</option>;
-				})}
-			</select>
-		</div>
+				{floors.map((floor) => (
+					<Select.Option key={floor} value={floor}>
+						{floor}
+					</Select.Option>
+				))}
+			</Select>
+		</>
 	);
 };
 export default memo(FloorSelect);

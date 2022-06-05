@@ -40,6 +40,7 @@ namespace UrfuMaps.Api
 			services.AddScoped<IPositionRepository, PositionRepository>();
 			services.AddScoped<ITypeRepository, TypeRepository>();
 			services.AddScoped<IUserRepository, UserRepository>();
+			services.AddScoped<IPrefixRepository, PrefixRepository>();
 
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<IMapService, FloorService>();
@@ -47,6 +48,7 @@ namespace UrfuMaps.Api
 			services.AddScoped<IInfoService, InfoService>();
 			services.AddScoped<ITypeService, TypeService>();
 			services.AddScoped<IPositionService, PositionService>();
+			services.AddScoped<IPrefixService, PrefixService>();
 
 			var authOptionsConfiguration = Configuration.GetSection("Auth");
 			services.Configure<AuthOptions>(authOptionsConfiguration);

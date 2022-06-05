@@ -105,22 +105,24 @@ const Main = memo(() => {
 	const buildingSelect = useMemo(
 		() => (
 			<BuildingSelect
-				buildingList={buildings || {}}
+				buildings={Object.keys(buildings || {})}
+				buildingName={buildingName}
 				setBuildingName={setBuildingName}
 			/>
 		),
-		[buildings]
+		[buildings, buildingName]
 	);
 	const floorSelect = useMemo(
 		() => (
 			<FloorSelect
 				floorNumber={floorNumber ? floorNumber : 0}
 				setFloorNumber={setFloorNumber}
-				buildingName={buildingName || ''}
-				buildingList={buildings || {}}
+				floors={
+					buildings && buildingName ? buildings[buildingName] : []
+				}
 			/>
 		),
-		[buildings, floorNumber, buildingName]
+		[buildings, buildingName]
 	);
 
 	return (

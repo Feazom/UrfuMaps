@@ -52,7 +52,7 @@ const MapEdit = ({
 	lastType,
 }: MapEditProps) => {
 	const width = useRef(window.innerWidth - 40);
-	const height = useRef(window.innerHeight - 180);
+	const height = useRef(window.innerHeight - 190);
 	const imageRef = useRef<Konva.Image>(null);
 	const stageRef = useRef<Konva.Stage>(null);
 	const lastId = useRef(1);
@@ -159,7 +159,7 @@ const MapEdit = ({
 				name: '',
 				description: '',
 				relatedWith: [],
-				type: lastType.current,
+				type: lastType.current.toString(),
 			};
 
 			setPositions((p) => [...p, newPosition]);

@@ -1,6 +1,7 @@
 import {
 	ChangeEvent,
 	Dispatch,
+	MutableRefObject,
 	SetStateAction,
 	useEffect,
 	useState,
@@ -9,12 +10,13 @@ import CreatePositionDTO from '../DTOs/CreatePositionDTO';
 import CreatebleSelect from 'react-select/creatable';
 import '../styles/position.css';
 import { getTypes, wrapRequest } from '../services/RequestService';
-import { ActionMeta, SingleValue } from 'react-select';
+import { SingleValue } from 'react-select';
 import { useQuery } from 'react-query';
 
 type PositionProps = {
 	position: CreatePositionDTO | null;
 	setPosition: Dispatch<SetStateAction<CreatePositionDTO | null>>;
+	lastType: MutableRefObject<string>;
 };
 
 type TypeOption = {
@@ -23,7 +25,7 @@ type TypeOption = {
 	__isNew__?: boolean;
 };
 
-const Position = ({ position, setPosition }: PositionProps) => {
+const Position = ({ position, setPosition, lastType }: PositionProps) => {
 	const [types, setTypes] = useState<TypeOption[]>([]);
 	const { data: typesData } = useQuery('types', () => {
 		return wrapRequest(getTypes());
@@ -84,16 +86,14 @@ const Position = ({ position, setPosition }: PositionProps) => {
 		}
 	}
 
-	function handleTypeChange(
-		element: SingleValue<TypeOption>,
-		meta: ActionMeta<TypeOption>
-	) {
+	function handleTypeChange(element: SingleValue<TypeOption>) {
 		if (position) {
 			if (element) {
 				if (element.__isNew__) {
 					setNewType(element);
 				}
 
+				lastType.current = element.value;
 				setPosition({
 					localId: position.localId,
 					name: position.name,
