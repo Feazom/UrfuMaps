@@ -9,7 +9,7 @@ import axios, { AxiosResponse } from 'axios';
 
 const user: TokenDTO | undefined = JSON.parse(localStorage.getItem('user')!);
 const instance = axios.create({
-	baseURL: 'http://192.168.1.102:5000',
+	baseURL: '',
 	headers: {
 		Authorization: user?.token || '',
 		'Content-Type': 'application/json',
