@@ -77,25 +77,25 @@ const NavMap = ({
 	useEffect(() => {
 		window.clearTimeout(timeoutSrc.current);
 		timeoutSrc.current = window.setTimeout(() => {
-			setSource(sourceInput);
+			setSource(convertCabinet(sourceInput));
 		}, 300);
 	}, [sourceInput]);
 
 	useEffect(() => {
 		window.clearTimeout(timeoutDst.current);
 		timeoutDst.current = window.setTimeout(() => {
-			setDestination(destinationInput);
+			setDestination(convertCabinet(destinationInput));
 		}, 300);
 	}, [destinationInput]);
 
 	const handleDestinationChange = (event: FormEvent<HTMLInputElement>) => {
 		const value = event.currentTarget.value;
-		setDestinationInput(convertCabinet(value));
+		setDestinationInput(value);
 	};
 
 	const handleSourceChange = (event: FormEvent<HTMLInputElement>) => {
 		const value = event.currentTarget.value;
-		setSourceInput(convertCabinet(value));
+		setSourceInput(value);
 	};
 
 	const handlePosition = () => {};
