@@ -1,13 +1,15 @@
+import { Steps } from 'antd';
 import {
 	Dispatch,
 	memo,
-	MutableRefObject,
 	SetStateAction,
 	useCallback,
+	useContext,
 	useEffect,
 	useRef,
 	useState,
 } from 'react';
+import { OrientationContext } from '../context';
 import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
 import '../styles/navMap.css';
 
@@ -39,6 +41,7 @@ const SegmentSelector = ({
 
 	const [selectedSegment, setSelectedSegment] = useState<number>(segmentFind);
 	const previousSegmentCount = useRef(0);
+	const orientation = useContext(OrientationContext);
 
 	// useEffect(() => {
 	// 	setSelectedSegment((s) => {
@@ -90,35 +93,87 @@ const SegmentSelector = ({
 		});
 	};
 
+	const handleChange = (value: number) => {
+		setSelectedSegment(value + 1);
+	};
+
 	return (
-		<div className="segment-selector">
-			<span>Этапы</span>
-			<div className="segment-field">
-				<button
-					onClick={handleFullLeft}
-					disabled={selectedSegment <= 1}
-					children="<<"
-				/>
-				<button
-					onClick={handleLeft}
-					disabled={selectedSegment <= 1}
-					children="<"
-				/>
-				<span className="segment">
-					{selectedSegment > 0 ? selectedSegment : '·'}
-				</span>
-				<button
-					onClick={handleRight}
-					disabled={selectedSegment >= route.length}
-					children=">"
-				/>
-				<button
-					onClick={handleFullRight}
-					disabled={selectedSegment >= route.length}
-					children=">>"
-				/>
-			</div>
-		</div>
+		<>
+			{orientation === 'landscape' ? (
+				route.length > 0 && (
+					<div className="segment-selector">
+						<span>Этапы</span>
+						<Steps
+							direction="vertical"
+							onChange={handleChange}
+							current={selectedSegment - 1}
+						>
+							{route.map((seg, index) => (
+								<Steps.Step
+									key={index}
+									title={`${seg.building} ${seg.floor}`}
+								/>
+							))}
+						</Steps>
+					</div>
+				)
+			) : (
+				<div className="segment-selector">
+					<span>Этапы</span>{' '}
+					<div className="segment-field">
+						<button
+							onClick={handleFullLeft}
+							disabled={selectedSegment <= 1}
+							children="<<"
+						/>
+						<button
+							onClick={handleLeft}
+							disabled={selectedSegment <= 1}
+							children="<"
+						/>
+						<span className="segment">
+							{selectedSegment > 0 ? selectedSegment : '·'}
+						</span>
+						<button
+							onClick={handleRight}
+							disabled={selectedSegment >= route.length}
+							children=">"
+						/>
+						<button
+							onClick={handleFullRight}
+							disabled={selectedSegment >= route.length}
+							children=">>"
+						/>
+					</div>
+				</div>
+			)}
+		</>
 	);
 };
 export default memo(SegmentSelector);
+
+/* <div className="segment-field">
+			<button
+				onClick={handleFullLeft}
+				disabled={selectedSegment <= 1}
+				children="<<"
+			/>
+			<button
+				onClick={handleLeft}
+				disabled={selectedSegment <= 1}
+				children="<"
+			/>
+			<span className="segment">
+				{selectedSegment > 0 ? selectedSegment : '·'}
+			</span>
+			<button
+				onClick={handleRight}
+				disabled={selectedSegment >= route.length}
+				children=">"
+			/>
+			<button
+				onClick={handleFullRight}
+				disabled={selectedSegment >= route.length}
+				children=">>"
+			/>
+		</div> */

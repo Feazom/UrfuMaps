@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using UrfuMaps.Api.Models;
 using UrfuMaps.Api.Repositories;
 
 namespace UrfuMaps.Api.Services
 {
 	public interface IPrefixService
 	{
-		Task<List<string>> GetPrefixes();
+		Task<List<Prefix>> GetPrefixes();
 	}
 
 	public class PrefixService : IPrefixService
@@ -18,7 +19,7 @@ namespace UrfuMaps.Api.Services
 			_prefixes = prefixes;
 		}
 
-		public Task<List<string>> GetPrefixes()
+		public Task<List<Prefix>> GetPrefixes()
 		{
 			return _prefixes.GetAll();
 		}

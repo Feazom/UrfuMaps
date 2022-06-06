@@ -7,11 +7,15 @@ import {
 	useRef,
 	useState,
 	useEffect,
+	useMemo,
+	ReactNode,
 } from 'react';
 import '../styles/navMap.css';
 import { convertCabinet } from '../services/utils';
-import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
 import { OrientationContext } from '../context';
+import { useQuery } from 'react-query';
+import { getPrefixes, wrapRequest } from '../services/RequestService';
+import { Input, InputNumber, Select } from 'antd';
 
 type MapProps = {
 	destination: string;
@@ -31,31 +35,67 @@ const NavMap = ({
 	const orientation = useContext(OrientationContext);
 	const timeoutSrc = useRef<number>();
 	const timeoutDst = useRef<number>();
+
 	const [sourceInput, setSourceInput] = useState(source || '');
 	const [destinationInput, setDestinationInput] = useState(destination || '');
+	const [sourcePrefix, setSourcePrefix] = useState('');
+
+	const handleSourcePrefix = (value: string) => {
+		setSourcePrefix(value);
+	};
+	const { data: prefixes } = useQuery('prefixes', () => {
+		return wrapRequest(getPrefixes());
+	});
+	const destMarker = useMemo(
+		() => (
+			<img
+				style={{ marginRight: '-4px' }}
+				width={20}
+				height={20}
+				className="marker-icon"
+				alt="dest-marker"
+				src="marker.svg"
+			/>
+		),
+		[]
+	);
+	const srcMarker = useMemo(
+		() => (
+			<img
+				// onClick={handlePosition}
+				style={{ marginLeft: '-4px' }}
+				className="marker-icon"
+				width={20}
+				height={20}
+				src="point.svg"
+				alt="src-marker"
+			/>
+		),
+		[]
+	);
 
 	useEffect(() => {
 		window.clearTimeout(timeoutSrc.current);
 		timeoutSrc.current = window.setTimeout(() => {
-			setSource(sourceInput);
+			setSource(convertCabinet(sourceInput));
 		}, 300);
 	}, [sourceInput]);
 
 	useEffect(() => {
 		window.clearTimeout(timeoutDst.current);
 		timeoutDst.current = window.setTimeout(() => {
-			setDestination(destinationInput);
+			setDestination(convertCabinet(destinationInput));
 		}, 300);
 	}, [destinationInput]);
 
 	const handleDestinationChange = (event: FormEvent<HTMLInputElement>) => {
 		const value = event.currentTarget.value;
-		setDestinationInput(convertCabinet(value));
+		setDestinationInput(value);
 	};
 
 	const handleSourceChange = (event: FormEvent<HTMLInputElement>) => {
 		const value = event.currentTarget.value;
-		setSourceInput(convertCabinet(value));
+		setSourceInput(value);
 	};
 
 	const handlePosition = () => {};
@@ -78,17 +118,23 @@ const NavMap = ({
 				<span>Куда: </span>
 
 				<div>
-					<img
+					{/* <img
 						className="marker-icon"
 						alt="dest-marker"
 						src="marker.svg"
+					/> */}
+					<Input
+						addonBefore={destMarker}
+						value={destinationInput}
+						size="small"
+						onChange={handleDestinationChange}
 					/>
-					<input
+					{/* <input
 						value={destinationInput}
 						placeholder="Поиск..."
 						onChange={handleDestinationChange}
 						size={5}
-					/>
+					/> */}
 				</div>
 			</div>
 			<div
@@ -101,18 +147,41 @@ const NavMap = ({
 				<span>Откуда: </span>
 
 				<div>
-					<img
+					{/* <img
 						onClick={handlePosition}
 						className="marker-icon"
 						src="point.svg"
 						alt="src-marker"
+					/> */}
+					<Input
+						addonBefore={srcMarker}
+						// addonBefore={
+						// 	<Select
+						// 		size="small"
+						// 		style={{ width: '40px' }}
+						// 		loading={!prefixes || prefixes.length === 0}
+						// 		onChange={handleSourcePrefix}
+						// 	>
+						// 		{prefixes?.map((prefix, index) => (
+						// 			<Select.Option
+						// 				key={index}
+						// 				value={prefix.value}
+						// 			>
+						// 				{prefix.value}
+						// 			</Select.Option>
+						// 		))}
+						// 	</Select>
+						// }
+						value={sourceInput}
+						size="small"
+						onChange={handleSourceChange}
 					/>
-					<input
+					{/* <input
 						value={sourceInput}
 						placeholder="Поиск..."
 						onChange={handleSourceChange}
 						size={5}
-					/>
+					/> */}
 				</div>
 			</div>
 			{segmentSelector}

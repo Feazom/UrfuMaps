@@ -7,12 +7,15 @@ namespace UrfuMaps.Api.Models
 	{
 		[StringLength(5)]
 		public string? Value { get; set; }
+		[StringLength(10)]
+		public string? Building { get; set; }
 
 		public object Clone()
 		{
 			return new Prefix
 			{
-				Value = Value
+				Value = Value,
+				Building = Building
 			};
 		}
 	}
