@@ -6,10 +6,11 @@ import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
 import TokenDTO from '../DTOs/TokenDTO';
 import UserDTO from '../DTOs/UserDTO';
 import axios, { AxiosResponse } from 'axios';
+import PrefixDTO from '../DTOs/PrefixDTO';
 
 const user: TokenDTO | undefined = JSON.parse(localStorage.getItem('user')!);
 const instance = axios.create({
-	baseURL: '',
+	baseURL: 'http://192.168.1.102:5000',
 	headers: {
 		Authorization: user?.token || '',
 		'Content-Type': 'application/json',
@@ -46,6 +47,10 @@ export function getRoute(sourceId: number, destinationId: number) {
 
 export function getTypes() {
 	return instance.get<string[]>('/type');
+}
+
+export function getPrefixes() {
+	return instance.get<PrefixDTO[]>('/prefix');
 }
 
 export function addMap(data: CreateFloorDTO) {

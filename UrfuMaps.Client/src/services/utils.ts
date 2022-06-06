@@ -14,7 +14,7 @@ export function convertCabinet(cabinet: string): string {
 	// 	result = 'r-' + result.slice(1);
 	// }
 	// return result;
-	return cabinet;
+	return cabinet.toLowerCase();
 }
 
 export function touchMove(

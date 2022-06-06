@@ -89,7 +89,6 @@ const MapCanvas = ({
 	);
 
 	useEffect(() => {
-		console.log(routeData);
 		setRoute(routeData || []);
 	}, [routeData]);
 

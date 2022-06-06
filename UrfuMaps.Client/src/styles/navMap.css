@@ -2,7 +2,7 @@
 	box-sizing: border-box;
 	font-weight: 600;
 	display: flex;
-	background-color: #56d328;
+	background-color: #ffc53d;
 	row-gap: 8px;
 	padding: 8px;
 	z-index: 1;
@@ -19,7 +19,7 @@
 .nav-portrait {
 	font-size: large;
 	width: 100vw;
-	height: 100px;
+	height: 150px;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-around;
@@ -32,6 +32,7 @@
 .cab-select-portrait {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	gap: 10px;
 }
 
@@ -42,29 +43,35 @@
 }
 
 .cab-select-landscape div {
-	height: 100%;
+	display: flex;
+	justify-content: flex-end;
+	width: 100px;
 }
 
-.cab-select-landscape input {
+.cab-select-portrait div {
+	display: flex;
+	justify-content: flex-end;
+	width: 100px;
+}
+
+.cab-select-portrait Input {
+	width: 70px;
 	height: 30px;
 	border-radius: 4px;
 	border-width: 1px;
 }
 
-.marker-icon {
-	height: 20px;
-	width: auto;
-	margin-right: 4px;
+.cab-select-landscape Input {
+	/* width: 100px; */
+	width: 70px;
+	height: 30px;
+	border-radius: 4px;
+	border-width: 1px;
 }
 
 .nav .nav-portrait div {
 	display: flex;
 	justify-content: space-between;
-}
-
-.floor-select select,
-.building-select select {
-	height: 22px;
 }
 
 .segment {

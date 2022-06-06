@@ -17,7 +17,7 @@ const FloorSelect = ({
 	}
 
 	return (
-		<>
+		<div className="floor-select">
 			<span>Этаж: </span>
 			<Select
 				onChange={handleFloorChange}
@@ -30,7 +30,7 @@ const FloorSelect = ({
 					</Select.Option>
 				))}
 			</Select>
-		</>
+		</div>
 	);
 };
 export default memo(FloorSelect);

@@ -3,7 +3,7 @@ import NavMap from '../components/NavMap';
 import '../styles/main.css';
 import MapCanvas from '../components/MapCanvas';
 import Konva from 'konva';
-import { getInfo } from '../services/RequestService';
+import { getInfo, getPrefixes, wrapRequest } from '../services/RequestService';
 import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
 import { Route, useSearchParams } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
