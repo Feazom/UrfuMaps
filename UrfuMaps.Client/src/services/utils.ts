@@ -69,13 +69,17 @@ export function convertCabinet(cabinet: string, building?: string): string {
 			result.substring(numberIndex, result.length - postfixSize) +
 			tr[result.substring(result.length - postfixSize)];
 	} else {
-		result = tr[result];
+		result = tr[result.slice(0, 5)];
 	}
 	if (building) {
 		if (result.slice(0, 5) === 'entry') {
 			result += building;
+			if (building === 'mab') {
+				result += 'm';
+			}
 		}
 	}
+	console.log(result);
 	return result;
 }
 

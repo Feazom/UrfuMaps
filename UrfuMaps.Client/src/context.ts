@@ -5,7 +5,6 @@ export const OrientationContext = createContext('landscape');
 
 i18next.init({
 	lng: 'ru',
-	debug: true,
 	resources: {
 		ru: {
 			translation: {

@@ -215,7 +215,8 @@ const MapCanvas = ({
 						/>
 					)}
 
-					{destinationMarker &&
+					{imageRef.current &&
+						destinationMarker &&
 						segment?.ids.includes(destinationMarker.id) && (
 							<MarkCanvas
 								x={destinationMarker.x}
@@ -223,9 +224,14 @@ const MapCanvas = ({
 								color="red"
 							/>
 						)}
-					{sourceMarker && segment?.ids.includes(sourceMarker.id) && (
-						<PointCanvas x={sourceMarker.x} y={sourceMarker.y} />
-					)}
+					{imageRef.current &&
+						sourceMarker &&
+						segment?.ids.includes(sourceMarker.id) && (
+							<PointCanvas
+								x={sourceMarker.x}
+								y={sourceMarker.y}
+							/>
+						)}
 					{/*imageRef.current &&
 						floor?.positions?.map((position) => {
 							const backgroundHeight =
