@@ -8,18 +8,18 @@ import {
 	useState,
 	useEffect,
 	useMemo,
-	ReactNode,
 } from 'react';
 import '../styles/navMap.css';
 import { convertCabinet } from '../services/utils';
 import { OrientationContext } from '../context';
 import { useQuery } from 'react-query';
 import { getPrefixes, wrapRequest } from '../services/RequestService';
-import { Input, InputNumber, Select } from 'antd';
+import { Input } from 'antd';
 
 type MapProps = {
 	destination: string;
 	source: string;
+	buildingName: string | undefined;
 	setDestination: Dispatch<SetStateAction<string>>;
 	segmentSelector: JSX.Element;
 	setSource: Dispatch<SetStateAction<string>>;
@@ -31,6 +31,7 @@ const NavMap = ({
 	setDestination,
 	setSource,
 	segmentSelector,
+	buildingName,
 }: MapProps) => {
 	const orientation = useContext(OrientationContext);
 	const timeoutSrc = useRef<number>();
@@ -77,14 +78,14 @@ const NavMap = ({
 	useEffect(() => {
 		window.clearTimeout(timeoutSrc.current);
 		timeoutSrc.current = window.setTimeout(() => {
-			setSource(convertCabinet(sourceInput));
+			setSource(convertCabinet(sourceInput, buildingName));
 		}, 300);
 	}, [sourceInput]);
 
 	useEffect(() => {
 		window.clearTimeout(timeoutDst.current);
 		timeoutDst.current = window.setTimeout(() => {
-			setDestination(convertCabinet(destinationInput));
+			setDestination(convertCabinet(destinationInput, buildingName));
 		}, 300);
 	}, [destinationInput]);
 

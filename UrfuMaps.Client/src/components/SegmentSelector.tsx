@@ -9,7 +9,7 @@ import {
 	useRef,
 	useState,
 } from 'react';
-import { OrientationContext } from '../context';
+import { OrientationContext, t } from '../context';
 import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
 import '../styles/navMap.css';
 
@@ -111,7 +111,9 @@ const SegmentSelector = ({
 							{route.map((seg, index) => (
 								<Steps.Step
 									key={index}
-									title={`${seg.building} ${seg.floor}`}
+									title={`${t(seg.building)}, ${
+										seg.floor
+									}-й этаж`}
 								/>
 							))}
 						</Steps>
@@ -151,29 +153,3 @@ const SegmentSelector = ({
 	);
 };
 export default memo(SegmentSelector);
-
-/* <div className="segment-field">
-			<button
-				onClick={handleFullLeft}
-				disabled={selectedSegment <= 1}
-				children="<<"
-			/>
-			<button
-				onClick={handleLeft}
-				disabled={selectedSegment <= 1}
-				children="<"
-			/>
-			<span className="segment">
-				{selectedSegment > 0 ? selectedSegment : '·'}
-			</span>
-			<button
-				onClick={handleRight}
-				disabled={selectedSegment >= route.length}
-				children=">"
-			/>
-			<button
-				onClick={handleFullRight}
-				disabled={selectedSegment >= route.length}
-				children=">>"
-			/>
-		</div> */

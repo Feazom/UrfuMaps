@@ -71,14 +71,17 @@ const MapCanvas = ({
 		() => {
 			return wrapRequest(getPosition(source));
 		},
-		{ retry: false, enabled: source.length > 0 }
+		{ retry: false, enabled: Boolean(source) && source.length > 0 }
 	);
 	const { data: destinationData } = useQuery(
 		['position', destination],
 		() => {
 			return wrapRequest(getPosition(destination));
 		},
-		{ retry: false, enabled: destination.length > 0 }
+		{
+			retry: false,
+			enabled: Boolean(destination) && destination.length > 0,
+		}
 	);
 	const { data: routeData } = useQuery(
 		['route', sourceData?.id, destinationData?.id],
@@ -223,7 +226,7 @@ const MapCanvas = ({
 					{sourceMarker && segment?.ids.includes(sourceMarker.id) && (
 						<PointCanvas x={sourceMarker.x} y={sourceMarker.y} />
 					)}
-					{imageRef.current &&
+					{/*imageRef.current &&
 						floor?.positions?.map((position) => {
 							const backgroundHeight =
 								imageRef.current!.getHeight();
@@ -248,7 +251,7 @@ const MapCanvas = ({
 									key={position.id}
 								/>
 							);
-						})}
+						})*/}
 				</Layer>
 			</DraggableStage>
 		</div>

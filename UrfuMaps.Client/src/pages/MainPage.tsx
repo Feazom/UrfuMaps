@@ -1,11 +1,11 @@
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import NavMap from '../components/NavMap';
 import '../styles/main.css';
 import MapCanvas from '../components/MapCanvas';
 import Konva from 'konva';
-import { getInfo, getPrefixes, wrapRequest } from '../services/RequestService';
+import { getInfo } from '../services/RequestService';
 import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
-import { Route, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
 import SegmentSelector from '../components/SegmentSelector';
 import BuildingSelect from '../components/BuildingSelect';
@@ -122,7 +122,7 @@ const Main = memo(() => {
 				}
 			/>
 		),
-		[buildings, buildingName]
+		[buildings, buildingName, floorNumber]
 	);
 
 	return (
@@ -135,6 +135,7 @@ const Main = memo(() => {
 				}
 			>
 				<NavMap
+					buildingName={buildingName}
 					segmentSelector={segmentSelector}
 					setDestination={setDestination}
 					setSource={setSource}

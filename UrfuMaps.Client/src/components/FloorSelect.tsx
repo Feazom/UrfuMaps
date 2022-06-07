@@ -22,7 +22,7 @@ const FloorSelect = ({
 			<Select
 				onChange={handleFloorChange}
 				loading={floors.length == 0}
-				defaultValue={floorNumber}
+				value={floorNumber}
 			>
 				{floors.map((floor) => (
 					<Select.Option key={floor} value={floor}>
