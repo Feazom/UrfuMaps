@@ -1,5 +1,6 @@
 import { Select } from 'antd';
 import { Dispatch, memo, SetStateAction } from 'react';
+import { t } from '../context';
 
 type BuildingSelectProps = {
 	buildingName: string | undefined;
@@ -24,11 +25,11 @@ const BuildingSelect = ({
 			<Select
 				onChange={handleBuildingChange}
 				loading={buildings.length == 0}
-				defaultValue={buildingName}
+				value={buildingName}
 			>
 				{buildings.map((building) => (
 					<Select.Option key={building} value={building}>
-						{building}
+						{t(building)}
 					</Select.Option>
 				))}
 			</Select>
