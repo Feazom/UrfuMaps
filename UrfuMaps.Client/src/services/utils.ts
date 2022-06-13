@@ -1,4 +1,5 @@
 import { Vector2d } from 'konva/lib/types';
+import { t } from '../context';
 
 const special = /[\s`~!@#$%^&*()\-_=+[\]{};:'"\\|/,.<>?]/g;
 
@@ -43,7 +44,37 @@ const translation: Record<string, string> = {
 
 const tr = new Proxy(translation, propertyHandler);
 
-export function convertCabinet(cabinet: string, building?: string): string {
+export function toFrontName(name: string) {
+	let result = name.toString();
+	if (!result && result === '') {
+		return result;
+	}
+	result = result.replace(special, '');
+	let numberIndex: number | undefined = undefined;
+	let postfixSize = 0;
+	for (let i = 0; i < result.length; i++) {
+		if (!isNaN(parseInt(result[i]))) {
+			numberIndex = i;
+			break;
+		}
+	}
+	for (let i = result.length - 1; i >= 0; i--) {
+		if (!isNaN(parseInt(result[i]))) {
+			break;
+		}
+		postfixSize++;
+	}
+	if (numberIndex) {
+		return (result =
+			t(result.slice(0, numberIndex)) +
+			' ' +
+			result.substring(numberIndex, result.length - postfixSize) +
+			t(result.substring(result.length - postfixSize)));
+	}
+	return t(result);
+}
+
+export function toApiName(cabinet: string, building?: string): string {
 	let result = cabinet.toLowerCase();
 	if (!result) {
 		return result;
@@ -79,7 +110,6 @@ export function convertCabinet(cabinet: string, building?: string): string {
 			}
 		}
 	}
-	console.log(result);
 	return result;
 }
 

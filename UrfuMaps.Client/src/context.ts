@@ -8,7 +8,14 @@ i18next.init({
 	resources: {
 		ru: {
 			translation: {
+				a: 'а',
+				b: 'б',
+				wcw: 'СУ Ж',
+				entryrtf: 'Вход',
 				r: 'Р',
+				m: 'М',
+				e: 'Э',
+				i: 'И',
 				rtf: 'ИРИТ-РТФ',
 				hti: 'ХТИ',
 				fti: 'ФТИ',

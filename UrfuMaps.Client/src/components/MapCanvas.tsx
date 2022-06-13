@@ -19,7 +19,7 @@ import {
 } from '../services/RequestService';
 import URLImage from './URLImage';
 import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
-import { canvaPosition } from '../services/utils';
+import { canvaPosition, toFrontName } from '../services/utils';
 import { OrientationContext } from '../context';
 import MarkCanvas from './MarkCanvas';
 import { Point } from '../types';
@@ -253,7 +253,7 @@ const MapCanvas = ({
 								<TextCanvas
 									x={x}
 									y={y}
-									text={position.id.toString()}
+									text={toFrontName(position.name)}
 									key={position.id}
 								/>
 							);

@@ -37,6 +37,14 @@ const Main = memo(() => {
 	const [orientation, setOrientation] = useState('landscape');
 
 	useEffect(() => {
+		if (buildings && buildingName && floorNumber) {
+			if (!buildings[buildingName].includes(floorNumber)) {
+				setFloorNumber(1);
+			}
+		}
+	}, [buildings, buildingName]);
+
+	useEffect(() => {
 		const type = window.screen.orientation.type;
 		setOrientation(type.substring(0, type.indexOf('-')));
 		window.addEventListener('orientationchange', handleOrientation);
