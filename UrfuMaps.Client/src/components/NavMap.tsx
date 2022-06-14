@@ -10,7 +10,7 @@ import {
 	useMemo,
 } from 'react';
 import '../styles/navMap.css';
-import { convertCabinet } from '../services/utils';
+import { toApiName } from '../services/utils';
 import { OrientationContext } from '../context';
 import { useQuery } from 'react-query';
 import { getPrefixes, wrapRequest } from '../services/RequestService';
@@ -78,14 +78,14 @@ const NavMap = ({
 	useEffect(() => {
 		window.clearTimeout(timeoutSrc.current);
 		timeoutSrc.current = window.setTimeout(() => {
-			setSource(convertCabinet(sourceInput, buildingName));
+			setSource(toApiName(sourceInput, buildingName));
 		}, 300);
 	}, [sourceInput]);
 
 	useEffect(() => {
 		window.clearTimeout(timeoutDst.current);
 		timeoutDst.current = window.setTimeout(() => {
-			setDestination(convertCabinet(destinationInput, buildingName));
+			setDestination(toApiName(destinationInput, buildingName));
 		}, 300);
 	}, [destinationInput]);
 

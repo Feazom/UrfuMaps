@@ -11,7 +11,7 @@ import CreateFloorDTO from '../DTOs/CreateFloorDTO';
 import CreatePositionDTO from '../DTOs/CreatePositionDTO';
 import { logout } from '../services/AuthService';
 import { addMap } from '../services/RequestService';
-import { convertCabinet } from '../services/utils';
+import { toApiName } from '../services/utils';
 import '../styles/navMap.css';
 import { EdgeDTODict } from '../types';
 
@@ -62,7 +62,7 @@ const NavAddMap = ({
 			imageLink: link,
 			positions: positions.map((p) => ({
 				localId: p.localId,
-				name: convertCabinet(p.name),
+				name: toApiName(p.name),
 				description: p.description,
 				type: p.type,
 				x: p.x,
@@ -70,6 +70,7 @@ const NavAddMap = ({
 			})),
 			edges: edges.current.keys(),
 		};
+
 		console.log(data);
 
 		if (

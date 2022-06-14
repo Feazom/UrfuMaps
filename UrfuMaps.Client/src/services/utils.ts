@@ -1,4 +1,5 @@
 import { Vector2d } from 'konva/lib/types';
+import { t } from '../context';
 
 const special = /[\s`~!@#$%^&*()\-_=+[\]{};:'"\\|/,.<>?]/g;
 
@@ -12,38 +13,95 @@ const translation: Record<string, string> = {
 	а: 'a',
 	б: 'b',
 	в: 'v',
-	ф: 'f',
-	т: 't',
-	х: 'h',
-	мт: 'mt',
+	г: 'g',
+	д: 'd',
+	е: 'e',
+	ж: 'j',
+	з: 'z',
 	и: 'i',
-	гук: 'mab',
+	к: 'k',
+	л: 'l',
 	м: 'm',
+	н: 'n',
+	о: 'o',
+	п: 'p',
+	р: 'r',
+	с: 's',
+	т: 't',
+	у: 'u',
+	ф: 'f',
+	х: 'h',
+	ц: 'c',
+	ч: 'ch',
+	ш: 'sh',
+	мт: 'mt',
+	гук: 'mab',
 	э: 'e',
 	сп: 'sp',
-	с: 's',
-	р: 'r',
 	вход: 'entry',
 	a: 'a',
 	b: 'b',
 	v: 'v',
-	f: 'f',
-	t: 't',
-	h: 'h',
-	mt: 'mt',
-	i: 'i',
-	mab: 'mab',
-	m: 'm',
+	g: 'g',
+	d: 'd',
 	e: 'e',
-	sp: 'sp',
-	s: 's',
+	j: 'j',
+	z: 'z',
+	i: 'i',
+	k: 'k',
+	l: 'l',
+	m: 'm',
+	n: 'n',
+	o: 'o',
+	p: 'p',
 	r: 'r',
+	s: 's',
+	t: 't',
+	u: 'u',
+	f: 'f',
+	h: 'h',
+	c: 'c',
+	ch: 'ch',
+	sh: 'sh',
+	mt: 'mt',
+	mab: 'mab',
+	sp: 'sp',
 	entry: 'entry',
 };
 
 const tr = new Proxy(translation, propertyHandler);
 
-export function convertCabinet(cabinet: string, building?: string): string {
+export function toFrontName(name: string) {
+	let result = name.toString();
+	if (!result && result === '') {
+		return result;
+	}
+	result = result.replace(special, '');
+	let numberIndex: number | undefined = undefined;
+	let postfixSize = 0;
+	for (let i = 0; i < result.length; i++) {
+		if (!isNaN(parseInt(result[i]))) {
+			numberIndex = i;
+			break;
+		}
+	}
+	for (let i = result.length - 1; i >= 0; i--) {
+		if (!isNaN(parseInt(result[i]))) {
+			break;
+		}
+		postfixSize++;
+	}
+	if (numberIndex) {
+		return (result =
+			t(result.slice(0, numberIndex)) +
+			' ' +
+			result.substring(numberIndex, result.length - postfixSize) +
+			t(result.substring(result.length - postfixSize)));
+	}
+	return t(result);
+}
+
+export function toApiName(cabinet: string, building?: string): string {
 	let result = cabinet.toLowerCase();
 	if (!result) {
 		return result;
@@ -69,11 +127,14 @@ export function convertCabinet(cabinet: string, building?: string): string {
 			result.substring(numberIndex, result.length - postfixSize) +
 			tr[result.substring(result.length - postfixSize)];
 	} else {
-		result = tr[result];
+		result = tr[result.slice(0, 5)];
 	}
 	if (building) {
 		if (result.slice(0, 5) === 'entry') {
 			result += building;
+			if (building === 'mab') {
+				result += 'm';
+			}
 		}
 	}
 	return result;
