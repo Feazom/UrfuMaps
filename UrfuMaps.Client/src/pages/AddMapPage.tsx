@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import NavAddMap from '../components/NavAddMap';
 import MapEdit from '../components/MapEdit';
-import CreatePositionDTO from '../DTOs/CreatePositionDTO';
+import CreatePositionDTO from '../types/CreatePositionDTO';
 import Konva from 'konva';
-import { EdgeDTODict, PointSelected } from '../types';
+import { PointSelected } from '../types';
 import Position from '../components/Position';
+import { EdgeDTODict } from '../types/EdgeDTODict';
 
 const AddMap = () => {
 	const [editedPosition, setEditedPosition] =

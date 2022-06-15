@@ -2,7 +2,6 @@
 using Graphalo.Traversal;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
 using UrfuMaps.Api.Repositories;
@@ -83,10 +82,10 @@ namespace UrfuMaps.Api.Services
 				graph.AddEdge((edge.FromNode.Type, edge.ToNode.Type) switch
 				{
 					("stair", "stair") =>
-						new Edge<int>(edge.FromNode.Id, edge.ToNode.Id, 0.01),
+						new Edge<int>(edge.FromNode.Id, edge.ToNode.Id, 1_000_000),
 
 					("entry", "entry") =>
-						new Edge<int>(edge.FromNode.Id, edge.ToNode.Id, 150),
+						new Edge<int>(edge.FromNode.Id, edge.ToNode.Id, 1_000_000),
 
 					(_, _) =>
 						new Edge<int>(

@@ -4,14 +4,16 @@ import '../styles/main.css';
 import MapCanvas from '../components/MapCanvas';
 import Konva from 'konva';
 import { getInfo } from '../services/RequestService';
-import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
-import { useSearchParams } from 'react-router-dom';
+import RouteSegmentDTO from '../types/RouteSegmentDTO';
 import LoadingSpinner from '../components/LoadingSpinner';
 import SegmentSelector from '../components/SegmentSelector';
 import BuildingSelect from '../components/BuildingSelect';
 import FloorSelect from '../components/FloorSelect';
 import { OrientationContext } from '../context';
 import { useQuery } from 'react-query';
+
+const buildingKey = 'building';
+const floorKey = 'floor';
 
 const Main = memo(() => {
 	Konva.dragButtons = [0];
@@ -20,20 +22,20 @@ const Main = memo(() => {
 	const [destination, setDestination] = useState('');
 	const [source, setSource] = useState('');
 	const [route, setRoute] = useState<RouteSegmentDTO[]>([]);
-	// const route = useRef<RouteSegmentDTO[]>([]);
 	const { data: buildings, isLoading } = useQuery('info', async () => {
 		try {
 			const { data } = await getInfo();
-			const buildings: Record<string, number[]> = {};
-			for (const info of data) {
-				buildings[info.buildingName] = info.floorList;
+			if (data.length > 0) {
+				const buildings: Record<string, number[]> = {};
+				for (const info of data) {
+					buildings[info.buildingName] = info.floorList;
+				}
+				return buildings;
 			}
-			return buildings;
 		} catch (error) {
 			throw error;
 		}
 	});
-	const [queryParams] = useSearchParams();
 	const [orientation, setOrientation] = useState('landscape');
 
 	useEffect(() => {
@@ -56,17 +58,15 @@ const Main = memo(() => {
 
 	useEffect(() => {
 		if (buildingName && floorNumber) {
-			window.history.replaceState(
-				{},
-				'',
-				`?building=${buildingName}&floor=${floorNumber}`
-			);
+			localStorage.setItem(buildingKey, buildingName);
+			localStorage.setItem(floorKey, floorNumber.toString());
 		}
 	}, [floorNumber, buildingName]);
 
 	useEffect(() => {
-		const building = queryParams.get('building');
-		const floor = queryParams.get('floor');
+		const building = localStorage.getItem(buildingKey);
+		const floor = parseInt(localStorage.getItem(floorKey) || '');
+
 		if (buildings) {
 			if (building) {
 				const includesBuilding =
@@ -78,10 +78,10 @@ const Main = memo(() => {
 
 				if (
 					includesBuilding &&
-					floor &&
-					buildings[building].includes(parseInt(floor))
+					!isNaN(floor) &&
+					buildings[building].includes(floor)
 				) {
-					setFloorNumber(parseInt(floor));
+					setFloorNumber(floor);
 				} else {
 					setFloorNumber(1);
 				}
@@ -90,7 +90,7 @@ const Main = memo(() => {
 				setFloorNumber(1);
 			}
 		}
-	}, [buildings, queryParams]);
+	}, [buildings]);
 
 	const handleOrientation = () => {
 		const type = window.screen.orientation.type;

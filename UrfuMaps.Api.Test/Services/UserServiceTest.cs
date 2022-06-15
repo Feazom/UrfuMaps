@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using UrfuMaps.Api;
 
 namespace UrfuMaps.Api.Test.Services
 {

@@ -1,12 +1,8 @@
-using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using UrfuMaps.Api;
 using UrfuMaps.Api.Models;
-using UrfuMaps.Api.Repositories;
 using UrfuMaps.Api.Services;
 using UrfuMaps.Api.Test.Repositories;
 
@@ -14,7 +10,7 @@ namespace UrfuMaps.Api.Test.Services
 {
 	public class MapServiceTest
 	{
-		private IMapService _mapService;
+		private IFloorService _mapService;
 		private FloorRepositoryMock _floors;
 		private TypeRepositoryMock _types;
 		private PositionRepositoryMock _positions;

@@ -1,5 +1,5 @@
 import { ChangeEvent, Dispatch, SetStateAction } from 'react';
-import CreatePositionDTO from '../DTOs/CreatePositionDTO';
+import CreatePositionDTO from '../types/CreatePositionDTO';
 import { PointSelected } from '../types';
 import './Edge.css';
 

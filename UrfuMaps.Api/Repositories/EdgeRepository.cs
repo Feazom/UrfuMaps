@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
-using System.Linq;
-using System;
 
 namespace UrfuMaps.Api.Repositories
 {

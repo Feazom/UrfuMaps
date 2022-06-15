@@ -8,7 +8,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
-using UrfuMaps.Api.Models;
 using UrfuMaps.Api.Repositories;
 using UrfuMaps.Api.Services;
 
@@ -43,7 +42,7 @@ namespace UrfuMaps.Api
 			services.AddScoped<IPrefixRepository, PrefixRepository>();
 
 			services.AddScoped<IUserService, UserService>();
-			services.AddScoped<IMapService, FloorService>();
+			services.AddScoped<IFloorService, FloorService>();
 			services.AddScoped<IRouteService, RouteService>();
 			services.AddScoped<IInfoService, InfoService>();
 			services.AddScoped<ITypeService, TypeService>();

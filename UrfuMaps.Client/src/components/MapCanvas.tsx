@@ -2,15 +2,14 @@ import Konva from 'konva';
 import {
 	Dispatch,
 	memo,
-	MutableRefObject,
 	SetStateAction,
+	useCallback,
 	useContext,
 	useEffect,
 	useRef,
 	useState,
 } from 'react';
 import { Line, Layer } from 'react-konva';
-import FloorDTO from '../DTOs/FloorDTO';
 import {
 	getMap,
 	getPosition,
@@ -18,17 +17,17 @@ import {
 	wrapRequest,
 } from '../services/RequestService';
 import URLImage from './URLImage';
-import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
-import { canvaPosition, toFrontName } from '../services/utils';
+import RouteSegmentDTO from '../types/RouteSegmentDTO';
+import { canvaPosition } from '../services/utils';
 import { OrientationContext } from '../context';
 import MarkCanvas from './MarkCanvas';
-import { Point } from '../types';
+import { Floor } from '../types';
 import PointCanvas from './PointCanvas';
 import DraggableStage from './DraggableStage';
 import styles from '../styles/map.module.css';
-import TextCanvas from './TextCanvas';
 import { useForceUpdate } from '../hooks';
 import { useQuery } from 'react-query';
+import PositionDTO from '../types/PositionDTO';
 
 type MapProps = {
 	floorNumber: number;
@@ -58,12 +57,30 @@ const MapCanvas = ({
 
 	const orientation = useContext(OrientationContext);
 	const imageRef = useRef<Konva.Image>(null);
-	const [destinationMarker, setDestinationMarker] = useState<Point>();
-	const [sourceMarker, setSourceMarker] = useState<Point>();
+
 	const { data: floor } = useQuery(
 		['floor', floorNumber, buildingName],
-		() => {
-			return wrapRequest(getMap(floorNumber, buildingName));
+		async () => {
+			try {
+				const data = await wrapRequest(
+					getMap(floorNumber, buildingName)
+				);
+				if (data) {
+					const positionsDict: Record<number, PositionDTO> = {};
+					for (const pos of data.positions) {
+						positionsDict[pos.id] = pos;
+					}
+					return {
+						id: data.id,
+						buildingName: data.buildingName,
+						floorNumber: data.floorNumber,
+						imageLink: data.imageLink,
+						positions: positionsDict,
+					} as Floor;
+				}
+			} catch (error) {
+				throw error;
+			}
 		}
 	);
 	const { data: sourceData } = useQuery(
@@ -91,8 +108,55 @@ const MapCanvas = ({
 		{ enabled: !!sourceData?.id && !!destinationData?.id }
 	);
 
+	const dstMarker = useCallback(() => {
+		if (destinationData && imageRef.current) {
+			if (floor?.positions[destinationData.id]) {
+				const position = floor?.positions[destinationData.id];
+				const convertedPosition = canvaPosition(
+					{
+						x: position.x,
+						y: position.y,
+					},
+					imageRef.current
+				);
+				return (
+					<MarkCanvas
+						x={convertedPosition.x}
+						y={convertedPosition.y}
+						color="red"
+					/>
+				);
+			}
+		}
+		return null;
+	}, [floor, destinationData, imageRef.current]);
+
+	const srcMarker = useCallback(() => {
+		if (sourceData && imageRef.current) {
+			if (floor?.positions[sourceData.id]) {
+				const position = floor?.positions[sourceData.id];
+				const convertedPosition = canvaPosition(
+					{
+						x: position.x,
+						y: position.y,
+					},
+					imageRef.current
+				);
+				return (
+					<PointCanvas
+						x={convertedPosition.x}
+						y={convertedPosition.y}
+					/>
+				);
+			}
+		}
+		return null;
+	}, [floor, sourceData, imageRef.current]);
+
 	useEffect(() => {
-		setRoute(routeData || []);
+		setRoute((r) => {
+			return routeData || r;
+		});
 	}, [routeData]);
 
 	useEffect(() => {
@@ -116,44 +180,6 @@ const MapCanvas = ({
 		);
 	}, [route, floor]);
 
-	useEffect(() => {
-		if (sourceData && destinationData) {
-			setSourceMarker({
-				...canvaPosition(
-					{
-						x: sourceData.x,
-						y: sourceData.y,
-					},
-					imageRef.current?.getHeight(),
-					imageRef.current?.getWidth(),
-					{
-						x: imageRef.current?.x() || 0,
-						y: imageRef.current?.y() || 0,
-					}
-				),
-				id: sourceData.id,
-			});
-			setDestinationMarker({
-				...canvaPosition(
-					{
-						x: destinationData.x,
-						y: destinationData.y,
-					},
-					imageRef.current?.getHeight(),
-					imageRef.current?.getWidth(),
-					{
-						x: imageRef.current?.x() || 0,
-						y: imageRef.current?.y() || 0,
-					}
-				),
-				id: destinationData.id,
-			});
-		} else {
-			setDestinationMarker(undefined);
-			setSourceMarker(undefined);
-		}
-	}, [sourceData, destinationData]);
-
 	return (
 		<div className={styles.map}>
 			<div className={styles.mselect}>
@@ -171,7 +197,7 @@ const MapCanvas = ({
 							setUpdate={forceUpdate}
 						/>
 					)}
-					{segment && (
+					{segment && imageRef.current && (
 						<Line
 							lineJoin="round"
 							lineCap="round"
@@ -180,9 +206,7 @@ const MapCanvas = ({
 							points={
 								segment.ids
 									.flatMap((id) => {
-										const position = floor?.positions.find(
-											(p) => p.id == id
-										);
+										const position = floor?.positions[id];
 
 										if (position) {
 											const convertedPosition =
@@ -191,16 +215,7 @@ const MapCanvas = ({
 														x: position.x,
 														y: position.y,
 													},
-													imageRef.current?.getHeight(),
-													imageRef.current?.getWidth(),
-													{
-														x:
-															imageRef.current?.x() ||
-															0,
-														y:
-															imageRef.current?.y() ||
-															0,
-													}
+													imageRef.current!
 												);
 
 											return [
@@ -215,49 +230,8 @@ const MapCanvas = ({
 						/>
 					)}
 
-					{imageRef.current &&
-						destinationMarker &&
-						segment?.ids.includes(destinationMarker.id) && (
-							<MarkCanvas
-								x={destinationMarker.x}
-								y={destinationMarker.y}
-								color="red"
-							/>
-						)}
-					{imageRef.current &&
-						sourceMarker &&
-						segment?.ids.includes(sourceMarker.id) && (
-							<PointCanvas
-								x={sourceMarker.x}
-								y={sourceMarker.y}
-							/>
-						)}
-					{/*imageRef.current &&
-						floor?.positions?.map((position) => {
-							const backgroundHeight =
-								imageRef.current!.getHeight();
-							const backgroundWidth =
-								imageRef.current!.getWidth();
-							const offset = {
-								x: imageRef.current!.x(),
-								y: imageRef.current!.y(),
-							};
-
-							const x =
-								(position.x / 100) * backgroundWidth + offset.x;
-							const y =
-								(position.y / 100) * backgroundHeight +
-								offset.y;
-
-							return (
-								<TextCanvas
-									x={x}
-									y={y}
-									text={toFrontName(position.name)}
-									key={position.id}
-								/>
-							);
-						})*/}
+					{dstMarker()}
+					{srcMarker()}
 				</Layer>
 			</DraggableStage>
 		</div>
