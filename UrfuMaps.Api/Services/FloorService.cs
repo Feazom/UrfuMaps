@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
@@ -7,14 +6,14 @@ using UrfuMaps.Api.Repositories;
 
 namespace UrfuMaps.Api.Services
 {
-	public interface IMapService
+	public interface IFloorService
 	{
 		Task<CreateResult> Create(CreateFloorDTO floorScheme);
 		Task<FloorDTO?> GetScheme(int floor, string building);
 		Task Delete(int floor, string building);
 	}
 
-	public class FloorService : IMapService
+	public class FloorService : IFloorService
 	{
 		private readonly IFloorRepository _floors;
 		private readonly ITypeRepository _types;

@@ -1,3 +1,4 @@
+import Konva from 'konva';
 import { Vector2d } from 'konva/lib/types';
 import { t } from '../context';
 
@@ -39,6 +40,8 @@ const translation: Record<string, string> = {
 	э: 'e',
 	сп: 'sp',
 	вход: 'entry',
+	правыйвход: 'entryr',
+	левыйвход: 'entryl',
 	a: 'a',
 	b: 'b',
 	v: 'v',
@@ -108,33 +111,33 @@ export function toApiName(cabinet: string, building?: string): string {
 	}
 	result = result.replace(special, '');
 	let numberIndex: number | undefined = undefined;
-	let postfixSize = 0;
+
 	for (let i = 0; i < result.length; i++) {
 		if (!isNaN(parseInt(result[i]))) {
 			numberIndex = i;
 			break;
 		}
 	}
-	for (let i = result.length - 1; i >= 0; i--) {
-		if (!isNaN(parseInt(result[i]))) {
-			break;
-		}
-		postfixSize++;
-	}
+
 	if (numberIndex) {
+		let postfixSize = 0;
+		for (let i = result.length - 1; i >= 0; i--) {
+			if (!isNaN(parseInt(result[i]))) {
+				break;
+			}
+			postfixSize++;
+		}
+
 		result =
 			tr[result.slice(0, numberIndex)] +
 			result.substring(numberIndex, result.length - postfixSize) +
 			tr[result.substring(result.length - postfixSize)];
 	} else {
-		result = tr[result.slice(0, 5)];
+		result = tr[result];
 	}
 	if (building) {
-		if (result.slice(0, 5) === 'entry') {
+		if (result.includes('entry')) {
 			result += building;
-			if (building === 'mab') {
-				result += 'm';
-			}
 		}
 	}
 	return result;
@@ -167,14 +170,9 @@ export function apiPosition(
 	};
 }
 
-export function canvaPosition(
-	position: Vector2d,
-	height: number,
-	widtgh: number,
-	offset: Vector2d
-) {
+export function canvaPosition(position: Vector2d, background: Konva.Image) {
 	return {
-		x: (position.x / 100) * widtgh + offset.x,
-		y: (position.y / 100) * height + offset.y,
+		x: (position.x / 100) * background.getWidth() + (background.x() || 0),
+		y: (position.y / 100) * background.getHeight() + (background.y() || 0),
 	};
 }

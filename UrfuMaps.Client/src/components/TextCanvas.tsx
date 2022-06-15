@@ -8,7 +8,7 @@ type TextCanvasProps = {
 	y: number;
 };
 
-const fontSize = 12;
+const fontSize = 4;
 const fontFamily = 'Calibry';
 
 const TextCanvas = ({ text, x, y }: TextCanvasProps) => {

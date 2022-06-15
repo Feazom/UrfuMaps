@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
 using UrfuMaps.Api.Services;
@@ -11,7 +8,7 @@ namespace UrfuMaps.Api.Controllers
 	[ApiController]
 	[Route("/position")]
 	[Produces("application/json")]
-	public class PositionController: ControllerBase
+	public class PositionController : ControllerBase
 	{
 		private readonly IPositionService _positionService;
 

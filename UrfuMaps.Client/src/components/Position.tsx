@@ -6,7 +6,7 @@ import {
 	useEffect,
 	useState,
 } from 'react';
-import CreatePositionDTO from '../DTOs/CreatePositionDTO';
+import CreatePositionDTO from '../types/CreatePositionDTO';
 import CreatebleSelect from 'react-select/creatable';
 import '../styles/position.css';
 import { getTypes, wrapRequest } from '../services/RequestService';

@@ -7,13 +7,13 @@ import {
 } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import CreateFloorDTO from '../DTOs/CreateFloorDTO';
-import CreatePositionDTO from '../DTOs/CreatePositionDTO';
+import CreateFloorDTO from '../types/CreateFloorDTO';
+import CreatePositionDTO from '../types/CreatePositionDTO';
 import { logout } from '../services/AuthService';
 import { addMap } from '../services/RequestService';
 import { toApiName } from '../services/utils';
 import '../styles/navMap.css';
-import { EdgeDTODict } from '../types';
+import { EdgeDTODict } from '../types/EdgeDTODict';
 
 type AddMapProps = {
 	positionElement: JSX.Element;

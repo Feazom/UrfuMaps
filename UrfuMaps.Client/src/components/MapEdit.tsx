@@ -9,21 +9,16 @@ import {
 	MutableRefObject,
 } from 'react';
 import { Circle, Layer, Line } from 'react-konva';
-import CreatePositionDTO from '../DTOs/CreatePositionDTO';
-import {
-	Edge,
-	EdgeDict,
-	EdgeDTODict,
-	keyFromString,
-	pair,
-	PointSelected,
-} from '../types';
+import CreatePositionDTO from '../types/CreatePositionDTO';
+import { Edge, keyFromString, pair, PointSelected } from '../types';
 import styles from '../styles/mapEdit.module.css';
 import URLImage from './URLImage';
 import Konva from 'konva';
 import { apiPosition, canvaPosition, clone } from '../services/utils';
 import { useForceUpdate } from '../hooks';
 import DraggableStage from './DraggableStage';
+import { EdgeDTODict } from '../types/EdgeDTODict';
+import { EdgeDict } from '../types/EdgeDict';
 
 type MapEditProps = {
 	setPositions: Dispatch<SetStateAction<CreatePositionDTO[]>>;
@@ -309,39 +304,40 @@ const MapEdit = ({
 									/>
 								);
 							})}
-							{positions.map((position) => {
-								const convertedPoint = canvaPosition(
-									{
-										x: position.x,
-										y: position.y,
-									},
-									imageRef.current?.getHeight(),
-									imageRef.current?.getWidth(),
-									offset
-								);
-								return (
-									<Circle
-										id={position.localId.toString()}
-										key={position.localId}
-										x={convertedPoint.x}
-										y={convertedPoint.y}
-										fill="red"
-										radius={circleRadius}
-										onContextMenu={handleRightClickCircle}
-										strokeWidth={circleRadius / 2}
-										onDragEnd={handleDragEnd}
-										onDragMove={handleDragMove}
-										onMouseUp={handleMouseUp}
-										onMouseDown={handleMouseDown}
-										draggable
-										stroke={
-											position.localId === selected.id
-												? 'black'
-												: 'red'
-										}
-									/>
-								);
-							})}
+							{imageRef.current &&
+								positions.map((position) => {
+									const convertedPoint = canvaPosition(
+										{
+											x: position.x,
+											y: position.y,
+										},
+										imageRef.current!
+									);
+									return (
+										<Circle
+											id={position.localId.toString()}
+											key={position.localId}
+											x={convertedPoint.x}
+											y={convertedPoint.y}
+											fill="red"
+											radius={circleRadius}
+											onContextMenu={
+												handleRightClickCircle
+											}
+											strokeWidth={circleRadius / 2}
+											onDragEnd={handleDragEnd}
+											onDragMove={handleDragMove}
+											onMouseUp={handleMouseUp}
+											onMouseDown={handleMouseDown}
+											draggable
+											stroke={
+												position.localId === selected.id
+													? 'black'
+													: 'red'
+											}
+										/>
+									);
+								})}
 						</>
 					)}
 				</Layer>

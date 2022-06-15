@@ -1,4 +1,4 @@
-import UserDTO from '../DTOs/UserDTO';
+import UserDTO from '../types/UserDTO';
 import { login as loginRequest } from './RequestService';
 
 export async function signin(login: string, password: string) {

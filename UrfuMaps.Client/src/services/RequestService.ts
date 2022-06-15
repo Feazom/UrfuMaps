@@ -1,12 +1,12 @@
-import CreateFloorDTO from '../DTOs/CreateFloorDTO';
-import FloorDTO from '../DTOs/FloorDTO';
-import InfoDTO from '../DTOs/InfoDTO';
-import PositionDTO from '../DTOs/PositionDTO';
-import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
-import TokenDTO from '../DTOs/TokenDTO';
-import UserDTO from '../DTOs/UserDTO';
+import CreateFloorDTO from '../types/CreateFloorDTO';
+import FloorDTO from '../types/FloorDTO';
+import InfoDTO from '../types/InfoDTO';
+import PositionDTO from '../types/PositionDTO';
+import RouteSegmentDTO from '../types/RouteSegmentDTO';
+import TokenDTO from '../types/TokenDTO';
+import UserDTO from '../types/UserDTO';
 import axios, { AxiosResponse } from 'axios';
-import PrefixDTO from '../DTOs/PrefixDTO';
+import PrefixDTO from '../types/PrefixDTO';
 
 const user: TokenDTO | undefined = JSON.parse(localStorage.getItem('user')!);
 const instance = axios.create({

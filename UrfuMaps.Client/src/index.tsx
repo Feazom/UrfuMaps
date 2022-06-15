@@ -1,4 +1,5 @@
-import 'antd/dist/antd.css';
+// import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import './styles/index.css';
 import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';

@@ -1,4 +1,4 @@
-import { EdgeDTO } from './DTOs/EdgeDTO';
+import { EdgeDTO } from './types/EdgeDTO';
 
 class EdgeDTOSet {
 	public edges: EdgeDTO[];

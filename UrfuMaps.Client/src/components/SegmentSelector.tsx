@@ -10,7 +10,7 @@ import {
 	useState,
 } from 'react';
 import { OrientationContext, t } from '../context';
-import RouteSegmentDTO from '../DTOs/RouteSegmentDTO';
+import RouteSegmentDTO from '../types/RouteSegmentDTO';
 import '../styles/navMap.css';
 
 type SegmentSelectorProps = {

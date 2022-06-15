@@ -7,6 +7,10 @@ type FloorSelectProps = {
 	floors: number[];
 };
 
+const compare = (a: number, b: number) => {
+	return a - b;
+};
+
 const FloorSelect = ({
 	floorNumber,
 	setFloorNumber,
@@ -15,7 +19,6 @@ const FloorSelect = ({
 	function handleFloorChange(floor: number) {
 		setFloorNumber(floor);
 	}
-
 	return (
 		<div className="floor-select">
 			<span>Этаж: </span>
@@ -24,7 +27,7 @@ const FloorSelect = ({
 				loading={floors.length == 0}
 				value={floorNumber}
 			>
-				{floors.map((floor) => (
+				{floors.sort(compare).map((floor) => (
 					<Select.Option key={floor} value={floor}>
 						{floor}
 					</Select.Option>

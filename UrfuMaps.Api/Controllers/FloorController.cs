@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Threading.Tasks;
 using UrfuMaps.Api.Models;
 using UrfuMaps.Api.Services;
@@ -15,9 +13,9 @@ namespace UrfuMaps.Api.Controllers
 	[Produces("application/json")]
 	public class FloorController : ControllerBase
 	{
-		private readonly IMapService _mapService;
+		private readonly IFloorService _mapService;
 
-		public FloorController(IMapService mapService)
+		public FloorController(IFloorService mapService)
 		{
 			_mapService = mapService;
 		}
