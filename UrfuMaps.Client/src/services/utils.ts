@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import { Vector2d } from 'konva/lib/types';
-import { t } from '../context';
+import { t, translation } from '../context';
 
 const special = /[\s`~!@#$%^&*()\-_=+[\]{};:'"\\|/,.<>?]/g;
 
@@ -8,68 +8,6 @@ const propertyHandler = {
 	get: function (target: Record<string, string>, name: string) {
 		return target.hasOwnProperty(name) ? target[name] : '';
 	},
-};
-
-const translation: Record<string, string> = {
-	а: 'a',
-	б: 'b',
-	в: 'v',
-	г: 'g',
-	д: 'd',
-	е: 'e',
-	ж: 'j',
-	з: 'z',
-	и: 'i',
-	к: 'k',
-	л: 'l',
-	м: 'm',
-	н: 'n',
-	о: 'o',
-	п: 'p',
-	р: 'r',
-	с: 's',
-	т: 't',
-	у: 'u',
-	ф: 'f',
-	х: 'h',
-	ц: 'c',
-	ч: 'ch',
-	ш: 'sh',
-	мт: 'mt',
-	гук: 'mab',
-	э: 'e',
-	сп: 'sp',
-	вход: 'entry',
-	правыйвход: 'entryr',
-	левыйвход: 'entryl',
-	a: 'a',
-	b: 'b',
-	v: 'v',
-	g: 'g',
-	d: 'd',
-	e: 'e',
-	j: 'j',
-	z: 'z',
-	i: 'i',
-	k: 'k',
-	l: 'l',
-	m: 'm',
-	n: 'n',
-	o: 'o',
-	p: 'p',
-	r: 'r',
-	s: 's',
-	t: 't',
-	u: 'u',
-	f: 'f',
-	h: 'h',
-	c: 'c',
-	ch: 'ch',
-	sh: 'sh',
-	mt: 'mt',
-	mab: 'mab',
-	sp: 'sp',
-	entry: 'entry',
 };
 
 const tr = new Proxy(translation, propertyHandler);
