@@ -7,6 +7,7 @@ import TokenDTO from '../types/TokenDTO';
 import UserDTO from '../types/UserDTO';
 import axios, { AxiosResponse } from 'axios';
 import PrefixDTO from '../types/PrefixDTO';
+import { DebugDto } from '../types';
 
 const user: TokenDTO | undefined = JSON.parse(localStorage.getItem('user')!);
 const instance = axios.create({

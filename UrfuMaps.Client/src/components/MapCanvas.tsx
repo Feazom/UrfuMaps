@@ -18,7 +18,7 @@ import {
 } from '../services/RequestService';
 import URLImage from './URLImage';
 import RouteSegmentDTO from '../types/RouteSegmentDTO';
-import { canvaPosition } from '../services/utils';
+import { canvaPosition, toFrontName } from '../services/utils';
 import { OrientationContext } from '../context';
 import MarkCanvas from './MarkCanvas';
 import { Floor } from '../types';
@@ -54,7 +54,6 @@ const MapCanvas = ({
 	const [width, setWidth] = useState(window.innerWidth * 0.8);
 	const [height, setHeight] = useState(window.innerHeight * 0.95);
 	const forceUpdate = useForceUpdate();
-
 	const orientation = useContext(OrientationContext);
 	const imageRef = useRef<Konva.Image>(null);
 
@@ -83,6 +82,7 @@ const MapCanvas = ({
 			}
 		}
 	);
+
 	const { data: sourceData } = useQuery(
 		['position', source],
 		() => {
@@ -155,7 +155,7 @@ const MapCanvas = ({
 
 	useEffect(() => {
 		setRoute((r) => {
-			return routeData || r;
+			return routeData || [];
 		});
 	}, [routeData]);
 

@@ -2,6 +2,15 @@ import { Vector2d } from 'konva/lib/types';
 import { EdgeDTO } from './EdgeDTO';
 import PositionDTO from './PositionDTO';
 
+export type DebugDto = {
+	fromId: number;
+	fromX: number;
+	fromY: number;
+	toId: number;
+	toX: number;
+	toY: number;
+};
+
 export type TouchMoveResult = {
 	scale: number;
 	newPosition: Vector2d;

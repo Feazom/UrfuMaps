@@ -43,16 +43,6 @@ const SegmentSelector = ({
 	const previousSegmentCount = useRef(0);
 	const orientation = useContext(OrientationContext);
 
-	// useEffect(() => {
-	// 	setSelectedSegment((s) => {
-	// 		const newSegment = segmentFind();
-	// 		if (s !== newSegment) {
-	// 			return newSegment;
-	// 		}
-	// 		return s;
-	// 	});
-	// }, [segmentFind]);
-
 	useEffect(() => {
 		if (route.length > 0 && selectedSegment > 0) {
 			setFloorNumber(route[selectedSegment - 1].floor);
